@@ -1,1 +1,2 @@
-[] al cambio di dimensione della bowl non viene ricalcolata l'indicazione superamento limite
+- al cambio di dimensione della bowl non viene ricalcolata l'indicazione superamento limite
+- rivedere grafica scelta dimensione ( in particolare durante ridimensionamento finestra)

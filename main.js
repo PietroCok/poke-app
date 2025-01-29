@@ -109,12 +109,12 @@ function fillHtml() {
   setDimensions(config);
 
   // inserisce opzioni per ogni tipologia
-  setIngridientsGroups(config);
+  setingredientsGroups(config);
 }
 
-function setTitle(config){
-  const elem = 
-  `<div class="title-wrapper">
+function setTitle(config) {
+  const elem =
+    `<div class="title-wrapper">
     <h1>${config.titolo}</h1>
     <div>
       <div>${config.sotto_titolo}</div>
@@ -135,9 +135,9 @@ function setDimensions(config) {
 
     const elemLimits = document.createElement("div");
     elemLimits.classList.add("limits");
-    for(const limit of limits){
-      const _elem = 
-      `<span class="${name}-${limit.split(" ")[1]}">${limit}</span>`;
+    for (const limit of limits) {
+      const _elem =
+        `<span class="${name}-${limit.split(" ")[1]}">${limit}</span>`;
 
       elemLimits.append(convertToHTML(_elem));
     }
@@ -146,7 +146,7 @@ function setDimensions(config) {
     const elem =
       `<div>
         <label class="dim-name" for="dim-${name}"><input id="dim-${name}" type="radio" name="dim" ${isFirst ? "checked" : ""}>${name}</label>
-        <label for="dim-${name}">
+        <label for="dim-${name}" class="w-100">
           ${elemLimits.outerHTML}
         </label>
 
@@ -163,14 +163,14 @@ function setDimensions(config) {
   }
 }
 
-function setIngridientsGroups(config) {
+function setingredientsGroups(config) {
   const main_section = document.querySelector("#main");
   const groups = config.gruppi;
 
-  for(const [name, group] of Object.entries(groups)){
+  for (const [name, group] of Object.entries(groups)) {
     // contenitore del gruppo
     const section =
-    `<section class="${name}">
+      `<section class="${name}">
       <div class="section-title-container">
         <h3>${name}</h3>
       </div>
@@ -186,13 +186,16 @@ function setIngridientsGroups(config) {
     const sectionElem = convertToHTML(section);
 
     // opzioni del gruppo
-    for(const option of group.opzioni){
+    for (const option of group.opzioni) {
       const id = option.split(" ").join("-")
-      const _opt = 
-      `<label for="${id}">
+      const _opt =
+        `<div class="option-container">
+        <label for="${id}"> ${option} </label>
         <input type="checkbox" id="${id}" data-group="${name}">
-        ${option}
-      </label>
+        <span class="extra" title="aggiungi extra" >
+          <i class="fa-solid fa-plus" data-group="${name}" data-option="${id}"></i>
+        </span>
+      </div>
       `
 
       const _optElem = convertToHTML(_opt);
@@ -203,7 +206,7 @@ function setIngridientsGroups(config) {
 
     main_section.append(sectionElem)
   }
-  
+
 }
 
 function convertToHTML(string) {
@@ -216,52 +219,90 @@ function convertToHTML(string) {
 // in particolare verifica che non venga superato il limite di elementi in base alla dimensione scelta
 function checkSelection(evt) {
   const selectedElem = evt.target;
-  if(selectedElem.getAttribute("type") == "checkbox"){
+  if (selectedElem.getAttribute("type") == "checkbox") {
     const group = selectedElem.dataset.group;
-    const limit = config.dimensioni[selected.dimension].limiti[group];
 
-    if(selectedElem.checked){
-      if(!selected[group]){
-        selected[group] = [];
-      }
-
-      selected[group].push(selectedElem.id);
-
-      if(selected[group].length > limit){
-        const elemClass = selected.dimension + "-" +group;
-        const elem = document.querySelector("."+elemClass);
-        elem.classList.add("over-limit");
-      }
-
+    if (selectedElem.checked) {
+      addingredient(group, selectedElem.id)
     } else {
-      selected[group] = selected[group].filter(x => x != selectedElem.id);
-
-      if(selected[group].length <= limit){
-        const elemClass = selected.dimension + "-" +group;
-        const elem = document.querySelector("."+elemClass);
-        elem.classList.remove("over-limit");
-      }
+      removeIngredient(group, selectedElem.id);
     }
     return;
   }
 
-  if(selectedElem.getAttribute("type") == "radio"){
+  if (selectedElem.getAttribute("type") == "radio") {
     selected.dimension = selectedElem.id.split("-")[1];
     return;
   }
 }
 
+function addExtra(evt) {
+  const group = evt.target.dataset.group;
+  const option = evt.target.dataset.option;
 
-function generateOrder(){
+  addingredient(group, option)
+}
+
+function addingredient(group, option, quantity = 1) {
+  const limit = config.dimensioni[selected.dimension].limiti[group];
+
+  if (!selected[group]) {
+    selected[group] = [];
+  }
+
+  const ingredient = selected[group].find(x => x.id == option)
+  if (ingredient) {
+    ingredient.quantity += 1;
+    quantity = ingredient.quantity;
+  } else {
+    selected[group].push({
+      id: option,
+      quantity: quantity
+    });
+  }
+
+  if(quantity > 1){
+    document.querySelector(".option-container:has(#" + option + ")").setAttribute("data-extra", quantity)
+  }
+
+  if (selected[group].length > limit) {
+    const elemClass = selected.dimension + "-" + group;
+    const elem = document.querySelector("." + elemClass);
+    elem.classList.add("over-limit");
+  }
+}
+
+function removeIngredient(group, option) {
+  if(typeof option != "string"){
+    option = option.id || "";
+  }
+
+  const limit = config.dimensioni[selected.dimension].limiti[group];
+
+  selected[group] = selected[group].filter(x => x.id != option);
+  
+  document.getElementById(option).checked = false;
+  document.querySelector(".option-container:has(#" + option + ")").removeAttribute("data-extra");
+
+  if (selected[group].length <= limit) {
+    const elemClass = selected.dimension + "-" + group;
+    const elem = document.querySelector("." + elemClass);
+    elem.classList.remove("over-limit");
+  }
+
+  console.log(selected[group]);
+}
+
+
+function generateOrder() {
   const outputElem = document.querySelector("#generated-order");
 
   let order = `${selected.dimension.toUpperCase()}: `;
 
-  // ordinamento gruppi ingredienti
-  for(const [group, elements] of Object.entries(selected)){
-    
-    if(group != "dimension"){
-      order += elements.map( e => e.replaceAll("-", " ")).join(", ") + ", ";
+  const _selected = getSelectedIngredient();
+  for (const [group, elements] of Object.entries(_selected)) {
+    for (const element of elements) {
+      order += element.id.replaceAll("-", " ") + (element.quantity > 1 ? " x" + element.quantity : "") + ", ";
     }
   }
   // rimozione ultima virgola
@@ -276,10 +317,10 @@ function generateOrder(){
 }
 
 
-function copyOrder(){
+function copyOrder() {
   const text = document.querySelector("#generated-order");
 
-  if(!text.value){
+  if (!text.value) {
     return;
   }
 
@@ -290,62 +331,91 @@ function copyOrder(){
 }
 
 
-function loadOrder(){
+function loadOrder() {
+  console.log("Loading order from localStorage...");
+
   let order;
   try {
     order = JSON.parse(localStorage.getItem("poke"));
   } catch (error) {
     console.error("Failed to load order from localStorage")
-    return;    
+    return;
   }
-  if(!order) return;
-
-  selected = order;
+  if (!order) return;
 
   // rimuove tutti i checks
-  for(const btn of document.querySelectorAll('input[type="checkbox"]')){
-    btn.checked = false;
+  for (const ingredient of document.querySelectorAll('input[type="checkbox"]')) {
+    ingredient.checked = false;
   }
 
   document.getElementById("dim-" + order.dimension).checked = true;
   // seleziono gli ingredienti salvati
-  for(const group of Object.keys(order)){
-    if(group != "dimension"){
-      for(const ingridient of order[group]){
-        const elem = document.getElementById(ingridient);
-        if(elem)
-          elem.checked = true;
+  for (const group of Object.keys(order)) {
+    if (group != 'dimension') {
+      for (const ingredient of order[group]) {
+        addingredient(group, ingredient.id, ingredient.quantity)
+        document.getElementById(ingredient.id).checked = true;
       }
     }
   }
+
+  // selected = order;
 }
 
-function clearOrder(){
+function clearOrder() {
   // rimuove tutti i checks
-  for(const btn of document.querySelectorAll('input[type="checkbox"]')){
-    btn.checked = false;
+  const _selected = getSelectedIngredient();
+  for (const group of Object.keys(_selected)) {
+    for (const ingredient of _selected[group]) {
+      removeIngredient(group, ingredient);
+    }
+  }
+
+  const _dim = document.querySelector("input[type='radio']:checked").id.split("-")[1];
+  selected = {
+    dimension: _dim ?? "regular",
   }
 }
 
+function getSelectedIngredient() {
+  console.log(selected);
+
+  let { dimension, ...ingredients } = selected;
+  console.log(ingredients);
+
+  return ingredients;
+}
+
 // Ricalcola i limit per gruppo di ingredienti
-function recalculateLimits(){
-  
+function recalculateLimits() {
+
+}
+
+
+function addActions() {
+  document.getElementById("generate-order").onclick = generateOrder;
+
+  const copyOrderElem = document.getElementById("copy-order")
+  if (!navigator.clipboard) {
+    copyOrderElem.style.display = 'none';
+  } else {
+    copyOrderElem.onclick = copyOrder;
+  }
+
+  document.getElementById("clear-order").onclick = clearOrder;
+
+
+  // extra of the same element
+  document.querySelectorAll(".extra").forEach(elem => elem.onclick = addExtra);
 }
 
 fillHtml();
 
 loadOrder();
 
-document.getElementById("generate-order").onclick = generateOrder;
+addActions();
 
-const copyOrderElem = document.getElementById("copy-order")
-if(!navigator.clipboard){
-  copyOrderElem.style.display = 'none';
-} else {
-  copyOrderElem.onclick = copyOrder;
-}
 
-document.getElementById("clear-order").onclick = clearOrder;
 
 
 
