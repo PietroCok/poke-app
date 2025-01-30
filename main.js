@@ -1,7 +1,9 @@
 let config;
 
 let selected = {
-  dimension: "regular"
+  dimension: "regular",
+  ingredients: {},
+  time: ''
 };
 
 
@@ -153,18 +155,16 @@ function addExtra(evt) {
 }
 
 function addingredient(group, option, quantity = 1) {
-  const limit = config.dimensioni[selected.dimension].limiti[group];
-
-  if (!selected[group]) {
-    selected[group] = [];
+  if (!selected.ingredients[group]) {
+    selected.ingredients[group] = [];
   }
 
-  const ingredient = selected[group].find(x => x.id == option)
+  const ingredient = selected.ingredients[group].find(x => x.id == option)
   if (ingredient) {
     ingredient.quantity += 1;
     quantity = ingredient.quantity;
   } else {
-    selected[group].push({
+    selected.ingredients[group].push({
       id: option,
       quantity: quantity
     });
@@ -175,6 +175,7 @@ function addingredient(group, option, quantity = 1) {
   }
 
   recalculateLimits();
+  generateOrder();
 }
 
 function removeIngredient(group, option) {
@@ -182,21 +183,32 @@ function removeIngredient(group, option) {
     option = option.id || "";
   }
 
-  selected[group] = selected[group].filter(x => x.id != option);
+  selected.ingredients[group] = selected.ingredients[group].filter(x => x.id != option);
 
   document.getElementById(option).checked = false;
   document.querySelector(".option-container:has(#" + option + ")").removeAttribute("data-extra");
 
   recalculateLimits();
+  generateOrder();
 }
 
 
+function changeTime() {
+  const order_time = document.getElementById('order-time');
+  if (order_time) selected['time'] = order_time.value;
+
+  generateOrder();
+}
+
+/**
+ * Genera stringa dell'ordine
+ */
 function generateOrder() {
   const outputElem = document.querySelector("#generated-order");
 
   let order = `${selected.dimension.toUpperCase()}: `;
 
-  const _selected = getSelectedIngredient();
+  const _selected = selected.ingredients;
   for (const [group, elements] of Object.entries(_selected)) {
     for (const element of elements) {
       order += element.id.replaceAll("-", " ") + (element.quantity > 1 ? " x" + element.quantity : "") + ", ";
@@ -205,12 +217,25 @@ function generateOrder() {
   // rimozione ultima virgola
   order = order.slice(0, order.length - 2);
 
-  outputElem.value = order;
+  // recupero orario
+  const order_time = document.getElementById('order-time');
 
-  console.log(order)
+  const order_string =
+    `Buongiorno,
+Vorrei ordinare una poke che passerei a ritirare ${order_time.value ? "al seguente orario: " : "il prima possibile"}${order_time.value}.
+La composizione della bowl è:
 
+${order}`;
+
+  outputElem.value = order_string;
+
+  outputElem.style.height = 'auto';
+  outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
   // salva in localstorage
+
   localStorage.setItem("poke", JSON.stringify(selected));
+
+  return order;
 }
 
 
@@ -227,7 +252,9 @@ function copyOrder() {
   navigator.clipboard.writeText(text.value);
 }
 
-
+/**
+ * Carica un ordine (da localstorage)
+ */
 function loadOrder() {
   console.log("Loading order from localStorage...");
 
@@ -246,22 +273,25 @@ function loadOrder() {
   }
 
   document.getElementById("dim-" + order.dimension).checked = true;
+
   // seleziono gli ingredienti salvati
-  for (const group of Object.keys(order)) {
-    if (group != 'dimension') {
-      for (const ingredient of order[group]) {
-        addingredient(group, ingredient.id, ingredient.quantity)
-        document.getElementById(ingredient.id).checked = true;
-      }
+  for (const group of Object.keys(order.ingredients)) {
+    for (const ingredient of order.ingredients[group]) {
+      addingredient(group, ingredient.id, ingredient.quantity)
+      document.getElementById(ingredient.id).checked = true;
     }
   }
+
+  document.getElementById('order-time').value = order.time;
+
+  console.log(order);
 
   selected = order;
 }
 
 function clearOrder() {
   // rimuove tutti i checks
-  const _selected = getSelectedIngredient();
+  const _selected = selected.ingredients;
   for (const group of Object.keys(_selected)) {
     for (const ingredient of _selected[group]) {
       removeIngredient(group, ingredient);
@@ -271,38 +301,32 @@ function clearOrder() {
   const _dim = document.querySelector("input[type='radio']:checked").id.split("-")[1];
   selected = {
     dimension: _dim ?? "regular",
+    time: '',
+    ingredients: {}
   }
-}
 
-function getSelectedIngredient() {
-  let { dimension, ...ingredients } = selected;
-
-  return ingredients;
+  document.getElementById('order-time').value = null;
 }
 
 // Ricalcola i limiti per tutti gli ingredienti selezionati
 function recalculateLimits() {
-  const _selected = getSelectedIngredient();
-  
-  if (!Object.keys(_selected).length) {
-    for(const [group, max] of Object.entries(config.dimensioni[selected.dimension].limiti)){
-      updateLimits(group, 0, max);
-    }    
-  } else {
-    for (const group of Object.keys(_selected)) {
-      let currentSelection = 0;
+  const _selected = selected.ingredients;
 
-      for (const ingredient of _selected[group]) {
-        currentSelection += ingredient.quantity;
-      }
-
-      let maxSelection = config.dimensioni[selected.dimension].limiti[group]
-
-      updateLimits(group, currentSelection, maxSelection);
-    }
+  for (const [group, max] of Object.entries(config.dimensioni[selected.dimension].limiti)) {
+    updateLimits(group, 0, max);
   }
 
+  for (const group of Object.keys(_selected)) {
+    let currentSelection = 0;
 
+    for (const ingredient of _selected[group]) {
+      currentSelection += ingredient.quantity;
+    }
+
+    let maxSelection = config.dimensioni[selected.dimension].limiti[group]
+
+    updateLimits(group, currentSelection, maxSelection);
+  }
 }
 
 function updateLimits(group, current, max) {
@@ -316,60 +340,74 @@ function updateLimits(group, current, max) {
   }
 }
 
+function addOrderToMessage(evt) {
+  const elem = evt.target;
+  let order = document.getElementById('generated-order').value;
+
+  // controllo ordine completo
+  // poke configurata
+  if (!order) {
+    evt.preventDefault();
+    return;
+  }
+
+  elem.href = `https://wa.me/${config.numero_telefono}/?text=` + encodeURIComponent(order);
+}
+
 
 function addActions() {
-  document.getElementById("generate-order").onclick = generateOrder;
+  const btn_gen_order = document.getElementById("generate-order");
+  if (btn_gen_order) btn_gen_order.onclick = generateOrder;
 
   const copyOrderElem = document.getElementById("copy-order")
   if (!navigator.clipboard) {
     copyOrderElem.style.display = 'none';
   } else {
-    copyOrderElem.onclick = copyOrder;
+    if (copyOrderElem) copyOrderElem.onclick = copyOrder;
   }
 
-  document.getElementById("clear-order").onclick = clearOrder;
-
+  const btn_clear_order = document.getElementById("clear-order");
+  if (btn_clear_order) btn_clear_order.onclick = clearOrder;
 
   // extra of the same element
-  document.querySelectorAll(".extra").forEach(elem => elem.onclick = addExtra);
+  document.querySelectorAll(".extra").forEach(elem => {
+    if (elem) elem.onclick = addExtra
+  });
 
   // recalculate limits on dimension change
-  document.querySelectorAll("#dimensione > div").forEach(elem => elem.onchange = recalculateLimits);
+  const btns_change_dim = document.querySelectorAll("#dimensione > div");
+  if (btns_change_dim) btns_change_dim.forEach(elem => elem.onchange = recalculateLimits);
 
+  // capture change time
+  const btn_time = document.getElementById('order-time');
+  if (btn_time) btn_time.onchange = changeTime;
+
+  // link order for message
+  const btn_send_order = document.getElementById('send-order');
+  if (btn_send_order) btn_send_order.onclick = addOrderToMessage;
 }
 
 
-async function setUp(){
+async function setUp() {
   await loadConfig();
 
   fillHtml();
-  
+
   loadOrder();
-  
+
   addActions();
-  
+
   recalculateLimits();
 }
 
-
 setUp();
 
-async function loadConfig(){
+async function loadConfig() {
   await fetch('./config.json')
-  .then(res => res.json())
-  .then(data => config = data)
-  .catch(err => err);
+    .then(res => res.json())
+    .then(data => config = data)
+    .catch(err => err);
 }
-
-
-
-
-
-
-
-
-
-
 
 
 

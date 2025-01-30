@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-.w-100{
+.w-100 {
   width: 100%;
 }
 
@@ -77,7 +77,7 @@ header {
     flex-direction: column;
     width: 100vw;
 
-    > span{
+    >span {
       display: flex;
       justify-content: center;
       align-items: center;
@@ -104,12 +104,12 @@ header {
   h4 {
     color: #be141b;
     font-size: 0.8em;
-    margin-bottom: 1em;
     position: sticky;
     top: 68px;
     background: white;
     padding: .5em;
     z-index: 2;
+    width: 100%;
   }
 
   section {
@@ -151,11 +151,10 @@ header {
       display: none;
     }
 
-    > div {
+    >div {
       align-items: center;
       justify-content: center;
-      /* gap: .5em; */
-      /* padding: .5em; */
+      width: 100%;
       border: 2px solid lightgrey;
       border-radius: 5px;
 
@@ -163,7 +162,7 @@ header {
         border: 2px solid #ec6f95;
       }
 
-      > * {
+      >* {
         display: flex;
         justify-content: center;
         padding: .5em;
@@ -206,7 +205,7 @@ header {
   .options {
     gap: 1em;
     justify-content: center;
-    margin-bottom: 1em;
+    margin: 1em 0;
 
     .option-container {
       text-transform: capitalize;
@@ -220,7 +219,7 @@ header {
       padding: 7px 5px;
     }
 
-    .option-container[data-extra]::after{
+    .option-container[data-extra]::after {
       content: 'x' attr(data-extra);
       position: absolute;
       right: 0;
@@ -292,22 +291,7 @@ input[type="checkbox"] {
     display: flex;
     justify-content: space-between;
 
-    button {
-      width: fit-content;
-      padding: 10px 20px;
-      cursor: pointer;
-      background: #0095bc;
-      color: white;
-      border: none;
-      font-weight: bold;
-      font-size: large;
-      border-radius: 5px;
-      transition: all 50ms linear;
 
-      &:hover {
-        box-shadow: 0 0 8px 1px #c5bdbd;
-      }
-    }
   }
 
   #generated-order {
@@ -342,6 +326,35 @@ input[type="checkbox"] {
     display: flex;
     gap: 10px;
   }
+
+  #order-time-container {
+    justify-content: space-evenly;
+    align-items: center;
+
+    #order-time {
+      font-size: large;
+    }
+  }
+
+}
+
+button,
+a {
+  width: fit-content;
+  padding: 10px 20px;
+  cursor: pointer;
+  background: #0095bc;
+  color: white;
+  border: none;
+  font-weight: bold;
+  font-size: large;
+  border-radius: 5px;
+  transition: all 50ms linear;
+  text-decoration: none;
+
+  &:hover {
+    box-shadow: 0 0 8px 1px #c5bdbd;
+  }
 }
 
 
@@ -350,9 +363,10 @@ input[type="checkbox"] {
     width: 40%;
   }
 
-  #main .section-title-container{
+  #main .section-title-container {
     flex-direction: row;
-    > span{
+
+    >span {
       flex: 1;
       padding: 0 2em;
       justify-content: flex-start;

@@ -26,9 +26,10 @@
   </section>
 
   <div id="order-wrapper">
-    <div class="button-wrapper">
-      <button id="generate-order">Salva ordine</button>
-      <button id="clear-order">Reset</button>
+
+    <div id="order-time-container">
+      <label for="order-time">Scegli l'orario</label>
+      <input type="time" name="order-time" step="900" id="order-time">
     </div>
 
     <div>
@@ -42,6 +43,14 @@
         </svg>
       </button>
     </div>
+
+    <div class="button-wrapper">
+      <!-- <button id="generate-order">Preview ordine</button> -->
+      <a id="send-order" target="_blank">Invia Ordine</a>
+
+      <button id="clear-order">Cancella</button>
+    </div>
+
   </div>
 
 </body>
