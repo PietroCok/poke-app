@@ -338,7 +338,9 @@ function addActions() {
 }
 
 
-function setUp(){
+async function setUp(){
+  await loadConfig();
+
   fillHtml();
   
   loadOrder();
@@ -351,17 +353,11 @@ function setUp(){
 
 setUp();
 
-
-loadConfig();
-
 async function loadConfig(){
   await fetch('./config.json')
   .then(res => res.json())
   .then(data => config = data)
   .catch(err => err);
-
-
-  console.log(config);
 }
 
 
