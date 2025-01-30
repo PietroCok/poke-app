@@ -74,6 +74,21 @@ header {
     top: 0;
     background-color: white;
     z-index: 2;
+    flex-direction: column;
+
+    > span{
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      span {
+        margin: 0 5px;
+      }
+    }
+
+    .over-limit {
+      color: red;
+    }
   }
 
   h3 {
@@ -88,12 +103,11 @@ header {
   h4 {
     color: #be141b;
     font-size: 0.8em;
-    margin-bottom: .5em;
-    margin-top: -10px;
+    margin-bottom: 1em;
     position: sticky;
-    top: 52px;
+    top: 68px;
     background: white;
-    padding-bottom: .5em;
+    padding: .5em;
     z-index: 2;
   }
 
@@ -101,7 +115,6 @@ header {
 
     >div {
       display: flex;
-      margin-bottom: 10px;
       flex-wrap: wrap;
     }
   }
@@ -182,14 +195,13 @@ header {
       }
     }
 
-    .over-limit {
-      color: red;
-    }
+
   }
 
   .options {
     gap: 1em;
     justify-content: center;
+    margin-bottom: 1em;
 
     .option-container {
       text-transform: capitalize;
@@ -331,5 +343,14 @@ input[type="checkbox"] {
 @media screen and (min-width: 600px) {
   #main .options .option-container {
     width: 40%;
+  }
+
+  #main .section-title-container{
+    flex-direction: row;
+    > span{
+      flex: 1;
+      padding: 0 2em;
+      justify-content: flex-start;
+    }
   }
 }

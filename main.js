@@ -101,6 +101,7 @@ let selected = {
   dimension: "regular"
 };
 
+
 function fillHtml() {
 
   setTitle(config);
@@ -168,11 +169,16 @@ function setingredientsGroups(config) {
   const groups = config.gruppi;
 
   for (const [name, group] of Object.entries(groups)) {
+
     // contenitore del gruppo
     const section =
       `<section class="${name}">
       <div class="section-title-container">
-        <h3>${name}</h3>
+        <span> </span>
+        <h3 id="${name}">${name}</h3>
+        <span class="${name}-limits">
+          <span id="${name}-limit-current">0</span> / <span id="${name}-limit-max">-</span>
+        </span>
       </div>
 
       <h4>${group.extras}</h4>
@@ -202,11 +208,11 @@ function setingredientsGroups(config) {
       sectionElem.querySelector(".options").append(_optElem);
 
       _optElem.onclick = checkSelection;
+
     }
 
     main_section.append(sectionElem)
   }
-
 }
 
 function convertToHTML(string) {
@@ -261,36 +267,24 @@ function addingredient(group, option, quantity = 1) {
     });
   }
 
-  if(quantity > 1){
+  if (quantity > 1) {
     document.querySelector(".option-container:has(#" + option + ")").setAttribute("data-extra", quantity)
   }
 
-  if (selected[group].length > limit) {
-    const elemClass = selected.dimension + "-" + group;
-    const elem = document.querySelector("." + elemClass);
-    elem.classList.add("over-limit");
-  }
+  recalculateLimits();
 }
 
 function removeIngredient(group, option) {
-  if(typeof option != "string"){
+  if (typeof option != "string") {
     option = option.id || "";
   }
 
-  const limit = config.dimensioni[selected.dimension].limiti[group];
-
   selected[group] = selected[group].filter(x => x.id != option);
-  
+
   document.getElementById(option).checked = false;
   document.querySelector(".option-container:has(#" + option + ")").removeAttribute("data-extra");
 
-  if (selected[group].length <= limit) {
-    const elemClass = selected.dimension + "-" + group;
-    const elem = document.querySelector("." + elemClass);
-    elem.classList.remove("over-limit");
-  }
-
-  console.log(selected[group]);
+  recalculateLimits();
 }
 
 
@@ -359,7 +353,7 @@ function loadOrder() {
     }
   }
 
-  // selected = order;
+  selected = order;
 }
 
 function clearOrder() {
@@ -378,17 +372,45 @@ function clearOrder() {
 }
 
 function getSelectedIngredient() {
-  console.log(selected);
-
   let { dimension, ...ingredients } = selected;
-  console.log(ingredients);
 
   return ingredients;
 }
 
-// Ricalcola i limit per gruppo di ingredienti
+// Ricalcola i limiti per tutti gli ingredienti selezionati
 function recalculateLimits() {
+  const _selected = getSelectedIngredient();
+  
+  if (!Object.keys(_selected).length) {
+    for(const [group, max] of Object.entries(config.dimensioni[selected.dimension].limiti)){
+      updateLimits(group, 0, max);
+    }    
+  } else {
+    for (const group of Object.keys(_selected)) {
+      let currentSelection = 0;
 
+      for (const ingredient of _selected[group]) {
+        currentSelection += ingredient.quantity;
+      }
+
+      let maxSelection = config.dimensioni[selected.dimension].limiti[group]
+
+      updateLimits(group, currentSelection, maxSelection);
+    }
+  }
+
+
+}
+
+function updateLimits(group, current, max) {
+  document.getElementById(group + "-limit-current").textContent = current;
+  document.getElementById(group + "-limit-max").textContent = max;
+
+  if (current > max) {
+    document.getElementById(group + "-limit-current").classList.add("over-limit")
+  } else {
+    document.getElementById(group + "-limit-current").classList.remove("over-limit")
+  }
 }
 
 
@@ -407,13 +429,24 @@ function addActions() {
 
   // extra of the same element
   document.querySelectorAll(".extra").forEach(elem => elem.onclick = addExtra);
+
+  // recalculate limits on dimension change
+  document.querySelectorAll("#dimensione > div").forEach(elem => elem.onchange = recalculateLimits);
 }
 
-fillHtml();
 
-loadOrder();
+function setUp(){
+  fillHtml();
+  
+  loadOrder();
+  
+  addActions();
+  
+  recalculateLimits();
+}
 
-addActions();
+
+setUp();
 
 
 
