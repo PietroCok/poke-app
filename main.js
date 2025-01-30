@@ -1,101 +1,4 @@
-const config = {
-  dimensioni: {
-    regular: {
-      limiti: {
-        proteina: 1,
-        condimenti: 4,
-        croccantini: 2,
-        salse: 3
-      },
-      prezzo: "8,90 €"
-    },
-    large: {
-      limiti: {
-        proteina: 2,
-        condimenti: 5,
-        croccantini: 2,
-        salse: 3
-      },
-      prezzo: "10,90 €"
-    }
-  },
-  gruppi: {
-    proteina: {
-      ordine: 0,
-      extras: "extra salmone tonno crudo € 2.00 / altri € 1.50",
-      opzioni: [
-        "salmone crudo",
-        "tonno crudo",
-        "salmone cotto",
-        "tonno sott'olio",
-        "gamberi cotti",
-        "tempura di gamberi",
-        "cotoletta di pollo",
-        "pollo cotto",
-        "tofu fresco",
-        "uova sode",
-        "uova al tegamino"
-      ]
-    },
-    condimenti: {
-      ordine: 1,
-      extras: "extra € 0.50",
-      opzioni: [
-        "alghe wakame",
-        "mais",
-        "avocado",
-        "ceci",
-        "pomodorino",
-        "edamamme",
-        "peperoni",
-        "fagioli",
-        "cetrioli",
-        "mango",
-        "carote",
-        "zenzero",
-        "ananas",
-        "olive nere"
-      ]
-    },
-    croccantini: {
-      ordine: 2,
-      extras: "extra € 0.50",
-      opzioni: [
-        "anacardi",
-        "mandorle",
-        "alghe nori",
-        "sesamo",
-        "tobico",
-        "kataifi",
-        "noci",
-        "cipolla croccante",
-        "pistacchio"
-      ]
-    },
-    salse: {
-      ordine: 3,
-      extras: "extra € 0.50",
-      opzioni: [
-        "olio di oliva",
-        "aceto balsamico",
-        "soia",
-        "maionese",
-        "philadelphia",
-        "teriyaki",
-        "wasabi",
-        "spicy maionese",
-        "salsa mango",
-        "salsa ponzu",
-        "salsa agrodolce",
-        "salsa agropiccante",
-        "salsa yogurt"
-      ]
-    }
-  },
-  titolo: "Nome ristorante",
-  sotto_titolo: "Breve descrizione",
-  sotto_titolo_2: "Info aggiuntive",
-}
+let config;
 
 let selected = {
   dimension: "regular"
@@ -416,9 +319,17 @@ loadOrder();
 addActions();
 
 
+loadConfig();
+
+async function loadConfig(){
+  await fetch('./config.json')
+  .then(res => res.json())
+  .then(data => config = data)
+  .catch(err => err);
 
 
-
+  console.log(config);
+}
 
 
 
