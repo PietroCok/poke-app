@@ -82,9 +82,9 @@ function setingredientsGroups(config) {
         <span class="${name}-limits">
           <span id="${name}-limit-current">0</span> / <span id="${name}-limit-max">-</span>
         </span>
-      </div>
 
-      <h4>${group.extras}</h4>
+        <h4>${group.extras}</h4>
+      </div>
 
       <div class="options">
 
@@ -335,6 +335,7 @@ function addActions() {
 
   // recalculate limits on dimension change
   document.querySelectorAll("#dimensione > div").forEach(elem => elem.onchange = recalculateLimits);
+
 }
 
 
