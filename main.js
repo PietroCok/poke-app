@@ -154,7 +154,7 @@ function addExtra(evt) {
   addingredient(group, option)
 }
 
-function addingredient(group, option, quantity = 1) {
+function addingredient(group, option, quantity = 1, generate = true) {
   if (!selected.ingredients[group]) {
     selected.ingredients[group] = [];
   }
@@ -175,7 +175,7 @@ function addingredient(group, option, quantity = 1) {
   }
 
   recalculateLimits();
-  generateOrder();
+  if(generate) generateOrder();
 }
 
 function removeIngredient(group, option) {
@@ -196,7 +196,7 @@ function removeIngredient(group, option) {
 function changeTime() {
   const order_time = document.getElementById('order-time');
   if (order_time) selected['time'] = order_time.value;
-
+  
   generateOrder();
 }
 
@@ -220,19 +220,19 @@ function generateOrder() {
   // recupero orario
   const order_time = document.getElementById('order-time');
 
-  const order_string =
+  const complete_order_string =
     `Buongiorno,
 Vorrei ordinare una poke che passerei a ritirare ${order_time.value ? "al seguente orario: " : "il prima possibile"}${order_time.value}.
 La composizione della bowl è:
 
 ${order}`;
 
-  outputElem.value = order_string;
+  outputElem.value = complete_order_string;
 
   outputElem.style.height = 'auto';
   outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
-  // salva in localstorage
 
+  // salva in localstorage
   localStorage.setItem("poke", JSON.stringify(selected));
 
   return order;
@@ -272,21 +272,24 @@ function loadOrder() {
     ingredient.checked = false;
   }
 
+  document.getElementById('order-time').value = order.time;
+  selected.time = order.time;
+
   document.getElementById("dim-" + order.dimension).checked = true;
 
   // seleziono gli ingredienti salvati
   for (const group of Object.keys(order.ingredients)) {
     for (const ingredient of order.ingredients[group]) {
-      addingredient(group, ingredient.id, ingredient.quantity)
+      addingredient(group, ingredient.id, ingredient.quantity, false);
       document.getElementById(ingredient.id).checked = true;
     }
   }
 
-  document.getElementById('order-time').value = order.time;
+  generateOrder();
 
   console.log(order);
 
-  selected = order;
+  selected = JSON.parse(JSON.stringify(order));
 }
 
 function clearOrder() {
@@ -393,9 +396,9 @@ async function setUp() {
 
   fillHtml();
 
-  loadOrder();
-
   addActions();
+
+  loadOrder();
 
   recalculateLimits();
 }
