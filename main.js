@@ -6,6 +6,9 @@ let selected = {
   time: ''
 };
 
+let fullOrder = '';
+let compactOrder = '';
+
 
 function fillHtml() {
 
@@ -204,7 +207,6 @@ function changeTime() {
  * Genera stringa dell'ordine
  */
 function generateOrder() {
-  const outputElem = document.querySelector("#generated-order");
 
   let order = `${selected.dimension.toUpperCase()}: `;
 
@@ -219,18 +221,18 @@ function generateOrder() {
 
   // recupero orario
   const order_time = document.getElementById('order-time');
-
+  
   const complete_order_string =
-    `Buongiorno,
-Vorrei ordinare una poke che passerei a ritirare ${order_time.value ? "al seguente orario: " : "il prima possibile"}${order_time.value}.
-La composizione della bowl è:
+  `Buongiorno,
+Vorrei ordinare una poke da asporto che passerei a ritirare ${order_time.value ? "per le: " : "a breve"}${order_time.value}.
 
 ${order}`;
+  
+  
+  compactOrder = order;
+  fullOrder = complete_order_string;
 
-  outputElem.value = complete_order_string;
-
-  outputElem.style.height = 'auto';
-  outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
+  changePreviewType();
 
   // salva in localstorage
   localStorage.setItem("poke", JSON.stringify(selected));
@@ -268,7 +270,7 @@ function loadOrder() {
   if (!order) return;
 
   // rimuove tutti i checks
-  for (const ingredient of document.querySelectorAll('input[type="checkbox"]')) {
+  for (const ingredient of document.querySelectorAll('section input[type="checkbox"]')) {
     ingredient.checked = false;
   }
 
@@ -357,6 +359,20 @@ function addOrderToMessage(evt) {
   elem.href = `https://wa.me/${config.numero_telefono}/?text=` + encodeURIComponent(order);
 }
 
+function changePreviewType(){
+  const previewBtn = document.getElementById('fullorder-preview');
+  const outputElem = document.getElementById("generated-order");
+
+  if(previewBtn.checked){
+    outputElem.value = fullOrder;
+  } else {
+    outputElem.value = compactOrder;
+  }
+
+  outputElem.style.height = 'auto';
+  outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
+}
+
 
 function addActions() {
   const btn_gen_order = document.getElementById("generate-order");
@@ -388,6 +404,10 @@ function addActions() {
   // link order for message
   const btn_send_order = document.getElementById('send-order');
   if (btn_send_order) btn_send_order.onclick = addOrderToMessage;
+
+  // message preview
+  const btn_preview_type = document.getElementById('fullorder-preview');
+  if (btn_preview_type) btn_preview_type.onchange = changePreviewType; 
 }
 
 
