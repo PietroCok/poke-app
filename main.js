@@ -116,7 +116,6 @@ function setingredientsGroups(config) {
       sectionElem.querySelector(".options").append(_optElem);
 
       _optElem.onclick = checkSelection;
-
     }
 
     main_section.append(sectionElem)
@@ -146,6 +145,7 @@ function checkSelection(evt) {
 
   if (selectedElem.getAttribute("type") == "radio") {
     selected.dimension = selectedElem.id.split("-")[1];
+    generateOrder();
     return;
   }
 }
@@ -181,7 +181,7 @@ function addingredient(group, option, quantity = 1, generate = true) {
   if(generate) generateOrder();
 }
 
-function removeIngredient(group, option) {
+function removeIngredient(group, option, generate = true) {
   if (typeof option != "string") {
     option = option.id || "";
   }
@@ -192,7 +192,7 @@ function removeIngredient(group, option) {
   document.querySelector(".option-container:has(#" + option + ")").removeAttribute("data-extra");
 
   recalculateLimits();
-  generateOrder();
+  if(generate) generateOrder();
 }
 
 
@@ -299,7 +299,7 @@ function clearOrder() {
   const _selected = selected.ingredients;
   for (const group of Object.keys(_selected)) {
     for (const ingredient of _selected[group]) {
-      removeIngredient(group, ingredient);
+      removeIngredient(group, ingredient, false);
     }
   }
 
@@ -310,6 +310,10 @@ function clearOrder() {
     ingredients: {}
   }
 
+  fullOrder = '';
+  compactOrder = '';
+
+  document.getElementById('generated-order').value = '';
   document.getElementById('order-time').value = null;
 }
 
@@ -362,11 +366,14 @@ function addOrderToMessage(evt) {
 function changePreviewType(){
   const previewBtn = document.getElementById('fullorder-preview');
   const outputElem = document.getElementById("generated-order");
+  const timeElem = document.getElementById('order-time-container');
 
   if(previewBtn.checked){
     outputElem.value = fullOrder;
+    timeElem.style.display = '';
   } else {
     outputElem.value = compactOrder;
+    timeElem.style.display = 'none';
   }
 
   outputElem.style.height = 'auto';
@@ -375,16 +382,6 @@ function changePreviewType(){
 
 
 function addActions() {
-  const btn_gen_order = document.getElementById("generate-order");
-  if (btn_gen_order) btn_gen_order.onclick = generateOrder;
-
-  const copyOrderElem = document.getElementById("copy-order")
-  if (!navigator.clipboard) {
-    copyOrderElem.style.display = 'none';
-  } else {
-    if (copyOrderElem) copyOrderElem.onclick = copyOrder;
-  }
-
   const btn_clear_order = document.getElementById("clear-order");
   if (btn_clear_order) btn_clear_order.onclick = clearOrder;
 
