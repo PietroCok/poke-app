@@ -60,7 +60,7 @@ function setDimensions(config) {
         </label>
 
         <label for="dim-${name}" class="price-container">
-          <div class="price-label">${values.prezzo}</div>
+          <div class="price-label">${values.prezzo.toLocaleString('it-IT')} €</div>
         </label>
       </div>
     `;
@@ -101,10 +101,10 @@ function setingredientsGroups(config) {
 
     // opzioni del gruppo
     for (const option of group.opzioni) {
-      const id = option.split(" ").join("-")
+      const id = option.name.replaceAll(" ", "-").replaceAll("'","--");
       const _opt =
-        `<div class="option-container">
-        <label for="${id}"> ${option} </label>
+      `<div class="option-container">
+        <label for="${id}"> ${option.name} </label>
         <input type="checkbox" id="${id}" data-group="${name}">
         <span class="extra" title="aggiungi extra" >
           <i class="fa-solid fa-plus" data-group="${name}" data-option="${id}"></i>
@@ -213,7 +213,7 @@ function generateOrder() {
   const _selected = selected.ingredients;
   for (const [group, elements] of Object.entries(_selected)) {
     for (const element of elements) {
-      order += element.id.replaceAll("-", " ") + (element.quantity > 1 ? " x" + element.quantity : "") + ", ";
+      order += element.id.replaceAll("-", " ").replaceAll("--", "'") + (element.quantity > 1 ? " x" + element.quantity : "") + ", ";
     }
   }
   // rimozione ultima virgola
@@ -239,7 +239,6 @@ ${order}`;
 
   return order;
 }
-
 
 function copyOrder() {
   const text = document.querySelector("#generated-order");
@@ -320,7 +319,9 @@ function clearOrder() {
 // Ricalcola i limiti per tutti gli ingredienti selezionati
 function recalculateLimits() {
   const _selected = selected.ingredients;
+  const extra = {};
 
+  // reset
   for (const [group, max] of Object.entries(config.dimensioni[selected.dimension].limiti)) {
     updateLimits(group, 0, max);
   }
@@ -335,8 +336,71 @@ function recalculateLimits() {
     let maxSelection = config.dimensioni[selected.dimension].limiti[group]
 
     updateLimits(group, currentSelection, maxSelection);
+
+    if(currentSelection > maxSelection){
+      extra[group] = {current: currentSelection, max: maxSelection};
+    }
+  }
+
+  //updatePrice(extra);
+}
+
+function updatePrice(extra){
+  // alcuni gruppi di ingredienti sono più di quelli inclusi nella dimensione scelta
+  // calcolo costo extra
+  const basePrice = config.dimensioni[selected.dimension].prezzo;
+  let extraPrice = 0;
+  console.log("base price: ", basePrice);
+  console.log(Object.keys(extra));
+  
+  for(const group of Object.keys(extra)){
+    console.log("Calculate extra for group: ", group);
+    const outOfLimits = extra[group].current - extra[group].max;
+
+    // recupera elementi del gruppo
+    const selectedInGroup = JSON.parse(JSON.stringify(selected.ingredients[group]));
+    
+    // ordine elementi del gruppo per prezzo
+    selectedInGroup.sort(sortIngredientByPrice);
+    
+    console.log(...selectedInGroup);
+    
+    // aggiunge il prezzo degli n meno costosi
+    let counter = outOfLimits;
+    while(counter > 0){
+      selectedInGroup[0].quantity--;
+
+      extraPrice += getPrice(selectedInGroup[0].id);
+
+      if(selectedInGroup[0].quantity <= 0){
+        selectedInGroup.splice(0, 1)
+      }
+
+      counter--;
+    }
+
+    console.log("Prezzo extra: ", extraPrice);
+    
   }
 }
+
+function sortIngredientByPrice(A, B){
+  // recupera prezzi degli ingredienti da confrontare
+  return getPrice(A) - getPrice(B);
+}
+
+
+function getPrice(ingredient){
+  for(const [group, ingredients] of Object.entries(config.gruppi)){
+    const _ingredient = ingredients.opzioni.find(i => i.name.replaceAll(" ", "-").replaceAll("'", "--") == ingredient)
+    if(_ingredient){
+      return _ingredient.prezzo;
+    }
+  }
+
+  return 0;
+}
+
 
 function updateLimits(group, current, max) {
   document.getElementById(group + "-limit-current").textContent = current;
