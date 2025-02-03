@@ -60,7 +60,7 @@ function setDimensions(config) {
         </label>
 
         <label for="dim-${name}" class="price-container">
-          <div class="price-label">${values.prezzo.toLocaleString('it-IT')} €</div>
+          <div class="price-label">${values.prezzo.toFixed(2).toLocaleString('it-IT')} €</div>
         </label>
       </div>
     `;
