@@ -200,8 +200,14 @@ header {
         padding: 2px;
       }
     }
+  }
 
+  .extra-price {
+    color: #be141b;
+  }
 
+  .extra-price:has(span:empty) {
+    display: none;
   }
 
   .options {
@@ -292,8 +298,12 @@ input[type="checkbox"] {
   >div {
     display: flex;
     justify-content: space-between;
+  }
 
-
+  #order-total-extra-price {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
   }
 
   #generated-order {
@@ -373,15 +383,15 @@ input[type="checkbox"] {
     }
   }
 
-  input:checked ~ #full-preview {
+  input:checked~#full-preview {
     display: inline-block;
   }
 
-  input:not(:checked) ~ #compact-preview {
+  input:not(:checked)~#compact-preview {
     display: inline-block;
   }
 
-  input:checked ~ .custom-checkbox {
+  input:checked~.custom-checkbox {
     &::after {
       transform: translate(calc(var(--width)/2));
     }

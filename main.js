@@ -86,7 +86,11 @@ function setingredientsGroups(config) {
         <h3 id="${name}">${name}</h3>
         <span class="${name}-limits">
           <span id="${name}-limit-current">0</span> / <span id="${name}-limit-max">-</span>
+          <span class="extra-price">
+            +<span id="extra-price-${name}"></span>€
+          </span>
         </span>
+
 
         <h4>${group.extras}</h4>
       </div>
@@ -101,9 +105,9 @@ function setingredientsGroups(config) {
 
     // opzioni del gruppo
     for (const option of group.opzioni) {
-      const id = option.name.replaceAll(" ", "-").replaceAll("'","--");
+      const id = option.name.replaceAll(" ", "-").replaceAll("'", "--");
       const _opt =
-      `<div class="option-container">
+        `<div class="option-container">
         <label for="${id}"> ${option.name} </label>
         <input type="checkbox" id="${id}" data-group="${name}">
         <span class="extra" title="aggiungi extra" >
@@ -178,7 +182,7 @@ function addingredient(group, option, quantity = 1, generate = true) {
   }
 
   recalculateLimits();
-  if(generate) generateOrder();
+  if (generate) generateOrder();
 }
 
 function removeIngredient(group, option, generate = true) {
@@ -192,14 +196,14 @@ function removeIngredient(group, option, generate = true) {
   document.querySelector(".option-container:has(#" + option + ")").removeAttribute("data-extra");
 
   recalculateLimits();
-  if(generate) generateOrder();
+  if (generate) generateOrder();
 }
 
 
 function changeTime() {
   const order_time = document.getElementById('order-time');
   if (order_time) selected['time'] = order_time.value;
-  
+
   generateOrder();
 }
 
@@ -221,14 +225,14 @@ function generateOrder() {
 
   // recupero orario
   const order_time = document.getElementById('order-time');
-  
+
   const complete_order_string =
-  `Buongiorno,
+    `Buongiorno,
 Vorrei ordinare una poke da asporto che passerei a ritirare ${order_time.value ? "per le: " : "a breve"}${order_time.value}.
 
 ${order}`;
-  
-  
+
+
   compactOrder = order;
   fullOrder = complete_order_string;
 
@@ -337,63 +341,77 @@ function recalculateLimits() {
 
     updateLimits(group, currentSelection, maxSelection);
 
-    if(currentSelection > maxSelection){
-      extra[group] = {current: currentSelection, max: maxSelection};
+    if (currentSelection > maxSelection) {
+      extra[group] = { current: currentSelection, max: maxSelection };
     }
   }
 
-  //updatePrice(extra);
+  updatePrice(extra);
 }
 
-function updatePrice(extra){
+function updatePrice(extra) {
   // alcuni gruppi di ingredienti sono più di quelli inclusi nella dimensione scelta
   // calcolo costo extra
   const basePrice = config.dimensioni[selected.dimension].prezzo;
   let extraPrice = 0;
-  console.log("base price: ", basePrice);
-  console.log(Object.keys(extra));
-  
-  for(const group of Object.keys(extra)){
-    console.log("Calculate extra for group: ", group);
-    const outOfLimits = extra[group].current - extra[group].max;
 
-    // recupera elementi del gruppo
-    const selectedInGroup = JSON.parse(JSON.stringify(selected.ingredients[group]));
-    
-    // ordine elementi del gruppo per prezzo
-    selectedInGroup.sort(sortIngredientByPrice);
-    
-    console.log(...selectedInGroup);
-    
-    // aggiunge il prezzo degli n meno costosi
-    let counter = outOfLimits;
-    while(counter > 0){
-      selectedInGroup[0].quantity--;
+  for (const group of Object.keys(config.gruppi)) {
+    let groupExtraPrice = 0;
+    if (extra[group]) {
+      const outOfLimits = extra[group].current - extra[group].max;
 
-      extraPrice += getPrice(selectedInGroup[0].id);
+      // recupera elementi del gruppo
+      const selectedInGroup = JSON.parse(JSON.stringify(selected.ingredients[group]));
 
-      if(selectedInGroup[0].quantity <= 0){
-        selectedInGroup.splice(0, 1)
+      // ordine elementi del gruppo per prezzo
+      selectedInGroup.sort(sortIngredientByPrice);
+
+      // somma il prezzo degli n meno costosi
+      let counter = outOfLimits;
+      while (counter > 0) {
+        selectedInGroup[0].quantity--;
+        groupExtraPrice += getPrice(selectedInGroup[0].id);
+
+        if (selectedInGroup[0].quantity <= 0) {
+          selectedInGroup.splice(0, 1)
+        }
+        counter--;
       }
 
-      counter--;
+      extraPrice += groupExtraPrice;
+
     }
 
-    console.log("Prezzo extra: ", extraPrice);
-    
+    // prezzo extra per gruppo di ingredienti
+    const elem = document.getElementById("extra-price-" + group);
+    if (elem) {
+      if (groupExtraPrice > 0) {
+        elem.textContent = groupExtraPrice.toFixed(2);
+      } else {
+        elem.textContent = '';
+      }
+    }
+  }
+  
+  // prezzo totale della bowl
+  const totalPrice = basePrice + extraPrice;
+  const elem = document.querySelector('#order-total-extra-price span');
+  if(elem) {
+    elem.textContent = totalPrice.toFixed(2);
+    elem.title = `${basePrice.toFixed(2)}€ (base) + ${extraPrice.toFixed(2)}€ (extra)`;
   }
 }
 
-function sortIngredientByPrice(A, B){
+function sortIngredientByPrice(A, B) {
   // recupera prezzi degli ingredienti da confrontare
-  return getPrice(A) - getPrice(B);
+  return getPrice(A.id) - getPrice(B.id);
 }
 
 
-function getPrice(ingredient){
-  for(const [group, ingredients] of Object.entries(config.gruppi)){
+function getPrice(ingredient) {
+  for (const [group, ingredients] of Object.entries(config.gruppi)) {
     const _ingredient = ingredients.opzioni.find(i => i.name.replaceAll(" ", "-").replaceAll("'", "--") == ingredient)
-    if(_ingredient){
+    if (_ingredient) {
       return _ingredient.prezzo;
     }
   }
@@ -427,12 +445,12 @@ function addOrderToMessage(evt) {
   elem.href = `https://wa.me/${config.numero_telefono}/?text=` + encodeURIComponent(order);
 }
 
-function changePreviewType(){
+function changePreviewType() {
   const previewBtn = document.getElementById('fullorder-preview');
   const outputElem = document.getElementById("generated-order");
   const timeElem = document.getElementById('order-time-container');
 
-  if(previewBtn.checked){
+  if (previewBtn.checked) {
     outputElem.value = fullOrder;
     timeElem.style.display = '';
   } else {
@@ -468,7 +486,7 @@ function addActions() {
 
   // message preview
   const btn_preview_type = document.getElementById('fullorder-preview');
-  if (btn_preview_type) btn_preview_type.onchange = changePreviewType; 
+  if (btn_preview_type) btn_preview_type.onchange = changePreviewType;
 }
 
 
