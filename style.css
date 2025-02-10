@@ -4,6 +4,17 @@
   box-sizing: border-box;
 }
 
+:root{
+  --main-bg: light-dark(#FFF, #000);
+  --main-color: light-dark(#000, #FFF);
+  --accent-1: #df3939;
+  --accent-2: #bd8928;
+  --accent-3: #0095bc;
+  --accent-4: #ec6f95;
+  --accent-5: lightgrey;
+}
+
+
 .w-100 {
   width: 100%;
 }
@@ -22,22 +33,39 @@ body {
   display: none;
 }
 
-header {
+body > header {
   text-transform: uppercase;
   margin: 1em 0;
-  color: #bd8928;
+  color: var(--accent-2);
   display: flex;
   flex-direction: column;
   text-align: center;
-
+  margin-top: 1.5em;
 
   >div {
     display: flex;
     justify-content: space-around;
-    margin-top: 10px;
+    margin-top: 2em;
     flex-direction: column;
     align-items: center;
     gap: .5em;
+  }
+
+  #cart-menu{
+    width: 2em;
+    height: 2em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: var(--main-bg);
+    box-shadow: 0 0 2px 2px var(--accent-2);
+    position: fixed;
+    z-index: 3;
+    top: 0;
+    left: 0;
+    margin: .5em;
+    font-size: large;
+    cursor: pointer;
   }
 }
 
@@ -67,7 +95,7 @@ header {
       content: '';
       width: 100%;
       height: 8px;
-      background-color: #ec6f95;
+      background-color: var(--accent-4);
       flex: 1;
     }
   }
@@ -75,7 +103,7 @@ header {
   .section-title-container {
     position: sticky;
     top: 0;
-    background-color: white;
+    background-color: var(--main-bg);
     z-index: 2;
     flex-direction: column;
     width: 105%;
@@ -91,13 +119,13 @@ header {
     }
 
     .over-limit {
-      color: red;
+      color:var(--accent-1);
     }
   }
 
   h3 {
-    background-color: #0095bc;
-    color: white;
+    background-color: var(--accent-3);
+    color: var(--main-bg);
     width: 150px;
     padding: 5px;
     position: relative;
@@ -105,11 +133,11 @@ header {
   }
 
   h4 {
-    color: #be141b;
+    color: var(--accent-1);
     font-size: 0.8em;
     position: sticky;
     top: 68px;
-    background: white;
+    background: var(--main-bg);
     padding: .5em;
     z-index: 2;
     width: 100%;
@@ -140,7 +168,7 @@ header {
     font-weight: bold;
     padding: 2px 5px;
     position: relative;
-    background-color: #ec6f95;
+    background-color: var(--accent-4);
     width: fit-content;
   }
 
@@ -157,11 +185,11 @@ header {
       align-items: center;
       justify-content: center;
       width: 100%;
-      border: 2px solid lightgrey;
+      border: 2px solid var(--accent-5);
       border-radius: 5px;
 
       &:has(input[type="radio"]:checked) {
-        border: 2px solid #ec6f95;
+        border: 2px solid var(--accent-4);
       }
 
       >* {
@@ -203,7 +231,7 @@ header {
   }
 
   .extra-price {
-    color: #be141b;
+    color: var(--accent-1);
   }
 
   .extra-price:has(span:empty) {
@@ -218,7 +246,7 @@ header {
     .option-container {
       text-transform: capitalize;
       margin-bottom: 7px;
-      border: 2px solid lightgray;
+      border: 2px solid var(--accent-5);
       border-radius: 5px;
       width: 100%;
       display: flex;
@@ -234,8 +262,8 @@ header {
       top: 0;
       transform: rotate(-20deg)translate(20px, -8px);
       font-weight: bold;
-      color: red;
-      background-color: white;
+      color: var(--accent-1);
+      background-color: var(--main-bg);
       padding: 5px;
       border-radius: 50%;
     }
@@ -253,8 +281,8 @@ header {
       z-index: 1;
 
       :hover {
-        background-color: lightgray;
-        box-shadow: 0 0 0 4px lightgray;
+        background-color: var(--accent-5);
+        box-shadow: 0 0 0 4px var(--accent-5);
       }
 
       i {
@@ -272,7 +300,7 @@ header {
     }
 
     .option-container:has(input[type="checkbox"]:checked) {
-      border: 2px solid #ec6f95;
+      border: 2px solid var(--accent-4);
 
       .extra {
         display: flex;
@@ -284,6 +312,51 @@ header {
     flex-direction: row;
     justify-content: space-between;
   }
+}
+
+#cart {
+  width: 100%;
+  height: 100vh;
+  position: fixed;
+  background-color: var(--main-bg);
+  top: 0;
+  left: 0;
+  z-index: 9;
+  
+  
+  header,
+  footer{
+    position: absolute;
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: .5em;
+  }
+  
+  header{
+    top: 0;
+    
+    #close-cart{
+      width: 2em;
+      aspect-ratio: 1;
+      background-color: var(--accent-1);
+    }
+  }
+
+  footer{
+    bottom: 0;
+
+    #clear-cart{
+      background-color: var(--accent-1);
+    }
+  }
+}
+
+.icon-button{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: .5em;
 }
 
 input[type="radio"],
@@ -313,7 +386,7 @@ input[type="checkbox"] {
 
   #generated-order {
     flex: 1;
-    border: 1px solid #0095bc;
+    border: 1px solid var(--accent-3);
     background-color: transparent;
     font-size: large;
     padding: 0 5px;
@@ -355,14 +428,14 @@ input[type="checkbox"] {
       height: var(--height);
       margin: 0 10px;
       border-radius: var(--height);
-      border: var(--border-w) solid lightgray;
+      border: var(--border-w) solid var(--accent-5);
 
       &::after {
         content: '';
         display: inline-block;
         width: calc(var(--height) - var(--border-w)*2);
         height: calc(var(--height) - var(--border-w)*2);
-        background-color: #0095bc;
+        background-color: var(--accent-3);
         border-radius: 50%;
         transition: transform .2s ease;
       }
@@ -387,7 +460,7 @@ input[type="checkbox"] {
 
 
 #clear-order {
-  background-color: #df3939;
+  background-color: var(--accent-1);
 }
 
 button,
@@ -395,8 +468,8 @@ a {
   width: fit-content;
   padding: 10px 20px;
   cursor: pointer;
-  background: #0095bc;
-  color: white;
+  background: var(--accent-3);
+  color: var(--main-bg);
   border: none;
   font-weight: bold;
   font-size: large;
@@ -405,7 +478,7 @@ a {
   text-decoration: none;
 
   &:hover {
-    box-shadow: 0 0 8px 1px #c5bdbd;
+    box-shadow: 0 0 8px 1px var(--accent-5);
   }
 }
 

@@ -7,12 +7,17 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
   <link rel="stylesheet" href="./style.css">
+  <script src="./utils.js" defer></script>
+  <script src="./cart.js" defer></script>
   <script src="./main.js" defer></script>
   <title>POKE</title>
 </head>
 
 <body>
   <header>
+    <nav id="cart-menu" class="icon-button">
+      <i class="fa-solid fa-cart-shopping"></i>
+    </nav>
 
   </header>
 
@@ -31,6 +36,24 @@
       <button id="clear-order">Cancella</button>
       <button id="add-cart">Aggiungi</a>
     </section>
+  </section>
+
+  <section id="cart" class="hidden">
+    <header>
+      <button id="close-cart" class="icon-button">
+        <i class="fa-solid fa-x"></i>
+      </button>
+    </header>
+
+    <section id="cart-content">
+
+    </section>
+
+
+    <footer>
+      <button id="clear-cart">Svuota</button>
+      <button id="send-order">Invia Ordine</button>
+    </footer>
   </section>
 
 

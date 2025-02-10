@@ -126,12 +126,6 @@ function setingredientsGroups(config) {
   }
 }
 
-function convertToHTML(string) {
-  const _tmp = document.createElement("div");
-  _tmp.innerHTML = string;
-  return _tmp.firstChild;
-}
-
 // esegue controlli al click di ogni elemento delle sezioni
 // in particolare verifica che non venga superato il limite di elementi in base alla dimensione scelta
 function checkSelection(evt) {
@@ -261,8 +255,6 @@ function copyOrder() {
  * Carica un ordine (da localstorage)
  */
 function loadOrder() {
-  console.log("Loading order from localStorage...");
-
   let order;
   try {
     order = JSON.parse(localStorage.getItem("poke"));
@@ -434,19 +426,19 @@ function updateLimits(group, current, max) {
   }
 }
 
-function addOrderToMessage(evt) {
-  const elem = evt.target;
-  let order = document.getElementById('generated-order').value;
+// function addOrderToMessage(evt) {
+//   const elem = evt.target;
+//   let order = document.getElementById('generated-order').value;
 
-  // controllo ordine completo
-  // poke configurata
-  if (!order) {
-    evt.preventDefault();
-    return;
-  }
+//   // controllo ordine completo
+//   // poke configurata
+//   if (!order) {
+//     evt.preventDefault();
+//     return;
+//   }
 
-  elem.href = `https://wa.me/${config.numero_telefono}/?text=` + encodeURIComponent(order);
-}
+//   elem.href = `https://wa.me/${config.numero_telefono}/?text=` + encodeURIComponent(order);
+// }
 
 function changePreviewType() {
   const previewBtn = document.getElementById('fullorder-preview');
@@ -467,7 +459,6 @@ function changePreviewType() {
   outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
 }
 
-
 function addActions() {
   const btn_clear_order = document.getElementById("clear-order");
   if (btn_clear_order) btn_clear_order.onclick = clearOrder;
@@ -486,12 +477,31 @@ function addActions() {
   if (btn_time) btn_time.onchange = changeTime;
 
   // link order for message
-  const btn_send_order = document.getElementById('send-order');
-  if (btn_send_order) btn_send_order.onclick = addOrderToMessage;
+  // const btn_send_order = document.getElementById('send-order');
+  // if (btn_send_order) btn_send_order.onclick = addOrderToMessage;
 
   // message preview
   const btn_preview_type = document.getElementById('fullorder-preview');
   if (btn_preview_type) btn_preview_type.onchange = changePreviewType;
+
+  // Cart actions
+
+  // add to cart
+  const btn_add_cart = document.getElementById('add-cart');
+  if(btn_add_cart) btn_add_cart.onclick = addToCart;
+
+  // open cart
+  const btn_open_cart = document.getElementById('cart-menu');
+  if(btn_open_cart) btn_open_cart.onclick = openCart;
+
+  //close cart
+  const btn_close_cart = document.getElementById('close-cart');
+  if(btn_close_cart) btn_close_cart.onclick = closeCart;
+
+  // clear cart
+  const btn_clear_cart = document.getElementById('clear-cart');
+  if(btn_clear_cart) btn_clear_cart.onclick = clearCart;
+
 }
 
 
@@ -508,13 +518,6 @@ async function setUp() {
 }
 
 setUp();
-
-async function loadConfig() {
-  await fetch('./config.json')
-    .then(res => res.json())
-    .then(data => config = data)
-    .catch(err => err);
-}
 
 
 
