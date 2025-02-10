@@ -4,6 +4,11 @@
   box-sizing: border-box;
 }
 
+/* Removes the highlight effect on mobile devices */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
 .w-100 {
   width: 100%;
 }
