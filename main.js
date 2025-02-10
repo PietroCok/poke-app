@@ -1,4 +1,4 @@
-let config;
+let config;  
 
 let selected = {
   dimension: "regular",
