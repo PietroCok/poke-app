@@ -5,7 +5,8 @@
 }
 
 :root{
-  --main-bg: light-dark(#FFF, #000);
+  color-scheme: light dark;
+  --main-bg: light-dark(#FFF, #121212);
   --main-color: light-dark(#000, #FFF);
   --accent-1: #df3939;
   --accent-2: #bd8928;
@@ -27,6 +28,7 @@ body {
   min-height: 100vh;
   font-family: sans-serif;
   padding-bottom: 2em;
+  background-color: var(--main-bg);
 }
 
 .hidden {
@@ -279,11 +281,6 @@ body > header {
       margin-right: 10px;
       cursor: pointer;
       z-index: 1;
-
-      :hover {
-        background-color: var(--accent-5);
-        box-shadow: 0 0 0 4px var(--accent-5);
-      }
 
       i {
         border: 1px solid transparent;
