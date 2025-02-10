@@ -73,7 +73,7 @@ function setDimensions(config) {
 }
 
 function setingredientsGroups(config) {
-  const main_section = document.querySelector("#main");
+  const main_section = document.querySelector("#ingredients");
   const groups = config.gruppi;
 
   for (const [name, group] of Object.entries(groups)) {
@@ -228,7 +228,7 @@ function generateOrder() {
 
   const complete_order_string =
     `Buongiorno,
-Vorrei ordinare una poke da asporto che passerei a ritirare ${order_time.value ? "per le: " : "a breve"}${order_time.value}.
+Vorrei ordinare una poke da asporto che passerei a ritirare ${order_time?.value ? "per le: " : "a breve"}${order_time?.value}.
 
 ${order}`;
 
@@ -277,7 +277,8 @@ function loadOrder() {
     ingredient.checked = false;
   }
 
-  document.getElementById('order-time').value = order.time;
+  const timeElem = document.getElementById('order-time')
+  if(timeElem) timeElem.value = order.time;
   selected.time = order.time;
 
   document.getElementById("dim-" + order.dimension).checked = true;
@@ -316,8 +317,10 @@ function clearOrder() {
   fullOrder = '';
   compactOrder = '';
 
-  document.getElementById('generated-order').value = '';
-  document.getElementById('order-time').value = null;
+  const orderPreviewElem = document.getElementById('generated-order')
+  if(orderPreviewElem) orderPreviewElem.value = '';
+  const orderTimeElem = document.getElementById('order-time')
+  if(orderTimeElem) orderTimeElem.value = null;
 }
 
 // Ricalcola i limiti per tutti gli ingredienti selezionati
@@ -449,6 +452,8 @@ function changePreviewType() {
   const previewBtn = document.getElementById('fullorder-preview');
   const outputElem = document.getElementById("generated-order");
   const timeElem = document.getElementById('order-time-container');
+
+  if(!previewBtn) return;
 
   if (previewBtn.checked) {
     outputElem.value = fullOrder;

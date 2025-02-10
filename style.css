@@ -279,6 +279,11 @@ header {
       }
     }
   }
+
+  section.button-wrapper{
+    flex-direction: row;
+    justify-content: space-between;
+  }
 }
 
 input[type="radio"],
@@ -312,25 +317,6 @@ input[type="checkbox"] {
     background-color: transparent;
     font-size: large;
     padding: 0 5px;
-  }
-
-  #clear-order {
-    background-color: #df3939;
-  }
-
-  #copy-order {
-    cursor: pointer;
-    background-color: #0095bc;
-    color: white;
-    opacity: 0.8;
-    border: none;
-    padding: 2px;
-    border-radius: 5px;
-    height: 28px;
-
-    &:hover {
-      box-shadow: 0 0 5px 1px #c5bdbd;
-    }
   }
 
   >div {
@@ -396,6 +382,12 @@ input[type="checkbox"] {
       transform: translate(calc(var(--width)/2));
     }
   }
+}
+
+
+
+#clear-order {
+  background-color: #df3939;
 }
 
 button,
