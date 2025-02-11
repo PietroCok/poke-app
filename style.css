@@ -20,6 +20,13 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+details > summary {
+  list-style: none;
+}
+details > summary::-webkit-details-marker {
+  display: none;
+}
+
 .w-100 {
   width: 100%;
 }
@@ -327,9 +334,9 @@ body > header {
   
   header,
   footer{
-    position: absolute;
-    display: flex;
     width: 100%;
+    position: fixed;
+    display: flex;
     justify-content: space-between;
     padding: .5em;
   }
@@ -345,10 +352,60 @@ body > header {
   }
 
   footer{
-    bottom: 0;
+    bottom: 1.5em;
+    display: flex;
+    justify-content: center;
+
+    div{
+      width: 80%;
+      display: flex;
+      justify-content: space-between;
+    }
 
     #clear-cart{
       background-color: var(--accent-1);
+    }
+  }
+
+  #cart-content{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 1em;
+    position: absolute;
+    top: 3.5em;
+    bottom: 5.5em;
+    overflow: scroll;
+
+    .item-container{
+      padding: .5em;
+      width: 80%;
+      border: 1px solid red;
+
+      .item-description{
+        margin: 1em 0;
+      }
+
+      .item-actions{
+        display: flex;
+        justify-content: space-around;
+
+        button{
+          aspect-ratio: 1;
+          width: 2em;
+          background-color: transparent;
+          color: var(--accent-3);
+        }
+
+        #remove-item{
+          color: var(--accent-1)
+        }
+
+        #star-item{
+          color: var(--accent-2)
+        }
+      }
     }
   }
 }

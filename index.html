@@ -34,7 +34,7 @@
 
     <section class="button-wrapper">
       <button id="clear-order">Cancella</button>
-      <button id="add-cart">Aggiungi</a>
+      <button id="add-cart">Salva</button>
     </section>
   </section>
 
@@ -46,13 +46,40 @@
     </header>
 
     <section id="cart-content">
+      <div class="item-container">
+        <details>
+          <summary><span class="item-name">poke pietro</span></summary>
+
+          <div class="item-description">REGULAR: salmone crudo, tonno crudo, noci, mandorle, cipolla croccante, soia, mango</div>
+
+          <div class="item-actions">
+
+            <button id="edit-item" class="icon-button">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+  
+            <button id="clone-item" class="icon-button">
+              <i class="fa-solid fa-clone"></i>
+            </button>
+  
+            <button id="star-item" class="icon-button">
+              <i class="fa-solid fa-star"></i>
+            </button>
+            
+            <button id="remove-item" class="icon-button">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </details>
+      </div>
 
     </section>
 
-
     <footer>
-      <button id="clear-cart">Svuota</button>
-      <button id="send-order">Invia Ordine</button>
+      <div>
+        <button id="clear-cart">Svuota</button>
+        <button id="send-order">Invia</button>
+      </div>
     </footer>
   </section>
 
