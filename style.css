@@ -4,7 +4,7 @@
   box-sizing: border-box;
 }
 
-:root{
+:root {
   color-scheme: light dark;
   --main-bg: light-dark(#FFF, #121212);
   --main-color: light-dark(#000, #FFF);
@@ -20,15 +20,28 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-details > summary {
+details>summary {
   list-style: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  button.icon-button {
+    background-color: inherit;
+    color: var(--accent-1);
+  }
 }
-details > summary::-webkit-details-marker {
+
+details>summary::-webkit-details-marker {
   display: none;
 }
 
 .w-100 {
   width: 100%;
+}
+
+.bad {
+  background-color: var(--accent-1);
 }
 
 body {
@@ -38,7 +51,7 @@ body {
   justify-content: center;
   min-height: 100vh;
   font-family: sans-serif;
-  padding-bottom: 2em;
+  padding-bottom: 80px;
   background-color: var(--main-bg);
 }
 
@@ -46,7 +59,7 @@ body {
   display: none;
 }
 
-body > header {
+body>header {
   text-transform: uppercase;
   margin: 1em 0;
   color: var(--accent-2);
@@ -64,7 +77,7 @@ body > header {
     gap: .5em;
   }
 
-  #cart-menu{
+  #cart-menu {
     width: 2em;
     height: 2em;
     display: flex;
@@ -132,7 +145,7 @@ body > header {
     }
 
     .over-limit {
-      color:var(--accent-1);
+      color: var(--accent-1);
     }
   }
 
@@ -316,10 +329,66 @@ body > header {
     }
   }
 
-  section.button-wrapper{
-    flex-direction: row;
-    justify-content: space-between;
+  section.button-wrapper {
+    width: 100%;
+    z-index: 3;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    background: var(--main-bg);
+
+    div {
+      display: flex;
+      width: 80%;
+      flex-direction: row;
+      justify-content: space-between;
+      padding: 1em 0;
+      background-color: inherit;
+    }
   }
+}
+
+#add-item-name {
+  &[open] {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 2em;
+    border: 1px solid;
+    border-radius: .5em;
+    z-index: 9;
+  }
+
+  &::backdrop {
+    filter: blur();
+  }
+
+  label {
+    font-size: large;
+    font-weight: 600;
+  }
+
+  input {
+    text-align: center;
+    font-size: large;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid var(--main-color);
+    margin-top: 1em;
+  }
+
+  footer {
+    margin-top: 1em;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
 }
 
 #cart {
@@ -330,44 +399,44 @@ body > header {
   top: 0;
   left: 0;
   z-index: 9;
-  
-  
+
+
   header,
-  footer{
+  footer {
     width: 100%;
     position: fixed;
     display: flex;
     justify-content: space-between;
     padding: .5em;
   }
-  
-  header{
+
+  header {
     top: 0;
-    
-    #close-cart{
+
+    #close-cart {
       width: 2em;
       aspect-ratio: 1;
       background-color: var(--accent-1);
     }
   }
 
-  footer{
+  footer {
     bottom: 1.5em;
     display: flex;
     justify-content: center;
 
-    div{
+    div {
       width: 80%;
       display: flex;
       justify-content: space-between;
     }
 
-    #clear-cart{
+    #clear-cart {
       background-color: var(--accent-1);
     }
   }
 
-  #cart-content{
+  #cart-content {
     width: 100%;
     display: flex;
     align-items: center;
@@ -376,33 +445,42 @@ body > header {
     position: absolute;
     top: 3.5em;
     bottom: 5.5em;
-    overflow: scroll;
+    overflow-y: auto;
 
-    .item-container{
+    .item-container {
       padding: .5em;
       width: 80%;
-      border: 1px solid red;
+      border: 1px solid var(--accent-5);
+      border-radius: .5em;
 
-      .item-description{
-        margin: 1em 0;
+      .item-name {
+        padding: 10px;
       }
 
-      .item-actions{
-        display: flex;
-        justify-content: space-around;
+      .item-description {
+        margin-bottom: 1em;
+        margin-left: 10px;
+      }
 
-        button{
+      details[open] summary button{
+        display: none;
+      }
+
+      .item-actions {
+        display: flex;
+        justify-content: space-between;
+
+        button {
           aspect-ratio: 1;
-          width: 2em;
           background-color: transparent;
           color: var(--accent-3);
         }
 
-        #remove-item{
+        #remove-item {
           color: var(--accent-1)
         }
 
-        #star-item{
+        #star-item {
           color: var(--accent-2)
         }
       }
@@ -410,11 +488,13 @@ body > header {
   }
 }
 
-.icon-button{
+.icon-button {
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: .5em;
+  aspect-ratio: 1;
+  width: 2em;
 }
 
 input[type="radio"],

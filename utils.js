@@ -20,3 +20,14 @@ async function loadConfig() {
         .then(data => config = data)
         .catch(err => err);
 }
+
+
+/**
+ * Closes a dialog element by its id
+ * 
+ * @param {String} id 
+ */
+function closeDialog(id){
+    const dialog = document.getElementById(id);
+    if(dialog) dialog.close();
+}

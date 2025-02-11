@@ -238,6 +238,36 @@ ${order}`;
   return order;
 }
 
+/**
+ * Converts an item to a string
+ * 
+ * @param {Object} item
+ * 
+ * @retruns a string representing the item
+ */
+function toString(item = {}){
+
+  let str = `${item.dimension.toUpperCase()}: `;
+  const ingredients = item.ingredients;
+  const groups = Object.keys(ingredients);
+  groups.sort(sortIngredientGroups);
+
+  for(const group of groups){
+    for(const ingredient of ingredients[group]){
+      str += ingredient.id.replaceAll("-", " ").replaceAll("--", "'") + (ingredient.quantity > 1 ? " x" + ingredient.quantity : "") + ", ";
+    }
+  }
+
+  // rimozione ultima virgola
+  str = str.slice(0, str.length - 2);
+
+  return str;
+}
+
+function sortIngredientGroups(A, B){
+  return config.gruppi[A].ordine - config.gruppi[B].ordine;
+}
+
 function copyOrder() {
   const text = document.querySelector("#generated-order");
 
@@ -487,21 +517,27 @@ function addActions() {
   // Cart actions
 
   // add to cart
-  const btn_add_cart = document.getElementById('add-cart');
-  if(btn_add_cart) btn_add_cart.onclick = addToCart;
+  // const btn_add_cart = document.getElementById('add-cart');
+  // if(btn_add_cart) btn_add_cart.onclick = askItemName;
 
   // open cart
-  const btn_open_cart = document.getElementById('cart-menu');
-  if(btn_open_cart) btn_open_cart.onclick = openCart;
+  // const btn_open_cart = document.getElementById('cart-menu');
+  // if(btn_open_cart) btn_open_cart.onclick = openCart;
 
   //close cart
-  const btn_close_cart = document.getElementById('close-cart');
-  if(btn_close_cart) btn_close_cart.onclick = closeCart;
+  // const btn_close_cart = document.getElementById('close-cart');
+  // if(btn_close_cart) btn_close_cart.onclick = closeCart;
 
   // clear cart
-  const btn_clear_cart = document.getElementById('clear-cart');
-  if(btn_clear_cart) btn_clear_cart.onclick = clearCart;
+  // const btn_clear_cart = document.getElementById('clear-cart');
+  // if(btn_clear_cart) btn_clear_cart.onclick = clearCart;
 
+
+  // dialogs comfirm with enter
+  const dialog_name = document.getElementById('add-item-name');
+  if(dialog_name) dialog_name.addEventListener('keypress', (evt) => {
+    if(evt.key == 'Enter') addToCart();
+  })
 }
 
 
@@ -515,6 +551,8 @@ async function setUp() {
   loadOrder();
 
   recalculateLimits();
+
+  loadCart();
 }
 
 setUp();

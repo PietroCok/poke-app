@@ -15,45 +15,145 @@ function closeCart() {
 }
 
 /**
+ * Retrieve cart from localStorage
+ * 
+ * @returns array of item in the cart
+ */
+function getCart(){
+    // get cart from localStorage
+    let cart = JSON.parse(localStorage.getItem('poke-cart'));
+    if(!cart){
+        cart = [];
+    }
+    return cart;
+}
+
+/**
+ * Loads the cart from localStorage
+ */
+function loadCart(){
+    const cart = getCart();
+
+    updateCart(cart);
+}
+
+/**
+ * Save cart to localStorage and update cart UI
+ * 
+ * @param {Array} cart - Items in the cart
+ */
+function saveCart(cart){
+    // save cart to localStorage
+    localStorage.setItem('poke-cart', JSON.stringify(cart));
+
+    updateCart(cart);
+}
+
+/**
  * Removes all items from cart and deletes it from localStorage
  */
 function clearCart() {
     if (confirm("Svuotare il carrello?\nL'operazione non è reversibile")) {
-        // TODO 
+        let cart = [];
+        saveCart(cart);
     }
 }
 
 /**
  * Add selected or current item to cart, then saves it to localStorage
  * 
- * @param {Object} item - item to add to the cart
+ * @param {Object} [item={}] 
  */
 function addToCart(item = {}) {
-    let poke = item;
+    let poke = JSON.parse(JSON.stringify(item));
 
     // if no valid object, add to cart current selected poke
-    if(!item?.dimension){
-        poke = selected;
+    if(!poke?.dimension){
+        poke = JSON.parse(JSON.stringify(selected));
+        // try to get the item name from dialog
+        const dialog_addItemName = document.getElementById("add-item-name");
+        const dialog_input = document.querySelector('#add-item-name input');
+        if(dialog_input){
+            let name = dialog_input.value;
+            if(!name) name = 'Senza nome'
+            poke.name = name;
+            
+            dialog_input.value = '';
+            dialog_addItemName.close();
+        }
     }
 
-    // checks if the item is valid
+    if (!poke.id) {
+        poke.id = Math.random().toString(36).slice(2);
+    }
+
+    const cart = getCart();
+
+    // update cart
+    cart.push(poke);
+
+    saveCart(cart);
+}
+
+/**
+ * Opens dialog to enter name of poke
+ */
+function askItemName(){
     if(Object.keys(selected.ingredients).length == 0){
         alert('Non è possibile aggiungere una poke vuota al carrello!');
         return;
     }
+    
+    const dialog_addItemName = document.getElementById('add-item-name');
+    if(dialog_addItemName) dialog_addItemName.showModal();
+}
 
-    // get cart from localStorage
-    let cart = JSON.parse(localStorage.getItem('poke-cart'));
-    if(!cart){
-        cart = [];
-    }
+/**
+ * Removes an item from the cart
+ * 
+ * @param {String} id - item id on cart 
+ */
+function removeFromCart(id){
+    let cart = getCart();
 
-    // update cart
-    cart.push(poke);
-    updateCart(cart);
+    cart = cart.filter(item => item.id != id);
 
-    // save cart to localStorage
-    // localStorage.setItem('poke-cart', JSON.stringify(cart));
+    saveCart(cart);
+}
+
+/**
+ * Clone and add an item to the cart
+ * 
+ * @param {String} id - id of item to clone 
+ */
+function cloneItem(id){
+    const cart = getCart();
+
+    const item = cart.find(item => item.id == id);
+
+    const copied_item = JSON.parse(JSON.stringify(item));
+    copied_item.id = Math.random().toString(36).slice(2);
+
+    addToCart(copied_item);
+}
+
+
+/**
+ * Add an item to starred items
+ * 
+ * @param {String} id 
+ */
+function starItem(id){
+    // TODO
+}
+
+/**
+ * Loads an item in the configurator
+ * 
+ * @param {String} id 
+ */
+function editItem(id){
+    // TODO
 }
 
 /**
@@ -62,5 +162,76 @@ function addToCart(item = {}) {
  * @param {Object} cart - cart with items to show
  */
 function updateCart(cart){
-    // TODO
+    // save ids of open elements
+    const openElems = Array.from(document.querySelectorAll('details[open]'));
+    let openElemsId = [];
+    if(openElems.length > 0){
+        openElemsId = openElems.map(elem => elem.dataset.id)
+    }
+
+    // empty cart UI
+    const cartElem = document.getElementById('cart-content');
+    if(cartElem) cartElem.innerHTML = '';
+
+    for(const item of cart){
+        const description = toString(item);
+        const isOpen = openElemsId?.includes(item.id);
+
+        const itemElemStr = 
+        `<div class="item-container">
+            <details data-id="${item.id}" ${isOpen ? "open" : ""}>
+            <summary>
+                <span class="item-name">${item.name}</span>
+                <button 
+                    id="remove-item" 
+                    class="icon-button" 
+                    onclick="removeFromCart('${item.id}')"
+                >
+                <i class="fa-solid fa-trash"></i>
+                </button>
+            </summary>
+
+            <div class="item-description">${description}</div>
+
+            <div class="item-actions">
+
+                <button 
+                    id="edit-item" 
+                    class="icon-button" 
+                    onclick="editItem('${item.id}')"
+                >
+                <i class="fa-solid fa-pen"></i>
+                </button>
+    
+                <button
+                    id="clone-item" 
+                    class="icon-button" 
+                    onclick="cloneItem('${item.id}')"
+                >
+                <i class="fa-solid fa-clone"></i>
+                </button>
+    
+                <button 
+                    id="star-item" 
+                    class="icon-button" 
+                    onclick="starItem('${item.id}')"
+                >
+                <i class="fa-solid fa-star"></i>
+                </button>
+                
+                <button 
+                    id="remove-item" 
+                    class="icon-button" 
+                    onclick="removeFromCart('${item.id}')"
+                >
+                <i class="fa-solid fa-trash"></i>
+                </button>
+            </div>
+            </details>
+        </div>
+        `;
+
+        const itemElem = convertToHTML(itemElemStr);
+        cartElem.append(itemElem);
+    }
 }
