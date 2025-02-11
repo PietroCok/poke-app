@@ -15,7 +15,11 @@
 
 <body>
   <header>
-    <nav id="cart-menu" class="icon-button">
+    <nav 
+      id="cart-menu" 
+      class="icon-button"
+      onclick="openCart()"
+    >
       <i class="fa-solid fa-cart-shopping"></i>
     </nav>
 
@@ -33,51 +37,55 @@
     </section>
 
     <section class="button-wrapper">
-      <button id="clear-order">Cancella</button>
-      <button id="add-cart">Salva</button>
+      <div>
+        <button 
+          id="clear-order"
+          onclick="clearOrder()"
+        >Cancella</button>
+        <button 
+          id="add-cart"
+          onclick="askItemName()"
+        >Salva</button>
+      </div>
     </section>
   </section>
 
+  <dialog id="add-item-name">
+      <label for="item-name">Dai un nome alla tua poke<input type="text" name="item-name" id="item-name"></label>
+
+      <footer>
+        <button 
+          class="icon-button bad" 
+          onclick="closeDialog('add-item-name')"
+          >
+          <i class="fa-solid fa-x"></i>
+        </button>
+        <button 
+          class="icon-button" 
+          onclick="addToCart()"
+        >
+          <i class="fa-solid fa-check"></i>
+        </button>
+      </footer>
+  </dialog>
+
   <section id="cart" class="hidden">
     <header>
-      <button id="close-cart" class="icon-button">
+      <button 
+        id="close-cart" 
+        class="icon-button"
+        onclick="closeCart()"
+      >
         <i class="fa-solid fa-x"></i>
       </button>
     </header>
 
     <section id="cart-content">
-      <div class="item-container">
-        <details>
-          <summary><span class="item-name">poke pietro</span></summary>
-
-          <div class="item-description">REGULAR: salmone crudo, tonno crudo, noci, mandorle, cipolla croccante, soia, mango</div>
-
-          <div class="item-actions">
-
-            <button id="edit-item" class="icon-button">
-              <i class="fa-solid fa-pen"></i>
-            </button>
-  
-            <button id="clone-item" class="icon-button">
-              <i class="fa-solid fa-clone"></i>
-            </button>
-  
-            <button id="star-item" class="icon-button">
-              <i class="fa-solid fa-star"></i>
-            </button>
-            
-            <button id="remove-item" class="icon-button">
-              <i class="fa-solid fa-trash"></i>
-            </button>
-          </div>
-        </details>
-      </div>
-
     </section>
 
     <footer>
       <div>
-        <button id="clear-cart">Svuota</button>
+        <button id="clear-cart" onclick="clearCart()">Svuota</button>
         <button id="send-order">Invia</button>
       </div>
     </footer>
