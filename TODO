@@ -1,22 +1,19 @@
+- valutare aggiunta preview singla poke
+
 - completare implementazione carrello
--- nel localStorage sarà presente sia l'ultima poke configurata sia l'ultimo carrello utilizzato
--- sarà possibile aggiungere al carrello la poke attualmente in modifica
---- all'aggiunta nel carrello il configuratore si svuota o deve essere presente un tasto "nuova" per passare alla configurazione di una nuova poke
--- sarà possibile rimuovere dal carrello una poke o svuotarlo completamente ( con conferma )
--- sarà possibile caricare una poke del carrello nel configuratore per effetuare delle modifiche, al salvataggio devo modificare direttamente la poke nel carrello ( in questo caso il bottone "aggiungi" dovrebbe cambiare in "salva")
---- usare un id per identificare univocamente una poke e capire anche che è una poke in modifica
--- valutare duplicazione di una poke nel carrello in modo da crearne una copia, che verrà inserita direttamente nel carrello o caricata nel configuratore.
--- invio dell'ordine
+-- add total cart price
+-- all'aggiunta nel carrello il configuratore si svuota ???
 
 - invio dell'ordine
 -- finestra con riepilogo del carrello
 -- utilizzerà una logica simile alla preview dell'ordine della poke singola
--- sarà possibile scegliere un nome e orario da aggiungere all'ordinazione
--- sarà possibile visualizzare il messaggio che verrà inviato per effetuare l'ordinazione ed eventualmente modificarlo prima di proseguire.
+-- sarà possibile scegliere un nome (per l'ordine) e orario da aggiungere all'ordinazione
+-- sarà possibile visualizzare il messaggio che verrà inviato per effetuare l'ordinazione ed eventualmente modificarlo prima dell'invio effettivo.
 
 - valutare aggiunta preferiti
 -- questo dovrebbe permettere di salvare (sempre nel localStorage) diverse poke con un nome specifico, in modo da poterle aggiungere velocemente nel carrello
+-- valutare sistema di recupero poke preferite dal localstorage
+
 
 - rimuovere codice inutilizzato
 - refactoring codice
--- miglior suddivisione in file delle funzionalità

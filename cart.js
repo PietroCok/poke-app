@@ -19,10 +19,10 @@ function closeCart() {
  * 
  * @returns array of item in the cart
  */
-function getCart(){
+function getCart() {
     // get cart from localStorage
     let cart = JSON.parse(localStorage.getItem('poke-cart'));
-    if(!cart){
+    if (!cart) {
         cart = [];
     }
     return cart;
@@ -31,20 +31,8 @@ function getCart(){
 /**
  * Loads the cart from localStorage
  */
-function loadCart(){
+function loadCart() {
     const cart = getCart();
-
-    updateCart(cart);
-}
-
-/**
- * Save cart to localStorage and update cart UI
- * 
- * @param {Array} cart - Items in the cart
- */
-function saveCart(cart){
-    // save cart to localStorage
-    localStorage.setItem('poke-cart', JSON.stringify(cart));
 
     updateCart(cart);
 }
@@ -64,48 +52,56 @@ function clearCart() {
  * 
  * @param {Object} [item={}] 
  */
-function addToCart(item = {}) {
+function addToCart(item = {}, allowDuplicate = false) {
     let poke = JSON.parse(JSON.stringify(item));
 
     // if no valid object, add to cart current selected poke
-    if(!poke?.dimension){
+    if (!poke?.dimension) {
         poke = JSON.parse(JSON.stringify(selected));
         // try to get the item name from dialog
         const dialog_addItemName = document.getElementById("add-item-name");
         const dialog_input = document.querySelector('#add-item-name input');
-        if(dialog_input){
+        if (dialog_input) {
             let name = dialog_input.value;
-            if(!name) name = 'Senza nome'
+            if (!name) name = 'Senza nome'
             poke.name = name;
-            
+
             dialog_input.value = '';
             dialog_addItemName.close();
         }
     }
 
-    if (!poke.id) {
-        poke.id = Math.random().toString(36).slice(2);
-    }
-
     const cart = getCart();
 
-    // update cart
-    cart.push(poke);
-
+    if (!poke.id || allowDuplicate) {
+        // insert into cart
+        poke.id = Math.random().toString(36).slice(2);
+        cart.push(poke);
+    } else {
+        // update intem in cart
+        const index = cart.indexOf(item => item.id == poke.id);
+        cart.splice(index, 1, poke);
+    }
+    
     saveCart(cart);
 }
 
 /**
  * Opens dialog to enter name of poke
  */
-function askItemName(){
-    if(Object.keys(selected.ingredients).length == 0){
+function askItemName() {
+    if (Object.keys(selected.ingredients).length == 0) {
         alert('Non è possibile aggiungere una poke vuota al carrello!');
         return;
     }
-    
+
+    if(selected.name){
+        const dialog_name = document.querySelector('#add-item-name input');
+        if(dialog_name) dialog_name.value = selected.name;
+    }
+
     const dialog_addItemName = document.getElementById('add-item-name');
-    if(dialog_addItemName) dialog_addItemName.showModal();
+    if (dialog_addItemName) dialog_addItemName.showModal();
 }
 
 /**
@@ -113,7 +109,7 @@ function askItemName(){
  * 
  * @param {String} id - item id on cart 
  */
-function removeFromCart(id){
+function removeFromCart(id) {
     let cart = getCart();
 
     cart = cart.filter(item => item.id != id);
@@ -126,7 +122,7 @@ function removeFromCart(id){
  * 
  * @param {String} id - id of item to clone 
  */
-function cloneItem(id){
+function cloneItem(id) {
     const cart = getCart();
 
     const item = cart.find(item => item.id == id);
@@ -134,7 +130,7 @@ function cloneItem(id){
     const copied_item = JSON.parse(JSON.stringify(item));
     copied_item.id = Math.random().toString(36).slice(2);
 
-    addToCart(copied_item);
+    addToCart(copied_item, true);
 }
 
 
@@ -143,7 +139,7 @@ function cloneItem(id){
  * 
  * @param {String} id 
  */
-function starItem(id){
+function starItem(id) {
     // TODO
 }
 
@@ -152,8 +148,34 @@ function starItem(id){
  * 
  * @param {String} id 
  */
-function editItem(id){
-    // TODO
+function editItem(id) {
+    if(!id) return;
+
+    const cart = getCart();
+
+    const item = cart.find(item => item.id == id);
+    if(!item) return;
+
+    try {
+        loadIntoConfigurator(item);
+    } catch (error) {
+        alert(error);
+        return;     
+    }
+
+    closeCart();
+}
+
+/**
+ * Save cart to localStorage and update cart UI
+ * 
+ * @param {Array} cart - Items in the cart
+ */
+function saveCart(cart, update = true) {
+    // save cart to localStorage
+    localStorage.setItem('poke-cart', JSON.stringify(cart));
+
+    if (update) updateCart(cart);
 }
 
 /**
@@ -161,37 +183,54 @@ function editItem(id){
  * 
  * @param {Object} cart - cart with items to show
  */
-function updateCart(cart){
+function updateCart(cart) {
     // save ids of open elements
     const openElems = Array.from(document.querySelectorAll('details[open]'));
     let openElemsId = [];
-    if(openElems.length > 0){
+    if (openElems.length > 0) {
         openElemsId = openElems.map(elem => elem.dataset.id)
     }
 
     // empty cart UI
     const cartElem = document.getElementById('cart-content');
-    if(cartElem) cartElem.innerHTML = '';
+    if (cartElem) cartElem.innerHTML = '';
 
-    for(const item of cart){
+    for (const item of cart) {
         const description = toString(item);
         const isOpen = openElemsId?.includes(item.id);
 
-        const itemElemStr = 
-        `<div class="item-container">
+        const itemElemStr =
+            `<div class="item-container">
             <details data-id="${item.id}" ${isOpen ? "open" : ""}>
             <summary>
                 <span class="item-name">${item.name}</span>
-                <button 
-                    id="remove-item" 
-                    class="icon-button" 
-                    onclick="removeFromCart('${item.id}')"
-                >
-                <i class="fa-solid fa-trash"></i>
-                </button>
+
+                <div>
+                    <div class='item-price'>
+                        <span>${item.totalPrice.toFixed(2)} €</span>
+                    </div>
+                    <button 
+                        id="edit-item" 
+                        class="icon-button icon-color" 
+                        onclick="editItem('${item.id}')"
+                    >
+                    <i class="fa-solid fa-pen"></i>
+                    </button>
+                    <button 
+                        id="remove-item" 
+                        class="icon-button icon-color-bad" 
+                        onclick="removeFromCart('${item.id}')"
+                    >
+                    <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
             </summary>
 
             <div class="item-description">${description}</div>
+
+            <div class='item-price'>
+                <div>Totale:<span>${item.totalPrice.toFixed(2)}</span>€</div>
+            </div>
 
             <div class="item-actions">
 

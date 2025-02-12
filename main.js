@@ -284,43 +284,35 @@ function copyOrder() {
 /**
  * Carica un ordine (da localstorage)
  */
-function loadOrder() {
-  let order;
-  try {
-    order = JSON.parse(localStorage.getItem("poke"));
-  } catch (error) {
-    console.error("Failed to load order from localStorage")
-    return;
-  }
-  if (!order) return;
-
-  // rimuove tutti i checks
-  for (const ingredient of document.querySelectorAll('section input[type="checkbox"]')) {
-    ingredient.checked = false;
+function loadIntoConfigurator(_item = null) {
+  let item = _item;
+  if(!_item){
+    try {
+      item = JSON.parse(localStorage.getItem("poke"));
+    } catch (error) {
+      console.error("Failed to load item from localStorage")
+      return;
+    }
+    if (!item) return;
   }
 
-  const timeElem = document.getElementById('order-time')
-  if(timeElem) timeElem.value = order.time;
-  selected.time = order.time;
+  clearConfigurator();
 
-  document.getElementById("dim-" + order.dimension).checked = true;
+  document.getElementById("dim-" + item.dimension).checked = true;
 
   // seleziono gli ingredienti salvati
-  for (const group of Object.keys(order.ingredients)) {
-    for (const ingredient of order.ingredients[group]) {
+  for (const group of Object.keys(item.ingredients)) {
+    for (const ingredient of item.ingredients[group]) {
       addingredient(group, ingredient.id, ingredient.quantity, false);
       document.getElementById(ingredient.id).checked = true;
     }
   }
 
-  generateOrder();
-
-  console.log(order);
-
-  selected = JSON.parse(JSON.stringify(order));
+  selected = JSON.parse(JSON.stringify(item));
+  localStorage.setItem("poke", JSON.stringify(selected));
 }
 
-function clearOrder() {
+function clearConfigurator() {
   // rimuove tutti i checks
   const _selected = selected.ingredients;
   for (const group of Object.keys(_selected)) {
@@ -335,14 +327,6 @@ function clearOrder() {
     time: '',
     ingredients: {}
   }
-
-  fullOrder = '';
-  compactOrder = '';
-
-  const orderPreviewElem = document.getElementById('generated-order')
-  if(orderPreviewElem) orderPreviewElem.value = '';
-  const orderTimeElem = document.getElementById('order-time')
-  if(orderTimeElem) orderTimeElem.value = null;
 }
 
 // Ricalcola i limiti per tutti gli ingredienti selezionati
@@ -425,6 +409,10 @@ function updatePrice(extra) {
     elem.textContent = totalPrice.toFixed(2);
     elem.title = `${basePrice.toFixed(2)}€ (base) + ${extraPrice.toFixed(2)}€ (extra)`;
   }
+
+  selected.totalPrice = totalPrice;
+  selected.basePrice = basePrice;
+  selected.extraPrice = extraPrice;
 }
 
 function sortIngredientByPrice(A, B) {
@@ -490,9 +478,6 @@ function changePreviewType() {
 }
 
 function addActions() {
-  const btn_clear_order = document.getElementById("clear-order");
-  if (btn_clear_order) btn_clear_order.onclick = clearOrder;
-
   // extra of the same element
   document.querySelectorAll(".extra").forEach(elem => {
     if (elem) elem.onclick = addExtra
@@ -506,32 +491,9 @@ function addActions() {
   const btn_time = document.getElementById('order-time');
   if (btn_time) btn_time.onchange = changeTime;
 
-  // link order for message
-  // const btn_send_order = document.getElementById('send-order');
-  // if (btn_send_order) btn_send_order.onclick = addOrderToMessage;
-
   // message preview
   const btn_preview_type = document.getElementById('fullorder-preview');
   if (btn_preview_type) btn_preview_type.onchange = changePreviewType;
-
-  // Cart actions
-
-  // add to cart
-  // const btn_add_cart = document.getElementById('add-cart');
-  // if(btn_add_cart) btn_add_cart.onclick = askItemName;
-
-  // open cart
-  // const btn_open_cart = document.getElementById('cart-menu');
-  // if(btn_open_cart) btn_open_cart.onclick = openCart;
-
-  //close cart
-  // const btn_close_cart = document.getElementById('close-cart');
-  // if(btn_close_cart) btn_close_cart.onclick = closeCart;
-
-  // clear cart
-  // const btn_clear_cart = document.getElementById('clear-cart');
-  // if(btn_clear_cart) btn_clear_cart.onclick = clearCart;
-
 
   // dialogs comfirm with enter
   const dialog_name = document.getElementById('add-item-name');
@@ -548,7 +510,7 @@ async function setUp() {
 
   addActions();
 
-  loadOrder();
+  loadIntoConfigurator();
 
   recalculateLimits();
 

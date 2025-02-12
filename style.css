@@ -28,7 +28,6 @@ details>summary {
 
   button.icon-button {
     background-color: inherit;
-    color: var(--accent-1);
   }
 }
 
@@ -42,6 +41,15 @@ details>summary::-webkit-details-marker {
 
 .bad {
   background-color: var(--accent-1);
+}
+
+.icon-color{
+  color: var(--accent-3);
+}
+
+
+.icon-color-bad{
+  color: var(--accent-1);
 }
 
 body {
@@ -453,17 +461,32 @@ body>header {
       border: 1px solid var(--accent-5);
       border-radius: .5em;
 
-      .item-name {
-        padding: 10px;
+      summary>div {
+        display: flex;
+        align-items: center;
+
+        div{
+          margin: 0 10px;
+          min-width: fit-content;
+        }
       }
 
-      .item-description {
+      details>div {
         margin-bottom: 1em;
         margin-left: 10px;
       }
 
-      details[open] summary button{
+      .item-name {
+        padding: 10px;
+      }
+
+      details[open] summary button,
+      details[open] summary .item-price {
         display: none;
+      }
+
+      .item-price span {
+        margin: 0 5px;
       }
 
       .item-actions {
