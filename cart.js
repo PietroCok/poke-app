@@ -232,7 +232,7 @@ function updateCart(cart) {
             <div class="item-description">${description}</div>
 
             <div class='item-price'>
-                <div>Totale:<span>${item.totalPrice.toFixed(2)}</span>€</div>
+                <div>Prezzo:<span>${item.totalPrice.toFixed(2)}</span>€</div>
             </div>
 
             <div class="item-actions">

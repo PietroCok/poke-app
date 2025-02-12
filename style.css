@@ -471,6 +471,11 @@ body>header {
     bottom: 5.5em;
     overflow-y: auto;
 
+    .item-name{
+      text-transform: capitalize;
+      font-weight: bold;
+    }
+
     .item-container {
       padding: .5em;
       width: 80%;
