@@ -325,8 +325,10 @@ function clearConfigurator() {
   selected = {
     dimension: _dim ?? "regular",
     time: '',
-    ingredients: {}
+    ingredients: {},
   }
+
+  localStorage.setItem("poke", JSON.stringify(selected));
 }
 
 // Ricalcola i limiti per tutti gli ingredienti selezionati

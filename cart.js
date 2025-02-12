@@ -82,6 +82,8 @@ function addToCart(item = {}, allowDuplicate = false) {
         const index = cart.findIndex(_item => _item.id == poke.id);
         cart.splice(index, 1, poke);
     }
+
+    clearConfigurator();
     
     saveCart(cart);
 }
