@@ -79,7 +79,7 @@ function addToCart(item = {}, allowDuplicate = false) {
         cart.push(poke);
     } else {
         // update intem in cart
-        const index = cart.indexOf(item => item.id == poke.id);
+        const index = cart.findIndex(_item => _item.id == poke.id);
         cart.splice(index, 1, poke);
     }
     
@@ -278,8 +278,6 @@ function updateCart(cart) {
     }
 
     // scrive il totale
-    console.log(cartSubtotal);
-    
     const cartSubtotalElem = document.querySelector('#cart-price span');
     if(cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
 }
