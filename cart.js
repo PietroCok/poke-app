@@ -195,9 +195,12 @@ function updateCart(cart) {
     const cartElem = document.getElementById('cart-content');
     if (cartElem) cartElem.innerHTML = '';
 
+    let cartSubtotal = 0;
+
     for (const item of cart) {
         const description = toString(item);
         const isOpen = openElemsId?.includes(item.id);
+        cartSubtotal += item.totalPrice;
 
         const itemElemStr =
             `<div class="item-container">
@@ -273,4 +276,10 @@ function updateCart(cart) {
         const itemElem = convertToHTML(itemElemStr);
         cartElem.append(itemElem);
     }
+
+    // scrive il totale
+    console.log(cartSubtotal);
+    
+    const cartSubtotalElem = document.querySelector('#cart-price span');
+    if(cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
 }

@@ -22,7 +22,6 @@
     >
       <i class="fa-solid fa-cart-shopping"></i>
     </nav>
-
   </header>
 
   <section id="main">
@@ -73,10 +72,25 @@
     <header>
       <button 
         id="close-cart" 
-        class="icon-button"
+        class="icon-button icon-color-bad"
         onclick="closeCart()"
       >
         <i class="fa-solid fa-x"></i>
+      </button>
+
+      <div id="cart-price-container">
+        <div class="icon-color">
+          <i class="fa-solid fa-coins"></i>
+        </div>
+        <div id="cart-price"><span></span>€</div>
+      </div>
+
+      <button 
+        id="cart-menu" 
+        class="icon-button icon-color"
+        onclick=""
+      >
+        <i class="fa-solid fa-bars"></i>
       </button>
     </header>
 

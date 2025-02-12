@@ -44,11 +44,13 @@ details>summary::-webkit-details-marker {
 }
 
 .icon-color{
+  background-color: var(--main-bg);
   color: var(--accent-3);
 }
 
 
 .icon-color-bad{
+  background-color: var(--main-bg);
   color: var(--accent-1);
 }
 
@@ -415,17 +417,31 @@ body>header {
     position: fixed;
     display: flex;
     justify-content: space-between;
+    align-items: center;
     padding: .5em;
   }
 
   header {
     top: 0;
+    margin-bottom: 1em;
 
     #close-cart {
       width: 2em;
       aspect-ratio: 1;
-      background-color: var(--accent-1);
     }
+
+    #cart-price-container{
+      display: flex;
+
+      div:has(i){
+        color: var(--accent-2);
+      }
+
+      span{
+        margin: 0 10px;
+      }
+    }
+
   }
 
   footer {
@@ -451,7 +467,7 @@ body>header {
     flex-direction: column;
     gap: 1em;
     position: absolute;
-    top: 3.5em;
+    top: 4.5em;
     bottom: 5.5em;
     overflow-y: auto;
 
