@@ -1,25 +1,30 @@
-- valutare aggiunta preview singla poke
-
-- valutare aggiunta messaggi di notifica sulle azioni
--- aggiunta elemento nel carrello
--- caricamento elemento nel configuratore
--- cancellazione elemento dal carrello
--- messaggi di errore (anche attuali alert)
-
+DA IMPLEMENTARE
 - completare implementazione carrello
 -- all'aggiunta nel carrello il configuratore si svuota ???
 -- aggiungere contatore numero oggetti nel carrello
 
 - invio dell'ordine
--- finestra con riepilogo del carrello
--- utilizzerà una logica simile alla preview dell'ordine della poke singola
--- sarà possibile scegliere un nome (per l'ordine) e orario da aggiungere all'ordinazione
--- sarà possibile visualizzare il messaggio che verrà inviato per effetuare l'ordinazione ed eventualmente modificarlo prima dell'invio effettivo.
+-- salvare nel localStorage l'ultimo nome (ordine) utilizzato
+-- salvare nel localStorage l'ultimo tempo (ordine) utilizzato
 
-- valutare aggiunta preferiti
+DA CORREGGERE
+- da mobile, i bottoni con effetto hover attivano l'effetto al click e lo mantengono anche una volta rimosso il dito dal bottone stesso
+
+DA VALUTARE
+- scelta del tema (auto/scuro/chiaro) anche diverso da quello impostato di sistema
+-- salvataggio della scelta nel localStorage per "persistenza"
+
+- aggiunta preview (messaggio ordine compatto) singla poke
+
+- aggiunta messaggi di notifica alle azioni dell'utente
+-- aggiunta elemento nel carrello
+-- caricamento elemento nel configuratore
+-- cancellazione elemento dal carrello
+-- messaggi di errore (rimuovere gli attuali alert)
+
+- aggiunta preferiti
 -- questo dovrebbe permettere di salvare (sempre nel localStorage) diverse poke con un nome specifico, in modo da poterle aggiungere velocemente nel carrello
--- valutare sistema di recupero poke preferite dal localstorage
-
+-- sistema di recupero poke preferite dal localstorage
 
 - rimuovere codice inutilizzato
 - refactoring codice

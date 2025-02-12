@@ -465,7 +465,9 @@ function changePreviewType() {
   const outputElem = document.getElementById("generated-order");
   const timeElem = document.getElementById('order-time-container');
 
+  if(!outputElem) return;
   if(!previewBtn) return;
+  if(!timeElem) return;
 
   if (previewBtn.checked) {
     outputElem.value = fullOrder;
@@ -501,6 +503,11 @@ function addActions() {
   const dialog_name = document.getElementById('add-item-name');
   if(dialog_name) dialog_name.addEventListener('keypress', (evt) => {
     if(evt.key == 'Enter') addToCart();
+  })
+
+  const dialog_preview = document.getElementById('preview-order');
+  if(dialog_preview) dialog_preview.addEventListener('keypress', (evt) => {
+    if(evt.key == 'Enter') sendOrder();
   })
 }
 

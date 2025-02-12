@@ -15,6 +15,19 @@
   --accent-5: lightgrey;
 }
 
+
+/*
+Can force color scheme from any element in the page 
+(if it's the only one with the attribute) 
+*/
+:root:has([data-scheme="light"]) {
+  color-scheme: light;
+}
+
+:root:has([data-scheme="dark"]) {
+  color-scheme: dark;
+}
+
 /* Removes the highlight effect on mobile devices */
 * {
   -webkit-tap-highlight-color: transparent;
@@ -29,10 +42,10 @@ details>summary {
   button.icon-button {
     background-color: inherit;
   }
-}
 
-details>summary::-webkit-details-marker {
-  display: none;
+  &::-webkit-details-marker {
+    display: none;
+  }
 }
 
 .w-100 {
@@ -43,13 +56,12 @@ details>summary::-webkit-details-marker {
   background-color: var(--accent-1);
 }
 
-.icon-color{
+.icon-color {
   background-color: var(--main-bg);
   color: var(--accent-3);
 }
 
-
-.icon-color-bad{
+.icon-color-bad {
   background-color: var(--main-bg);
   color: var(--accent-1);
 }
@@ -358,7 +370,7 @@ body>header {
   }
 }
 
-#add-item-name {
+dialog {
   &[open] {
     top: 30%;
     left: 50%;
@@ -388,7 +400,7 @@ body>header {
     padding: 10px;
     border-radius: 5px;
     border: 1px solid var(--main-color);
-    margin-top: 1em;
+    margin: 1em 0;
   }
 
   footer {
@@ -430,14 +442,14 @@ body>header {
       aspect-ratio: 1;
     }
 
-    #cart-price-container{
+    #cart-price-container {
       display: flex;
 
-      div:has(i){
+      div:has(i) {
         color: var(--accent-2);
       }
 
-      span{
+      span {
         margin: 0 10px;
       }
     }
@@ -471,7 +483,7 @@ body>header {
     bottom: 5.5em;
     overflow-y: auto;
 
-    .item-name{
+    .item-name {
       text-transform: capitalize;
       font-weight: bold;
     }
@@ -486,7 +498,7 @@ body>header {
         display: flex;
         align-items: center;
 
-        div{
+        div {
           margin: 0 10px;
           min-width: fit-content;
         }
@@ -546,100 +558,100 @@ input[type="checkbox"] {
   display: none;
 }
 
-#order-wrapper {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1em;
-  width: 80%;
 
-  margin-bottom: 2em;
+#preview-order{
+  top: 1em;
+  transform: translate(-50%, 0);
 
-  >div {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  #order-total-extra-price {
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-  }
-
-  #generated-order {
-    flex: 1;
-    border: 1px solid var(--accent-3);
-    background-color: transparent;
-    font-size: large;
-    padding: 0 5px;
-  }
-
-  >div {
+  > *{
     width: 100%;
-    display: flex;
-    gap: 10px;
   }
 
-  #order-time-container {
-    justify-content: space-evenly;
+  > div{
+    display: flex;
+    justify-content: flex-start;
     align-items: center;
+    gap: 1em;
+    width: 100%;
 
-    #order-time {
-      font-size: large;
+    label{
+      min-width: 22%;
     }
   }
 
+  input{
+    margin: .5em 0;
+    min-width: 50%;
+    text-align: left;
+  }
 
+  textarea{
+    padding: 10px;
+    margin: 1em;
+  }
+
+  .button-wrapper{
+    justify-content: space-between;
+    margin-top: 1em;
+  }
+
+  #order-price-container{
+    margin: .5em 0;
+  }
+
+  #order-price span{
+    margin-left: 1em;
+  }
+}
+
+#order-preview-controls {
   --width: 50px;
   --height: calc(var(--width)/2);
   --border-w: 4px;
 
-  #order-preview-controls {
-    justify-content: center;
-    align-items: center;
-    flex-direction: row-reverse;
+  display: flex;
+  justify-content: flex-end !important;
+  align-items: center;
+  flex-direction: row-reverse;
+  margin: .5em 0;
 
-    >* {
-      cursor: pointer;
-      user-select: none;
-    }
-
-    .custom-checkbox {
-      position: relative;
-      width: var(--width);
-      height: var(--height);
-      margin: 0 10px;
-      border-radius: var(--height);
-      border: var(--border-w) solid var(--accent-5);
-
-      &::after {
-        content: '';
-        display: inline-block;
-        width: calc(var(--height) - var(--border-w)*2);
-        height: calc(var(--height) - var(--border-w)*2);
-        background-color: var(--accent-3);
-        border-radius: 50%;
-        transition: transform .2s ease;
-      }
-    }
+  >* {
+    cursor: pointer;
+    user-select: none;
   }
 
-  input:checked~#full-preview {
-    display: inline-block;
-  }
+  .custom-checkbox {
+    position: relative;
+    min-width: var(--width);
+    height: var(--height);
+    border-radius: var(--height);
+    border: var(--border-w) solid var(--accent-5);
 
-  input:not(:checked)~#compact-preview {
-    display: inline-block;
-  }
-
-  input:checked~.custom-checkbox {
     &::after {
-      transform: translate(calc(var(--width)/2));
+      content: '';
+      display: block;
+      width: calc(var(--height) - var(--border-w)*2);
+      height: calc(var(--height) - var(--border-w)*2);
+      background-color: var(--accent-3);
+      border-radius: 50%;
+      transition: transform .2s ease;
     }
   }
 }
 
+input:checked~#full-preview {
+  display: inline-block;
+}
 
+input:not(:checked)~#compact-preview {
+  display: inline-block;
+}
+
+input:checked~.custom-checkbox {
+  &::after {
+    transform: translate(calc(var(--width)/2));
+  }
+}
 
 #clear-order {
   background-color: var(--accent-1);

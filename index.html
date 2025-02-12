@@ -15,11 +15,7 @@
 
 <body>
   <header>
-    <nav 
-      id="cart-menu" 
-      class="icon-button"
-      onclick="openCart()"
-    >
+    <nav id="cart-menu" class="icon-button" onclick="openCart()">
       <i class="fa-solid fa-cart-shopping"></i>
     </nav>
   </header>
@@ -37,44 +33,15 @@
 
     <section class="button-wrapper">
       <div>
-        <button 
-          id="clear-order"
-          onclick="clearConfigurator()"
-        >Cancella</button>
-        <button 
-          id="add-cart"
-          onclick="askItemName()"
-        >Salva</button>
+        <button id="clear-order" onclick="clearConfigurator()">Cancella</button>
+        <button id="add-cart" onclick="askItemName()">Salva</button>
       </div>
     </section>
   </section>
 
-  <dialog id="add-item-name">
-      <label for="item-name">Dai un nome alla tua poke<input type="text" name="item-name" id="item-name"></label>
-
-      <footer>
-        <button 
-          class="icon-button bad" 
-          onclick="closeDialog('add-item-name')"
-        >
-          <i class="fa-solid fa-x"></i>
-        </button>
-        <button 
-          class="icon-button" 
-          onclick="addToCart()"
-        >
-          <i class="fa-solid fa-check"></i>
-        </button>
-      </footer>
-  </dialog>
-
   <section id="cart" class="hidden">
     <header>
-      <button 
-        id="close-cart" 
-        class="icon-button icon-color-bad"
-        onclick="closeCart()"
-      >
+      <button id="close-cart" class="icon-button icon-color-bad" onclick="closeCart()">
         <i class="fa-solid fa-x"></i>
       </button>
 
@@ -85,11 +52,7 @@
         <div id="cart-price"><span></span>€</div>
       </div>
 
-      <button 
-        id="cart-menu" 
-        class="icon-button icon-color"
-        onclick=""
-      >
+      <button id="cart-menu" class="icon-button icon-color" onclick="">
         <i class="fa-solid fa-bars"></i>
       </button>
     </header>
@@ -100,40 +63,62 @@
     <footer>
       <div>
         <button id="clear-cart" onclick="clearCart()">Svuota</button>
-        <button id="send-order">Invia</button>
+        <button id="btn-preview-order" onclick="showOrderPreview()">Invia</button>
       </div>
     </footer>
   </section>
 
 
-  <!-- <div id="order-wrapper">
 
-    <div id="order-total-extra-price">
-      Prezzo totale della bowl: <span></span>€
+  <dialog id="add-item-name">
+    <label for="item-name">Dai un nome alla tua poke<input type="text" name="item-name" id="item-name"></label>
+
+    <footer>
+
+      <button class="icon-button bad" onclick="closeDialog('add-item-name')">
+        <i class="fa-solid fa-x"></i>
+      </button>
+
+      <button class="icon-button" onclick="addToCart()">
+        <i class="fa-solid fa-check"></i>
+      </button>
+
+    </footer>
+  </dialog>
+
+  <dialog id="preview-order">
+
+    <div id="order-name-container">
+      <label for="order-name">Nome</label>
+      <input type="text" name="order-name" id="order-name">
+    </div>
+
+    <div id="order-time-container">
+      <label for="order-time">Orario</label>
+      <input type="time" name="order-time" step="900" id="order-time">
+    </div>
+
+    <div id="order-price-container">
+      <span id="order-price">Totale:<span>0,00</span>€</span>
     </div>
 
     <div id="order-preview-controls">
-      <input type="checkbox" name="fullorder-preview" id="fullorder-preview">
+      <input type="checkbox" name="fullorder-preview" id="fullorder-preview" checked>
       <label id="full-preview" for="fullorder-preview" class="hidden">Ordine completo</label>
       <label id="compact-preview" class="hidden" for="fullorder-preview">Ordine compatto</label>
       <label class="custom-checkbox" for="fullorder-preview"></label>
     </div>
 
-    <div id="order-time-container">
-      <label for="order-time">Scegli l'orario</label>
-      <input type="time" name="order-time" step="900" id="order-time">
-    </div>
+    <textarea name="order-preview" id="order-preview" rows="3"></textarea>
 
-    <div>
-      <textarea name="generated-order" id="generated-order" disabled></textarea>
-    </div>
+
 
     <div class="button-wrapper">
-      <a id="send-order" target="_blank">Invia Ordine</a>
-      <button id="clear-order">Cancella</button>
+      <button id="clear-order" onclick="closeDialog('preview-order')">Annulla</button>
+      <button id="send-order" onclick="sendOrder()">Conferma</button>
     </div>
+  </dialog>
 
-  </div> -->
 </body>
 
 </html>

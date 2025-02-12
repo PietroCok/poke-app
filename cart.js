@@ -107,6 +107,29 @@ function askItemName() {
 }
 
 /**
+ * Opens preview order dialog
+ */
+function showOrderPreview(){
+    // check if at least one item in cart
+    const cart = getCart();
+
+    if(cart.length == 0){
+        return;
+    }
+
+    const previewOrderDialog = document.getElementById('preview-order');
+    if(previewOrderDialog) previewOrderDialog.showModal();    
+}
+
+
+/**
+ * Redirect to application with preloaded order message
+ */
+function sendOrder(){
+    // TODO
+}
+
+/**
  * Removes an item from the cart
  * 
  * @param {String} id - item id on cart 
@@ -279,7 +302,7 @@ function updateCart(cart) {
         cartElem.append(itemElem);
     }
 
-    // scrive il totale
+    // aggiorna il totale UI
     const cartSubtotalElem = document.querySelector('#cart-price span');
     if(cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
 }
