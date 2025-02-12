@@ -1,7 +1,14 @@
 - valutare aggiunta preview singla poke
 
+- valutare aggiunta messaggi di notifica sulle azioni
+-- aggiunta elemento nel carrello
+-- caricamento elemento nel configuratore
+-- cancellazione elemento dal carrello
+-- messaggi di errore (anche attuali alert)
+
 - completare implementazione carrello
 -- all'aggiunta nel carrello il configuratore si svuota ???
+-- aggiungere contatore numero oggetti nel carrello
 
 - invio dell'ordine
 -- finestra con riepilogo del carrello
