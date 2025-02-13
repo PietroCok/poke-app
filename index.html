@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
   <link rel="stylesheet" href="./style.css">
+  <script src="./theme.js" defer></script>
   <script src="./utils.js" defer></script>
   <script src="./cart.js" defer></script>
   <script src="./main.js" defer></script>
@@ -18,6 +19,22 @@
     <nav id="cart-menu" class="icon-button" onclick="openCart()">
       <i class="fa-solid fa-cart-shopping"></i>
     </nav>
+
+    <nav id="theme-controls-container">
+      <div id="theme-icon-auto" title="AUTO" for="theme-controller" class="icon-button icon-color" onclick="handleTheme('auto')">
+        <i class="fa-solid fa-a"></i>
+      </div>
+
+      <div id="theme-icon-light" title="LIGHT" for="theme-controller" class="icon-button icon-color hidden" onclick="handleTheme('light')">
+        <i class="fa-solid fa-sun"></i>
+      </div>
+
+      <div id="theme-icon-dark" title="DARK" for="theme-controller" class="icon-button icon-color hidden" onclick="handleTheme('dark')">
+        <i class="fa-solid fa-moon"></i>
+      </div>
+    </nav>
+
+
   </header>
 
   <section id="main">
@@ -60,7 +77,7 @@
     <section id="cart-content">
     </section>
 
-    <footer>
+    <footer class="button-wrapper">
       <div>
         <button id="clear-cart" onclick="clearCart()">Svuota</button>
         <button id="btn-preview-order" onclick="showOrderPreview()">Invia</button>
@@ -110,8 +127,6 @@
     </div>
 
     <textarea name="order-preview" id="order-preview" rows="3"></textarea>
-
-
 
     <div class="button-wrapper">
       <button id="clear-order" onclick="closeDialog('preview-order')">Annulla</button>
