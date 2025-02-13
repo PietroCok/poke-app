@@ -1,16 +1,11 @@
 DA IMPLEMENTARE
-- completare implementazione carrello
--- all'aggiunta nel carrello il configuratore si svuota ???
--- aggiungere contatore numero oggetti nel carrello
+- contatore elementi nel carrello
 
-- invio dell'ordine
--- salvare nel localStorage l'ultimo nome (ordine) utilizzato
--- salvare nel localStorage l'ultimo tempo (ordine) utilizzato
+- aggiunta preferiti
+-- questo dovrebbe permettere di salvare (sempre nel localStorage) diverse poke con un nome specifico, in modo da poterle aggiungere velocemente nel carrello
+-- sistema di recupero poke preferite dal localstorage
 
 DA CORREGGERE
-- da mobile, i bottoni con effetto hover attivano l'effetto al click e lo mantengono anche una volta rimosso il dito dal bottone stesso
-- migliorare dimensione tasti
--- in particolare carello/menu/aggiunta ingredienti e extra
 
 DA VALUTARE
 - aggiunta preview (messaggio ordine compatto) singla poke
@@ -20,10 +15,6 @@ DA VALUTARE
 -- caricamento elemento nel configuratore
 -- cancellazione elemento dal carrello
 -- messaggi di errore (rimuovere gli attuali alert)
-
-- aggiunta preferiti
--- questo dovrebbe permettere di salvare (sempre nel localStorage) diverse poke con un nome specifico, in modo da poterle aggiungere velocemente nel carrello
--- sistema di recupero poke preferite dal localstorage
 
 - rimuovere codice inutilizzato
 - refactoring codice
