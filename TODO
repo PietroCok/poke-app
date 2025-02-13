@@ -13,9 +13,6 @@ DA CORREGGERE
 -- in particolare carello/menu/aggiunta ingredienti e extra
 
 DA VALUTARE
-- scelta del tema (auto/scuro/chiaro) anche diverso da quello impostato di sistema
--- salvataggio della scelta nel localStorage per "persistenza"
-
 - aggiunta preview (messaggio ordine compatto) singla poke
 
 - aggiunta messaggi di notifica alle azioni dell'utente
