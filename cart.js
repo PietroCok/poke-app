@@ -117,8 +117,90 @@ function showOrderPreview(){
         return;
     }
 
+    // check for prefill
+    // order name
+    const orderName = localStorage.getItem('order-name');
+    const orderNameElem = document.getElementById('order-name');
+    if(orderName && orderNameElem){
+        orderNameElem.value = orderName;
+    }
+
+    // order time
+    const orderTime = localStorage.getItem('order-time');
+    const orderTimeElem = document.getElementById('order-time');
+    if(orderTime && orderTimeElem){
+        orderTimeElem.value = orderTime;
+    }
+
+    // total price
+    let cartSubtotal = 0;
+    for(const item of cart){
+        cartSubtotal += item.totalPrice;
+    }
+    const cartSubtotalElem = document.querySelector('#order-price');
+    if(cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
+    
+    // open dialog
     const previewOrderDialog = document.getElementById('preview-order');
     if(previewOrderDialog) previewOrderDialog.showModal();    
+
+    // order message
+    generateOrderMessage();
+}
+
+/**
+ * Generate the order string to display on order confirmation window
+ */
+function generateOrderMessage(){
+
+    const cart = getCart();
+    const orderTime = document.getElementById('order-time');
+    const orderName = document.getElementById('order-name');
+
+    let simple_order_string = '';
+
+    for(const [index, item] of Object.entries(cart)){
+        let single_order = ''
+        single_order += `${Number(index)+1}) ${item.dimension.toUpperCase()}: `;
+        
+        for (const elements of Object.values(item.ingredients)) {
+            for (const element of elements) {
+                single_order += element.id.replaceAll("-", " ").replaceAll("--", "'") + (element.quantity > 1 ? " x" + element.quantity : "") + ", ";
+            }
+        }
+        // rimozione ultima virgola
+        single_order = single_order.slice(0, single_order.length - 2);
+
+        single_order += '\n\r';
+
+        simple_order_string += single_order;
+    }
+    
+    const complete_order_string = 
+    `Buongiorno,
+vorrei ordinare ${cart.length > 1 ? cart.length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ?" a nome: " + orderName.value : ""}.
+
+${simple_order_string}`;
+
+    const orderMessageElem = document.getElementById('order-preview');
+    if(orderMessageElem) {
+        orderMessageElem.value = complete_order_string;
+        orderMessageElem.style.height = orderMessageElem.scrollHeight + 3 + 'px';
+    }
+}
+
+function setOrderName(elem){
+    generateOrderMessage()
+    if(!elem) return;
+
+    localStorage.setItem('order-name', elem.value);
+}
+
+function setOrderTime(elem){
+    generateOrderMessage()
+    if(!elem || !elem.value) return;
+
+    localStorage.setItem('order-time', elem.value);
 }
 
 
@@ -126,7 +208,29 @@ function showOrderPreview(){
  * Redirect to application with preloaded order message
  */
 function sendOrder(){
-    // TODO
+    // last checks
+
+    // time must not be empty
+    const time = document.getElementById('order-time');
+    if(!time.value){
+        // ERROR
+        alert("Scegli un orario prima procedere con l'ordine!");
+        return
+    }
+
+    // get order string (can have been modified by user after generation)
+    const order_preview = document.getElementById('order-preview');
+    let order_string = ''
+    if(order_preview) {
+        order_string = order_preview.value
+    } else {
+        // ERROR
+        alert("ops, qualcosa è andato storto.\nProva più tardi.")
+        return
+    };
+
+    // open wa to send message
+    window.open(`https://wa.me/${config.numero_telefono}/?text=${encodeURIComponent(order_string)}`);
 }
 
 /**

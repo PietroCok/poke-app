@@ -21,15 +21,15 @@
     </nav>
 
     <nav id="theme-controls-container">
-      <div id="theme-icon-auto" title="AUTO" for="theme-controller" class="icon-button icon-color" onclick="handleTheme('auto')">
+      <div id="theme-icon-auto" title="AUTO" class="icon-button icon-color hover hidden" onclick="handleTheme('auto')">
         <i class="fa-solid fa-a"></i>
       </div>
 
-      <div id="theme-icon-light" title="LIGHT" for="theme-controller" class="icon-button icon-color hidden" onclick="handleTheme('light')">
+      <div id="theme-icon-light" title="LIGHT" class="icon-button icon-color hover hidden" onclick="handleTheme('light')">
         <i class="fa-solid fa-sun"></i>
       </div>
 
-      <div id="theme-icon-dark" title="DARK" for="theme-controller" class="icon-button icon-color hidden" onclick="handleTheme('dark')">
+      <div id="theme-icon-dark" title="DARK" class="icon-button icon-color hover hidden" onclick="handleTheme('dark')">
         <i class="fa-solid fa-moon"></i>
       </div>
     </nav>
@@ -107,24 +107,25 @@
 
     <div id="order-name-container">
       <label for="order-name">Nome</label>
-      <input type="text" name="order-name" id="order-name">
+      <input type="text" name="order-name" id="order-name" onchange="setOrderName(this)">
     </div>
 
     <div id="order-time-container">
       <label for="order-time">Orario</label>
-      <input type="time" name="order-time" step="900" id="order-time">
+      <input type="time" name="order-time" id="order-time" oninput="setOrderTime(this)">
     </div>
 
     <div id="order-price-container">
-      <span id="order-price">Totale:<span>0,00</span>€</span>
+      <span>Totale:</span>
+      <span><span id="order-price">0,00</span>€</span>
     </div>
 
-    <div id="order-preview-controls">
+    <!-- <div id="order-preview-controls">
       <input type="checkbox" name="fullorder-preview" id="fullorder-preview" checked>
       <label id="full-preview" for="fullorder-preview" class="hidden">Ordine completo</label>
       <label id="compact-preview" class="hidden" for="fullorder-preview">Ordine compatto</label>
       <label class="custom-checkbox" for="fullorder-preview"></label>
-    </div>
+    </div> -->
 
     <textarea name="order-preview" id="order-preview" rows="3"></textarea>
 

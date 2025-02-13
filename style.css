@@ -114,13 +114,18 @@ body>header {
     z-index: 3;
     top: 0;
     margin: .5em;
-    font-size: large;
-    background-color: var(--main-bg);
+    font-size: x-large;
     
     &#cart-menu{
       cursor: pointer;
-      box-shadow: 0 0 2px 2px var(--accent-2);
       left: 0;
+      background-color: var(--main-bg);
+      box-shadow: -20px -20px 0px 20px var(--main-bg);
+
+      &:hover{
+        box-shadow:0 0 8px 1px var(--accent-5),
+        -20px -20px 0px 20px var(--main-bg);
+      }
     }
 
     &#theme-controls-container{
@@ -132,9 +137,13 @@ body>header {
       div{
         width: 2em;
         cursor: pointer;
+        font-size: x-large;
+        overflow: hidden;
+        box-shadow: 20px -20px 0px 20px var(--main-bg);
 
         &:hover {
-          box-shadow: 0 0 8px 1px var(--accent-5);
+          box-shadow:0 0 8px 1px var(--accent-5),
+          20px -20px 0px 20px var(--main-bg);
         }
       }
     }
@@ -459,9 +468,8 @@ dialog {
     padding: .5em;
     padding-bottom: 1em;
 
-    #close-cart {
-      width: 2em;
-      aspect-ratio: 1;
+    button{
+      font-size: x-large;
     }
 
     #cart-price-container {
@@ -482,12 +490,6 @@ dialog {
     bottom: 0;
     display: flex;
     justify-content: center;
-
-    /* div {
-      width: 80%;
-      display: flex;
-      justify-content: space-between;
-    } */
 
     #clear-cart {
       background-color: var(--accent-1);
@@ -600,8 +602,13 @@ input[type="checkbox"] {
     gap: 1em;
     width: 100%;
 
-    label{
+    label,
+    > span{
       min-width: 22%;
+      text-align: left;
+      span{
+        margin-right: .5em;
+      }
     }
   }
 
@@ -613,7 +620,7 @@ input[type="checkbox"] {
 
   textarea{
     padding: 10px;
-    margin: 1em;
+    margin: 1em 0;
   }
 
   .button-wrapper{
@@ -627,6 +634,11 @@ input[type="checkbox"] {
 
   #order-price span{
     margin-left: 1em;
+    margin-right: .5em;
+  }
+
+  .button-wrapper{
+    position: relative;
   }
 }
 
@@ -705,6 +717,8 @@ button {
   box-shadow: 0 0 8px 1px var(--accent-5);
 }
 
+
+
 .extra i.hover:hover{
   box-shadow: inset 0 0 8px 1px var(--accent-5);
 }
@@ -735,6 +749,12 @@ button {
   .hover:hover,
   button:hover {
       box-shadow: none !important;
+  }
+
+  #theme-controls-container{
+    div:hover{
+      box-shadow: 20px -20px 0px 20px var(--main-bg) !important;
+    }
   }
 
   .extra i.click-feedback{

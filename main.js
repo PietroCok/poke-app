@@ -143,7 +143,6 @@ function checkSelection(evt) {
 
   if (selectedElem.getAttribute("type") == "radio") {
     selected.dimension = selectedElem.id.split("-")[1];
-    generateOrder();
     return;
   }
 }
@@ -155,7 +154,7 @@ function addExtra(evt) {
   addingredient(group, option)
 }
 
-function addingredient(group, option, quantity = 1, generate = true) {
+function addingredient(group, option, quantity = 1) {
   if(!group) return;
 
   if (!selected.ingredients[group]) {
@@ -178,10 +177,9 @@ function addingredient(group, option, quantity = 1, generate = true) {
   }
 
   recalculateLimits();
-  if (generate) generateOrder();
 }
 
-function removeIngredient(group, option, generate = true) {
+function removeIngredient(group, option) {
   if (typeof option != "string") {
     option = option.id || "";
   }
@@ -192,53 +190,8 @@ function removeIngredient(group, option, generate = true) {
   document.querySelector(".option-container:has(#" + option + ")").removeAttribute("data-extra");
 
   recalculateLimits();
-  if (generate) generateOrder();
 }
 
-
-function changeTime() {
-  const order_time = document.getElementById('order-time');
-  if (order_time) selected['time'] = order_time.value;
-
-  generateOrder();
-}
-
-/**
- * Genera stringa dell'ordine
- */
-function generateOrder() {
-
-  let order = `${selected.dimension.toUpperCase()}: `;
-
-  const _selected = selected.ingredients;
-  for (const [group, elements] of Object.entries(_selected)) {
-    for (const element of elements) {
-      order += element.id.replaceAll("-", " ").replaceAll("--", "'") + (element.quantity > 1 ? " x" + element.quantity : "") + ", ";
-    }
-  }
-  // rimozione ultima virgola
-  order = order.slice(0, order.length - 2);
-
-  // recupero orario
-  const order_time = document.getElementById('order-time');
-
-  const complete_order_string =
-    `Buongiorno,
-Vorrei ordinare una poke da asporto che passerei a ritirare ${order_time?.value ? "per le: " : "a breve"}${order_time?.value}.
-
-${order}`;
-
-
-  compactOrder = order;
-  fullOrder = complete_order_string;
-
-  changePreviewType();
-
-  // salva in localstorage
-  localStorage.setItem("poke", JSON.stringify(selected));
-
-  return order;
-}
 
 /**
  * Converts an item to a string
@@ -492,10 +445,6 @@ function addActions() {
   // recalculate limits on dimension change
   const btns_change_dim = document.querySelectorAll("#dimensione > div");
   if (btns_change_dim) btns_change_dim.forEach(elem => elem.onchange = recalculateLimits);
-
-  // capture change time
-  const btn_time = document.getElementById('order-time');
-  if (btn_time) btn_time.onchange = changeTime;
 
   // message preview
   const btn_preview_type = document.getElementById('fullorder-preview');
