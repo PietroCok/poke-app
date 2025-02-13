@@ -111,7 +111,7 @@ function setingredientsGroups(config) {
         <label for="${id}"> ${option.name} </label>
         <input type="checkbox" id="${id}" data-group="${name}">
         <span class="extra" title="aggiungi extra" >
-          <i class="fa-solid fa-plus" data-group="${name}" data-option="${id}"></i>
+          <i class="fa-solid fa-plus hover" data-group="${name}" data-option="${id}" onclick="clickFeedback(this)"></i>
         </span>
       </div>
       `
@@ -156,6 +156,8 @@ function addExtra(evt) {
 }
 
 function addingredient(group, option, quantity = 1, generate = true) {
+  if(!group) return;
+
   if (!selected.ingredients[group]) {
     selected.ingredients[group] = [];
   }
