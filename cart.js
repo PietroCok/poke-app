@@ -343,14 +343,16 @@ function updateCart(cart) {
                     </div>
                     <button 
                         id="edit-item" 
-                        class="icon-button icon-color" 
+                        class="icon-button icon-color"
+                        title="Modifica" 
                         onclick="editItem('${item.id}')"
                     >
                     <i class="fa-solid fa-pen"></i>
                     </button>
                     <button 
                         id="remove-item" 
-                        class="icon-button icon-color-bad" 
+                        class="icon-button icon-color-bad"
+                        title="Rimuovi dal carrello"
                         onclick="removeFromCart('${item.id}')"
                     >
                     <i class="fa-solid fa-trash"></i>
@@ -368,7 +370,8 @@ function updateCart(cart) {
 
                 <button 
                     id="edit-item" 
-                    class="icon-button" 
+                    class="icon-button"
+                    title="Modifica"
                     onclick="editItem('${item.id}')"
                 >
                 <i class="fa-solid fa-pen"></i>
@@ -376,7 +379,8 @@ function updateCart(cart) {
     
                 <button
                     id="clone-item" 
-                    class="icon-button" 
+                    class="icon-button"
+                    title="Crea una copia"
                     onclick="cloneItem('${item.id}')"
                 >
                 <i class="fa-solid fa-clone"></i>
@@ -384,7 +388,8 @@ function updateCart(cart) {
     
                 <button 
                     id="star-item" 
-                    class="icon-button" 
+                    class="icon-button"
+                    title="Aggiungi ai preferiti"
                     onclick="starItem('${item.id}')"
                 >
                 <i class="fa-solid fa-star"></i>
@@ -392,7 +397,8 @@ function updateCart(cart) {
                 
                 <button 
                     id="remove-item" 
-                    class="icon-button" 
+                    class="icon-button"
+                    title="Rimuovi dal carrello"
                     onclick="removeFromCart('${item.id}')"
                 >
                 <i class="fa-solid fa-trash"></i>
@@ -401,6 +407,13 @@ function updateCart(cart) {
             </details>
         </div>
         `;
+
+        // update cart count
+        const menuElem = document.getElementById('cart-menu');
+        if(menuElem) menuElem.dataset.cartcount = cart.length > 0 ? cart.length : '';
+
+        const headerElem = document.getElementById('cart-count');
+        if(headerElem) headerElem.textContent = `( ${cart.length} )`;
 
         const itemElem = convertToHTML(itemElemStr);
         cartElem.append(itemElem);

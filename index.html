@@ -16,11 +16,11 @@
 
 <body>
   <header>
-    <nav id="cart-menu" class="icon-button" onclick="openCart()">
+    <nav id="cart-menu" title="Carello" class="icon-button" onclick="openCart()">
       <i class="fa-solid fa-cart-shopping"></i>
     </nav>
 
-    <nav id="main-menu-container" class="icon-button">
+    <nav id="main-menu-container" title="Menu principale" class="icon-button">
       <details>
         <summary>
           <div id="main-menu" class="icon-button icon-color" onclick="handleMenuClick()">
@@ -61,23 +61,24 @@
 
     <section class="button-wrapper">
       <div>
-        <button id="clear-order" onclick="clearConfigurator()">Cancella</button>
-        <button id="add-cart" onclick="askItemName()">Salva</button>
+        <button id="clear-order" title="Svuota configuratore" onclick="clearConfigurator()">Cancella</button>
+        <button id="add-cart" title="Aggiungi al carello" onclick="askItemName()">Salva</button>
       </div>
     </section>
   </section>
 
   <section id="cart" class="hidden">
     <header>
-      <button id="close-cart" class="icon-button icon-color-bad" onclick="closeCart()">
+      <button id="close-cart" title="Chiudi carrello" class="icon-button icon-color-bad" onclick="closeCart()">
         <i class="fa-solid fa-x"></i>
       </button>
 
       <div id="cart-price-container">
+        <div id="cart-count" title="Elementi nel carrello"></div>
         <div class="icon-color">
           <i class="fa-solid fa-coins"></i>
         </div>
-        <div id="cart-price"><span></span>€</div>
+        <div id="cart-price" title="Totale carrello"><span></span>€</div>
       </div>
 
       <div class="icon-button"></div>
@@ -88,8 +89,8 @@
 
     <footer class="button-wrapper">
       <div>
-        <button id="clear-cart" onclick="clearCart()">Svuota</button>
-        <button id="btn-preview-order" onclick="showOrderPreview()">Invia</button>
+        <button id="clear-cart" title="Svuota carello" onclick="clearCart()">Svuota</button>
+        <button id="btn-preview-order" title="Visualizza preview ordine" onclick="showOrderPreview()">Invia</button>
       </div>
     </footer>
   </section>
