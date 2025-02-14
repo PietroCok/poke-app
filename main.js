@@ -436,6 +436,20 @@ function changePreviewType() {
   outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
 }
 
+function handleMenuClick(){
+  // get details state
+  const parentContainer = document.querySelector('#main-menu-container details');
+  if(parentContainer && !parentContainer.open){
+    // close theme menu
+    loadTheme();
+  }
+}
+
+function closeMenu(){
+  const elem = document.querySelector('#main-menu-container details');
+  if(elem) elem.open = false;
+}
+
 function addActions() {
   // extra of the same element
   document.querySelectorAll(".extra").forEach(elem => {
@@ -460,6 +474,20 @@ function addActions() {
   if(dialog_preview) dialog_preview.addEventListener('keypress', (evt) => {
     if(evt.key == 'Enter') sendOrder();
   })
+
+  // visualizza sempre una singola icona per ogni sottomenu all'apertura del menu
+  const main_menu = document.getElementById('main-menu');
+  if(main_menu) main_menu.onclick = handleMenuClick;
+  
+  // close menu if click outside of it
+  const main_menu_container = document.getElementById('main-menu-container');
+  document.addEventListener('touchstart', (evt) => handleCloseMenu(evt));
+  document.addEventListener('mousedown', (evt) => handleCloseMenu(evt));
+  function handleCloseMenu(evt){
+    if(!main_menu_container.contains(evt.target)){
+      closeMenu();
+    }
+  }
 }
 
 

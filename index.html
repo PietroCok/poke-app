@@ -20,20 +20,31 @@
       <i class="fa-solid fa-cart-shopping"></i>
     </nav>
 
-    <nav id="theme-controls-container">
-      <div id="theme-icon-auto" title="AUTO" class="icon-button icon-color hover hidden" onclick="handleTheme('auto')">
-        <i class="fa-solid fa-a"></i>
-      </div>
+    <nav id="main-menu-container" class="icon-button">
+      <details>
+        <summary>
+          <div id="main-menu" class="icon-button icon-color" onclick="handleMenuClick()">
+            <i class="fa-solid fa-bars"></i>
+          </div>
+        </summary>
 
-      <div id="theme-icon-light" title="LIGHT" class="icon-button icon-color hover hidden" onclick="handleTheme('light')">
-        <i class="fa-solid fa-sun"></i>
-      </div>
-
-      <div id="theme-icon-dark" title="DARK" class="icon-button icon-color hover hidden" onclick="handleTheme('dark')">
-        <i class="fa-solid fa-moon"></i>
-      </div>
+        <div id="theme-controls-container">
+          <div id="theme-icon-auto" title="AUTO" class="icon-button icon-color hover hidden" onclick="handleTheme('auto')">
+            <i class="fa-solid fa-a"></i>
+          </div>
+    
+          <div id="theme-icon-light" title="LIGHT" class="icon-button icon-color hover hidden" onclick="handleTheme('light')">
+            <i class="fa-solid fa-sun"></i>
+          </div>
+    
+          <div id="theme-icon-dark" title="DARK" class="icon-button icon-color hover hidden" onclick="handleTheme('dark')">
+            <i class="fa-solid fa-moon"></i>
+          </div>
+        </div>
+      </details>
     </nav>
 
+    
 
   </header>
 
@@ -69,9 +80,7 @@
         <div id="cart-price"><span></span>€</div>
       </div>
 
-      <button id="cart-menu" class="icon-button icon-color" onclick="">
-        <i class="fa-solid fa-bars"></i>
-      </button>
+      <div class="icon-button"></div>
     </header>
 
     <section id="cart-content">

@@ -112,14 +112,14 @@ body>header {
     align-items: center;
     position: fixed;
     z-index: 3;
-    top: 0;
-    margin: .5em;
+    top: .5rem;
     font-size: x-large;
     
     &#cart-menu{
       cursor: pointer;
-      left: 0;
+      left: .5rem;
       background-color: var(--main-bg);
+      color: var(--accent-3);
       box-shadow: -20px -20px 0px 20px var(--main-bg);
 
       &:hover{
@@ -128,22 +128,51 @@ body>header {
       }
     }
 
-    &#theme-controls-container{
+    &#main-menu-container{
+      position: fixed;
       right: 0;
-      display: flex;
-      width: fit-content;
-      gap: .5em;
+      top: 0;
+      z-index: 10;
+      
+      details{
+        position: fixed;
+        top: 8px;
+        right: 8px;
+        background-color: var(--main-bg);
+        border-radius: 10px;
+        border: 1px solid transparent;
+        &[open]{
+          border: 1px solid var(--accent-3);
 
-      div{
-        width: 2em;
+          #main-menu{
+            margin-bottom: .5em;
+          }
+        }
+      }
+      
+      summary{
+        display: flex;
+        justify-content: flex-end;
+      }
+      
+      #main-menu{
         cursor: pointer;
-        font-size: x-large;
-        overflow: hidden;
-        box-shadow: 20px -20px 0px 20px var(--main-bg);
-
+    
         &:hover {
-          box-shadow:0 0 8px 1px var(--accent-5),
-          20px -20px 0px 20px var(--main-bg);
+          box-shadow:0 0 8px 1px var(--accent-5);
+        }
+      }
+
+      #theme-controls-container{
+        display: flex;
+        width: fit-content;
+        gap: .5em;
+  
+        div{
+          width: 2em;
+          cursor: pointer;
+          font-size: x-large;
+          overflow: hidden;
         }
       }
     }
@@ -210,7 +239,7 @@ body>header {
     width: 150px;
     padding: 5px;
     position: relative;
-    margin: 10px auto 10px auto;
+    margin: 25px auto 10px auto;
   }
 
   h4 {
@@ -749,12 +778,6 @@ button {
   .hover:hover,
   button:hover {
       box-shadow: none !important;
-  }
-
-  #theme-controls-container{
-    div:hover{
-      box-shadow: 20px -20px 0px 20px var(--main-bg) !important;
-    }
   }
 
   .extra i.click-feedback{

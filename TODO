@@ -2,8 +2,9 @@ DA IMPLEMENTARE
 - contatore elementi nel carrello
 
 - aggiunta preferiti
--- questo dovrebbe permettere di salvare (sempre nel localStorage) diverse poke con un nome specifico, in modo da poterle aggiungere velocemente nel carrello
--- sistema di recupero poke preferite dal localstorage
+- salvataggio elemeto in configurazione o dal carrello
+- visualizzazione elenco poke nei preferiti (stile carrello)
+- caricamento elemeto dai preferiti nel configuratore o nel carrello (valutare se si riesce a rendere le operazioni intuibili o se è meglio implementare una sola e lasciare all'utente la possibilità di spostare l'elemento dove serve)
 
 DA CORREGGERE
 
@@ -15,6 +16,8 @@ DA VALUTARE
 -- caricamento elemento nel configuratore
 -- cancellazione elemento dal carrello
 -- messaggi di errore (rimuovere gli attuali alert)
+
+- aggiungere persistenza (nuova versione applicazione)
 
 - rimuovere codice inutilizzato
 - refactoring codice
