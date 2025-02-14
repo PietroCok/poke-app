@@ -130,8 +130,8 @@ body>header {
 
     &#main-menu-container{
       position: fixed;
-      right: 0;
-      top: 0;
+      right: 8px;
+      top: 8px;
       z-index: 10;
       
       details{
