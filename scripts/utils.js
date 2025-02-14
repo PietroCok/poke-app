@@ -31,17 +31,3 @@ function closeDialog(id){
     const dialog = document.getElementById(id);
     if(dialog) dialog.close();
 }
-
-
-/**
- * Add some feedback style to elements
- * 
- */
-function clickFeedback(elem){
-    if(elem){
-        elem.classList.add('click-feedback');
-        setTimeout(() => {
-            elem.classList.remove('click-feedback');
-        }, 100);
-    }
-}

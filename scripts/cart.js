@@ -21,7 +21,7 @@ function closeCart() {
  */
 function getCart() {
     // get cart from localStorage
-    let cart = JSON.parse(localStorage.getItem('poke-cart'));
+    let cart = JSON.parse(localStorage.getItem('cart'));
     if (!cart) {
         cart = [];
     }
@@ -262,16 +262,6 @@ function cloneItem(id) {
     addToCart(copied_item, true);
 }
 
-
-/**
- * Add an item to starred items
- * 
- * @param {String} id 
- */
-function starItem(id) {
-    // TODO
-}
-
 /**
  * Loads an item in the configurator
  * 
@@ -302,7 +292,7 @@ function editItem(id) {
  */
 function saveCart(cart, update = true) {
     // save cart to localStorage
-    localStorage.setItem('poke-cart', JSON.stringify(cart));
+    localStorage.setItem('cart', JSON.stringify(cart));
 
     if (update) updateCart(cart);
 }
@@ -312,7 +302,7 @@ function saveCart(cart, update = true) {
  * 
  * @param {Object} cart - cart with items to show
  */
-function updateCart(cart) {
+function updateCart(cart = getCart()) {
     // save ids of open elements
     const openElems = Array.from(document.querySelectorAll('details[open]'));
     let openElemsId = [];
@@ -370,7 +360,7 @@ function updateCart(cart) {
 
                 <button 
                     id="edit-item" 
-                    class="icon-button"
+                    class="icon-button icon-color"
                     title="Modifica"
                     onclick="editItem('${item.id}')"
                 >
@@ -379,7 +369,7 @@ function updateCart(cart) {
     
                 <button
                     id="clone-item" 
-                    class="icon-button"
+                    class="icon-button icon-color"
                     title="Crea una copia"
                     onclick="cloneItem('${item.id}')"
                 >
@@ -388,7 +378,7 @@ function updateCart(cart) {
     
                 <button 
                     id="star-item" 
-                    class="icon-button"
+                    class="icon-button ${isStarred(item.id) ? 'disabled' : ''}"
                     title="Aggiungi ai preferiti"
                     onclick="starItem('${item.id}')"
                 >

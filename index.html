@@ -6,11 +6,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
-  <link rel="stylesheet" href="./style.css">
-  <script src="./theme.js" defer></script>
-  <script src="./utils.js" defer></script>
-  <script src="./cart.js" defer></script>
-  <script src="./main.js" defer></script>
+  <link rel="stylesheet" href="./styles/starred.css">
+  <link rel="stylesheet" href="./styles/style.css">
+
+  <script src="./scripts/starred.js" defer></script>
+  <script src="./scripts/theme.js" defer></script>
+  <script src="./scripts/utils.js" defer></script>
+  <script src="./scripts/cart.js" defer></script>
+  <script src="./scripts/main.js" defer></script>
   <title>POKE</title>
 </head>
 
@@ -20,7 +23,7 @@
       <i class="fa-solid fa-cart-shopping"></i>
     </nav>
 
-    <nav id="main-menu-container" title="Menu principale" class="icon-button">
+    <nav id="main-menu-container" title="Menu principale">
       <details>
         <summary>
           <div id="main-menu" class="icon-button icon-color" onclick="handleMenuClick()">
@@ -28,7 +31,7 @@
           </div>
         </summary>
 
-        <div id="theme-controls-container">
+        <div id="theme-menu-container">
           <div id="theme-icon-auto" title="AUTO" class="icon-button icon-color hover hidden" onclick="handleTheme('auto')">
             <i class="fa-solid fa-a"></i>
           </div>
@@ -41,11 +44,14 @@
             <i class="fa-solid fa-moon"></i>
           </div>
         </div>
+
+        <div id="starred-menu-container">
+          <div id="star-item" class="icon-button icon-color" onclick="openStarredItems()">
+            <i class="fa-solid fa-star"></i>
+          </div>
+        </div>
       </details>
     </nav>
-
-    
-
   </header>
 
   <section id="main">
@@ -95,7 +101,13 @@
     </footer>
   </section>
 
-
+  <section id="starred" class="hidden">
+    <header>
+      <button id="close-starred" title="Chiudi preferiti" class="icon-button icon-color-bad" onclick="closeStarred()">
+        <i class="fa-solid fa-x"></i>
+      </button>
+    </header>
+  </section>
 
   <dialog id="add-item-name">
     <label for="item-name">Dai un nome alla tua poke<input type="text" name="item-name" id="item-name"></label>

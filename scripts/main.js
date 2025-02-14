@@ -112,7 +112,7 @@ function setingredientsGroups(config) {
         <label for="${id}"> ${option.name} </label>
         <input type="checkbox" id="${id}" data-group="${name}">
         <span class="extra" title="aggiungi extra" >
-          <i class="fa-solid fa-plus hover" data-group="${name}" data-option="${id}" onclick="clickFeedback(this)"></i>
+          <i class="fa-solid fa-plus hover" data-group="${name}" data-option="${id}"></i>
         </span>
       </div>
       `
@@ -131,21 +131,26 @@ function setingredientsGroups(config) {
 // in particolare verifica che non venga superato il limite di elementi in base alla dimensione scelta
 function checkSelection(evt) {
   const selectedElem = evt.target;
-  if (selectedElem.getAttribute("type") == "checkbox") {
-    const group = selectedElem.dataset.group;
+  const checkType = selectedElem.getAttribute("type");
 
-    if (selectedElem.checked) {
-      addingredient(group, selectedElem.id)
-    } else {
-      removeIngredient(group, selectedElem.id);
-    }
-    return;
+  switch (checkType){
+    case 'checkbox':
+      const group = selectedElem.dataset.group;
+
+      if (selectedElem.checked) {
+        addingredient(group, selectedElem.id)
+      } else {
+        removeIngredient(group, selectedElem.id);
+      }
+      break;
+
+    case 'radio':
+      selected.dimension = selectedElem.id.split("-")[1];
+      break;
   }
 
-  if (selectedElem.getAttribute("type") == "radio") {
-    selected.dimension = selectedElem.id.split("-")[1];
-    return;
-  }
+  // save item from configurator on localStorage
+  localStorage.setItem("item", JSON.stringify(selected));
 }
 
 function addExtra(evt) {
@@ -244,7 +249,7 @@ function loadIntoConfigurator(_item = null) {
   let item = _item;
   if(!_item){
     try {
-      item = JSON.parse(localStorage.getItem("poke"));
+      item = JSON.parse(localStorage.getItem("item"));
     } catch (error) {
       console.error("Failed to load item from localStorage")
       return;
@@ -265,7 +270,7 @@ function loadIntoConfigurator(_item = null) {
   }
 
   selected = JSON.parse(JSON.stringify(item));
-  localStorage.setItem("poke", JSON.stringify(selected));
+  localStorage.setItem("item", JSON.stringify(selected));
 }
 
 function clearConfigurator() {
@@ -284,7 +289,7 @@ function clearConfigurator() {
     ingredients: {},
   }
 
-  localStorage.setItem("poke", JSON.stringify(selected));
+  localStorage.setItem("item", JSON.stringify(selected));
 }
 
 // Ricalcola i limiti per tutti gli ingredienti selezionati
@@ -401,20 +406,6 @@ function updateLimits(group, current, max) {
     document.getElementById(group + "-limit-current").classList.remove("over-limit")
   }
 }
-
-// function addOrderToMessage(evt) {
-//   const elem = evt.target;
-//   let order = document.getElementById('generated-order').value;
-
-//   // controllo ordine completo
-//   // poke configurata
-//   if (!order) {
-//     evt.preventDefault();
-//     return;
-//   }
-
-//   elem.href = `https://wa.me/${config.numero_telefono}/?text=` + encodeURIComponent(order);
-// }
 
 function changePreviewType() {
   const previewBtn = document.getElementById('fullorder-preview');

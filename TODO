@@ -1,10 +1,9 @@
 DA IMPLEMENTARE
-
-- aggiunta preferiti
-- salvataggio elemeto in configurazione o dal carrello
-- visualizzazione elenco poke nei preferiti (stile carrello)
-- caricamento elemeto dai preferiti nel configuratore o nel carrello (valutare se si riesce a rendere le operazioni intuibili o se è meglio implementare una sola e lasciare all'utente la possibilità di spostare l'elemento dove serve)
-- valutare svuotamento automatica carrello ad invio ordine
+- aggiunta elemento ai preferiti
+- visualizzazione elenco elementi preferiti
+- caricamento elemento da preferiti a carello o configuratore
+- eliminazione elemento dai preferiti
+- valutare svuotamento automatico carrello ad invio ordine
 
 DA CORREGGERE
 
@@ -17,7 +16,7 @@ DA VALUTARE
 -- cancellazione elemento dal carrello
 -- messaggi di errore (rimuovere gli attuali alert)
 
-- aggiungere persistenza vera (nuova versione applicazione)
+- aggiungere persistenza vera con db (nuova versione applicazione)
 
 - rimuovere codice inutilizzato
 - refactoring codice
