@@ -32,7 +32,8 @@ function setTitle(config) {
   </div>
   `
 
-  document.querySelector("header").append(convertToHTML(elem));
+  // Not needed until final shipping
+  //document.querySelector("header").append(convertToHTML(elem));
 }
 
 function setDimensions(config) {
