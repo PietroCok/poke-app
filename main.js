@@ -1,4 +1,4 @@
-let config;
+let config;  
 
 let selected = {
   dimension: "regular",
@@ -32,7 +32,8 @@ function setTitle(config) {
   </div>
   `
 
-  document.querySelector("header").append(convertToHTML(elem));
+  // Not needed until final shipping
+  //document.querySelector("header").append(convertToHTML(elem));
 }
 
 function setDimensions(config) {
@@ -73,7 +74,7 @@ function setDimensions(config) {
 }
 
 function setingredientsGroups(config) {
-  const main_section = document.querySelector("#main");
+  const main_section = document.querySelector("#ingredients");
   const groups = config.gruppi;
 
   for (const [name, group] of Object.entries(groups)) {
@@ -111,7 +112,7 @@ function setingredientsGroups(config) {
         <label for="${id}"> ${option.name} </label>
         <input type="checkbox" id="${id}" data-group="${name}">
         <span class="extra" title="aggiungi extra" >
-          <i class="fa-solid fa-plus" data-group="${name}" data-option="${id}"></i>
+          <i class="fa-solid fa-plus hover" data-group="${name}" data-option="${id}" onclick="clickFeedback(this)"></i>
         </span>
       </div>
       `
@@ -124,12 +125,6 @@ function setingredientsGroups(config) {
 
     main_section.append(sectionElem)
   }
-}
-
-function convertToHTML(string) {
-  const _tmp = document.createElement("div");
-  _tmp.innerHTML = string;
-  return _tmp.firstChild;
 }
 
 // esegue controlli al click di ogni elemento delle sezioni
@@ -149,7 +144,6 @@ function checkSelection(evt) {
 
   if (selectedElem.getAttribute("type") == "radio") {
     selected.dimension = selectedElem.id.split("-")[1];
-    generateOrder();
     return;
   }
 }
@@ -161,7 +155,9 @@ function addExtra(evt) {
   addingredient(group, option)
 }
 
-function addingredient(group, option, quantity = 1, generate = true) {
+function addingredient(group, option, quantity = 1) {
+  if(!group) return;
+
   if (!selected.ingredients[group]) {
     selected.ingredients[group] = [];
   }
@@ -182,10 +178,9 @@ function addingredient(group, option, quantity = 1, generate = true) {
   }
 
   recalculateLimits();
-  if (generate) generateOrder();
 }
 
-function removeIngredient(group, option, generate = true) {
+function removeIngredient(group, option) {
   if (typeof option != "string") {
     option = option.id || "";
   }
@@ -196,52 +191,37 @@ function removeIngredient(group, option, generate = true) {
   document.querySelector(".option-container:has(#" + option + ")").removeAttribute("data-extra");
 
   recalculateLimits();
-  if (generate) generateOrder();
 }
 
-
-function changeTime() {
-  const order_time = document.getElementById('order-time');
-  if (order_time) selected['time'] = order_time.value;
-
-  generateOrder();
-}
 
 /**
- * Genera stringa dell'ordine
+ * Converts an item to a string
+ * 
+ * @param {Object} item
+ * 
+ * @retruns a string representing the item
  */
-function generateOrder() {
+function toString(item = {}){
 
-  let order = `${selected.dimension.toUpperCase()}: `;
+  let str = `${item.dimension.toUpperCase()}: `;
+  const ingredients = item.ingredients;
+  const groups = Object.keys(ingredients);
+  groups.sort(sortIngredientGroups);
 
-  const _selected = selected.ingredients;
-  for (const [group, elements] of Object.entries(_selected)) {
-    for (const element of elements) {
-      order += element.id.replaceAll("-", " ").replaceAll("--", "'") + (element.quantity > 1 ? " x" + element.quantity : "") + ", ";
+  for(const group of groups){
+    for(const ingredient of ingredients[group]){
+      str += ingredient.id.replaceAll("-", " ").replaceAll("--", "'") + (ingredient.quantity > 1 ? " x" + ingredient.quantity : "") + ", ";
     }
   }
+
   // rimozione ultima virgola
-  order = order.slice(0, order.length - 2);
+  str = str.slice(0, str.length - 2);
 
-  // recupero orario
-  const order_time = document.getElementById('order-time');
+  return str;
+}
 
-  const complete_order_string =
-    `Buongiorno,
-Vorrei ordinare una poke da asporto che passerei a ritirare ${order_time.value ? "per le: " : "a breve"}${order_time.value}.
-
-${order}`;
-
-
-  compactOrder = order;
-  fullOrder = complete_order_string;
-
-  changePreviewType();
-
-  // salva in localstorage
-  localStorage.setItem("poke", JSON.stringify(selected));
-
-  return order;
+function sortIngredientGroups(A, B){
+  return config.gruppi[A].ordine - config.gruppi[B].ordine;
 }
 
 function copyOrder() {
@@ -260,44 +240,35 @@ function copyOrder() {
 /**
  * Carica un ordine (da localstorage)
  */
-function loadOrder() {
-  console.log("Loading order from localStorage...");
-
-  let order;
-  try {
-    order = JSON.parse(localStorage.getItem("poke"));
-  } catch (error) {
-    console.error("Failed to load order from localStorage")
-    return;
-  }
-  if (!order) return;
-
-  // rimuove tutti i checks
-  for (const ingredient of document.querySelectorAll('section input[type="checkbox"]')) {
-    ingredient.checked = false;
+function loadIntoConfigurator(_item = null) {
+  let item = _item;
+  if(!_item){
+    try {
+      item = JSON.parse(localStorage.getItem("poke"));
+    } catch (error) {
+      console.error("Failed to load item from localStorage")
+      return;
+    }
+    if (!item) return;
   }
 
-  document.getElementById('order-time').value = order.time;
-  selected.time = order.time;
+  clearConfigurator();
 
-  document.getElementById("dim-" + order.dimension).checked = true;
+  document.getElementById("dim-" + item.dimension).checked = true;
 
   // seleziono gli ingredienti salvati
-  for (const group of Object.keys(order.ingredients)) {
-    for (const ingredient of order.ingredients[group]) {
+  for (const group of Object.keys(item.ingredients)) {
+    for (const ingredient of item.ingredients[group]) {
       addingredient(group, ingredient.id, ingredient.quantity, false);
       document.getElementById(ingredient.id).checked = true;
     }
   }
 
-  generateOrder();
-
-  console.log(order);
-
-  selected = JSON.parse(JSON.stringify(order));
+  selected = JSON.parse(JSON.stringify(item));
+  localStorage.setItem("poke", JSON.stringify(selected));
 }
 
-function clearOrder() {
+function clearConfigurator() {
   // rimuove tutti i checks
   const _selected = selected.ingredients;
   for (const group of Object.keys(_selected)) {
@@ -310,14 +281,10 @@ function clearOrder() {
   selected = {
     dimension: _dim ?? "regular",
     time: '',
-    ingredients: {}
+    ingredients: {},
   }
 
-  fullOrder = '';
-  compactOrder = '';
-
-  document.getElementById('generated-order').value = '';
-  document.getElementById('order-time').value = null;
+  localStorage.setItem("poke", JSON.stringify(selected));
 }
 
 // Ricalcola i limiti per tutti gli ingredienti selezionati
@@ -400,6 +367,10 @@ function updatePrice(extra) {
     elem.textContent = totalPrice.toFixed(2);
     elem.title = `${basePrice.toFixed(2)}€ (base) + ${extraPrice.toFixed(2)}€ (extra)`;
   }
+
+  selected.totalPrice = totalPrice;
+  selected.basePrice = basePrice;
+  selected.extraPrice = extraPrice;
 }
 
 function sortIngredientByPrice(A, B) {
@@ -431,24 +402,28 @@ function updateLimits(group, current, max) {
   }
 }
 
-function addOrderToMessage(evt) {
-  const elem = evt.target;
-  let order = document.getElementById('generated-order').value;
+// function addOrderToMessage(evt) {
+//   const elem = evt.target;
+//   let order = document.getElementById('generated-order').value;
 
-  // controllo ordine completo
-  // poke configurata
-  if (!order) {
-    evt.preventDefault();
-    return;
-  }
+//   // controllo ordine completo
+//   // poke configurata
+//   if (!order) {
+//     evt.preventDefault();
+//     return;
+//   }
 
-  elem.href = `https://wa.me/${config.numero_telefono}/?text=` + encodeURIComponent(order);
-}
+//   elem.href = `https://wa.me/${config.numero_telefono}/?text=` + encodeURIComponent(order);
+// }
 
 function changePreviewType() {
   const previewBtn = document.getElementById('fullorder-preview');
   const outputElem = document.getElementById("generated-order");
   const timeElem = document.getElementById('order-time-container');
+
+  if(!outputElem) return;
+  if(!previewBtn) return;
+  if(!timeElem) return;
 
   if (previewBtn.checked) {
     outputElem.value = fullOrder;
@@ -462,11 +437,21 @@ function changePreviewType() {
   outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
 }
 
+function handleMenuClick(){
+  // get details state
+  const parentContainer = document.querySelector('#main-menu-container details');
+  if(parentContainer && !parentContainer.open){
+    // close theme menu
+    loadTheme();
+  }
+}
+
+function closeMenu(){
+  const elem = document.querySelector('#main-menu-container details');
+  if(elem) elem.open = false;
+}
 
 function addActions() {
-  const btn_clear_order = document.getElementById("clear-order");
-  if (btn_clear_order) btn_clear_order.onclick = clearOrder;
-
   // extra of the same element
   document.querySelectorAll(".extra").forEach(elem => {
     if (elem) elem.onclick = addExtra
@@ -476,17 +461,34 @@ function addActions() {
   const btns_change_dim = document.querySelectorAll("#dimensione > div");
   if (btns_change_dim) btns_change_dim.forEach(elem => elem.onchange = recalculateLimits);
 
-  // capture change time
-  const btn_time = document.getElementById('order-time');
-  if (btn_time) btn_time.onchange = changeTime;
-
-  // link order for message
-  const btn_send_order = document.getElementById('send-order');
-  if (btn_send_order) btn_send_order.onclick = addOrderToMessage;
-
   // message preview
   const btn_preview_type = document.getElementById('fullorder-preview');
   if (btn_preview_type) btn_preview_type.onchange = changePreviewType;
+
+  // dialogs comfirm with enter
+  const dialog_name = document.getElementById('add-item-name');
+  if(dialog_name) dialog_name.addEventListener('keypress', (evt) => {
+    if(evt.key == 'Enter') addToCart();
+  })
+
+  const dialog_preview = document.getElementById('preview-order');
+  if(dialog_preview) dialog_preview.addEventListener('keypress', (evt) => {
+    if(evt.key == 'Enter') sendOrder();
+  })
+
+  // visualizza sempre una singola icona per ogni sottomenu all'apertura del menu
+  const main_menu = document.getElementById('main-menu');
+  if(main_menu) main_menu.onclick = handleMenuClick;
+  
+  // close menu if click outside of it
+  const main_menu_container = document.getElementById('main-menu-container');
+  document.addEventListener('touchstart', (evt) => handleCloseMenu(evt));
+  document.addEventListener('mousedown', (evt) => handleCloseMenu(evt));
+  function handleCloseMenu(evt){
+    if(!main_menu_container.contains(evt.target)){
+      closeMenu();
+    }
+  }
 }
 
 
@@ -497,19 +499,14 @@ async function setUp() {
 
   addActions();
 
-  loadOrder();
+  loadIntoConfigurator();
 
   recalculateLimits();
+
+  loadCart();
 }
 
 setUp();
-
-async function loadConfig() {
-  await fetch('./config.json')
-    .then(res => res.json())
-    .then(data => config = data)
-    .catch(err => err);
-}
 
 
 
