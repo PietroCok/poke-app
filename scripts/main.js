@@ -1,4 +1,4 @@
-let config;  
+let config;
 
 let selected = {
   dimension: "regular",
@@ -133,7 +133,7 @@ function checkSelection(evt) {
   const selectedElem = evt.target;
   const checkType = selectedElem.getAttribute("type");
 
-  switch (checkType){
+  switch (checkType) {
     case 'checkbox':
       const group = selectedElem.dataset.group;
 
@@ -161,7 +161,7 @@ function addExtra(evt) {
 }
 
 function addingredient(group, option, quantity = 1) {
-  if(!group) return;
+  if (!group) return;
 
   if (!selected.ingredients[group]) {
     selected.ingredients[group] = [];
@@ -200,46 +200,51 @@ function removeIngredient(group, option) {
 
 
 /**
- * Converts an item to a string
+ * Loads an item in the configurator
  * 
- * @param {Object} item
- * 
- * @retruns a string representing the item
+ * @param {String} id 
  */
-function toString(item = {}){
+function editItem(id, from = '') {
+  if (!id) return;
 
-  let str = `${item.dimension.toUpperCase()}: `;
-  const ingredients = item.ingredients;
-  const groups = Object.keys(ingredients);
-  groups.sort(sortIngredientGroups);
+  let item;
+  switch (from) {
+    case 'cart':
+      const cart = getCart();
+      item = cart.find(item => item.id == id);
+      if (!item) return;
+      // save from where the item is edited
+      if (from) item.from = from;
 
-  for(const group of groups){
-    for(const ingredient of ingredients[group]){
-      str += ingredient.id.replaceAll("-", " ").replaceAll("--", "'") + (ingredient.quantity > 1 ? " x" + ingredient.quantity : "") + ", ";
-    }
+      try {
+        loadIntoConfigurator(item);
+      } catch (error) {
+        alert(error);
+        return;
+      }
+
+      closeCart();
+      break;
+    case 'starred':
+      const starred = getStarred();
+      item = starred.find(item => item.id == id);
+      if (!item) return;
+      // save from where the item is edited
+      if (from) item.from = from;
+
+      try {
+        loadIntoConfigurator(item);
+      } catch (error) {
+        alert(error);
+        return;
+      }
+
+      closeCart();
+      closeStarred();
+      break;
   }
 
-  // rimozione ultima virgola
-  str = str.slice(0, str.length - 2);
 
-  return str;
-}
-
-function sortIngredientGroups(A, B){
-  return config.gruppi[A].ordine - config.gruppi[B].ordine;
-}
-
-function copyOrder() {
-  const text = document.querySelector("#generated-order");
-
-  if (!text.value) {
-    return;
-  }
-
-  text.select();
-  text.setSelectionRange(0, 99999);
-
-  navigator.clipboard.writeText(text.value);
 }
 
 /**
@@ -247,7 +252,8 @@ function copyOrder() {
  */
 function loadIntoConfigurator(_item = null) {
   let item = _item;
-  if(!_item){
+
+  if (!_item) {
     try {
       item = JSON.parse(localStorage.getItem("item"));
     } catch (error) {
@@ -271,6 +277,101 @@ function loadIntoConfigurator(_item = null) {
 
   selected = JSON.parse(JSON.stringify(item));
   localStorage.setItem("item", JSON.stringify(selected));
+}
+
+/**
+ * Opens dialog to enter name of item
+ */
+function askItemName() {
+  if (Object.keys(selected.ingredients).length == 0) {
+    alert('Non è possibile salvare un elemento vuoto!');
+    return;
+  }
+
+  if (selected.name) {
+    const dialog_name = document.querySelector('#add-item-name input');
+    if (dialog_name) dialog_name.value = selected.name;
+  }
+
+  const dialog_addItemName = document.getElementById('add-item-name');
+  if (dialog_addItemName) dialog_addItemName.showModal();
+}
+
+/**
+ * Save item from configurator
+ */
+function saveItem() {
+  // get loaded item in configurator
+  const item = structuredClone(selected);
+
+  const dialog_addItemName = document.getElementById("add-item-name");
+  const dialog_input = document.querySelector('#add-item-name input');
+  if (dialog_input) {
+    let name = dialog_input.value;
+    if (!name) name = 'Senza nome'
+    item.name = name;
+
+    dialog_input.value = '';
+    dialog_addItemName.close();
+  }
+
+  // check where to save item
+  // default to cart
+  switch (item.from) {
+    case 'starred':
+      updateStarredItem(item);
+      break;
+
+    case 'cart':
+    default:
+      addToCart(item);
+  }
+}
+
+/**
+ * Clone and add an item to the cart
+ * 
+ * @param {String} id - id of item to clone 
+ */
+function cloneItem(id, from) {
+  if (!id || !from) return;
+
+  let item;
+  let copy;
+  switch (from) {
+    case 'starred':
+      const starred = getStarred();
+      item = starred.find(item => item.id == id);
+      copy = structuredClone(item);
+      copy.id = getRandomId();
+      starItem(copy)
+      break;
+
+    case 'cart':
+      const cart = getCart();
+      item = cart.find(item => item.id == id);
+      copy = structuredClone(item);
+      copy.id = getRandomId();
+      addToCart(copy, true);
+
+  }
+}
+
+function sortIngredientGroups(A, B) {
+  return config.gruppi[A].ordine - config.gruppi[B].ordine;
+}
+
+function copyOrder() {
+  const text = document.querySelector("#generated-order");
+
+  if (!text.value) {
+    return;
+  }
+
+  text.select();
+  text.setSelectionRange(0, 99999);
+
+  navigator.clipboard.writeText(text.value);
 }
 
 function clearConfigurator() {
@@ -364,11 +465,11 @@ function updatePrice(extra) {
       }
     }
   }
-  
+
   // prezzo totale della bowl
   const totalPrice = basePrice + extraPrice;
   const elem = document.querySelector('#order-total-extra-price span');
-  if(elem) {
+  if (elem) {
     elem.textContent = totalPrice.toFixed(2);
     elem.title = `${basePrice.toFixed(2)}€ (base) + ${extraPrice.toFixed(2)}€ (extra)`;
   }
@@ -412,9 +513,9 @@ function changePreviewType() {
   const outputElem = document.getElementById("generated-order");
   const timeElem = document.getElementById('order-time-container');
 
-  if(!outputElem) return;
-  if(!previewBtn) return;
-  if(!timeElem) return;
+  if (!outputElem) return;
+  if (!previewBtn) return;
+  if (!timeElem) return;
 
   if (previewBtn.checked) {
     outputElem.value = fullOrder;
@@ -428,18 +529,18 @@ function changePreviewType() {
   outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
 }
 
-function handleMenuClick(){
+function handleMenuClick() {
   // get details state
   const parentContainer = document.querySelector('#main-menu-container details');
-  if(parentContainer && !parentContainer.open){
+  if (parentContainer && !parentContainer.open) {
     // close theme menu
     loadTheme();
   }
 }
 
-function closeMenu(){
+function closeMenu() {
   const elem = document.querySelector('#main-menu-container details');
-  if(elem) elem.open = false;
+  if (elem) elem.open = false;
 }
 
 function addActions() {
@@ -458,25 +559,25 @@ function addActions() {
 
   // dialogs comfirm with enter
   const dialog_name = document.getElementById('add-item-name');
-  if(dialog_name) dialog_name.addEventListener('keypress', (evt) => {
-    if(evt.key == 'Enter') addToCart();
+  if (dialog_name) dialog_name.addEventListener('keypress', (evt) => {
+    if (evt.key == 'Enter') saveItem();
   })
 
   const dialog_preview = document.getElementById('preview-order');
-  if(dialog_preview) dialog_preview.addEventListener('keypress', (evt) => {
-    if(evt.key == 'Enter') sendOrder();
+  if (dialog_preview) dialog_preview.addEventListener('keypress', (evt) => {
+    if (evt.key == 'Enter') sendOrder();
   })
 
   // visualizza sempre una singola icona per ogni sottomenu all'apertura del menu
   const main_menu = document.getElementById('main-menu');
-  if(main_menu) main_menu.onclick = handleMenuClick;
-  
+  if (main_menu) main_menu.onclick = handleMenuClick;
+
   // close menu if click outside of it
   const main_menu_container = document.getElementById('main-menu-container');
   document.addEventListener('touchstart', (evt) => handleCloseMenu(evt));
   document.addEventListener('mousedown', (evt) => handleCloseMenu(evt));
-  function handleCloseMenu(evt){
-    if(!main_menu_container.contains(evt.target)){
+  function handleCloseMenu(evt) {
+    if (!main_menu_container.contains(evt.target)) {
       closeMenu();
     }
   }

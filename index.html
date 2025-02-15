@@ -87,7 +87,9 @@
         <div id="cart-price" title="Totale carrello"><span></span>€</div>
       </div>
 
-      <div class="icon-button"></div>
+      <div class="icon-button icon-color hidden-fake">
+        <i class="fa-solid fa-square-full"></i>
+      </div>
     </header>
 
     <section id="cart-content">
@@ -106,7 +108,19 @@
       <button id="close-starred" title="Chiudi preferiti" class="icon-button icon-color-bad" onclick="closeStarred()">
         <i class="fa-solid fa-x"></i>
       </button>
+
+      <h3>Preferiti</h3>
+
+
+      <div class="icon-button hidden-fake">
+        <i class="fa-solid fa-square-full"></i>
+      </div>
     </header>
+
+    <section id="starred-content">
+
+    </section>
+
   </section>
 
   <dialog id="add-item-name">
@@ -118,7 +132,7 @@
         <i class="fa-solid fa-x"></i>
       </button>
 
-      <button class="icon-button" onclick="addToCart()">
+      <button class="icon-button" onclick="saveItem()">
         <i class="fa-solid fa-check"></i>
       </button>
 
