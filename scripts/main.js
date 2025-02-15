@@ -83,7 +83,7 @@ function setingredientsGroups(config) {
     const section =
       `<section class="${name}">
       <div class="section-title-container">
-        <span> </span>
+        <span></span>
         <h3 id="${name}">${name}</h3>
         <span class="${name}-limits">
           <span id="${name}-limit-current">0</span> / <span id="${name}-limit-max">-</span>

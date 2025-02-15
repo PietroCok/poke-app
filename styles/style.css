@@ -227,11 +227,17 @@ body>header {
     z-index: 2;
     flex-direction: column;
     width: 105%;
+    gap: .5em;
+    padding: 1em;
 
     >span {
       display: flex;
       justify-content: center;
       align-items: center;
+
+      &:empty{
+        display: none;
+      }
 
       span {
         margin: 0 5px;
@@ -249,7 +255,7 @@ body>header {
     width: 150px;
     padding: 5px;
     position: relative;
-    margin: 25px auto 10px auto;
+    margin: auto;
   }
 
   h4 {
@@ -258,7 +264,6 @@ body>header {
     position: sticky;
     top: 68px;
     background: var(--main-bg);
-    padding: .5em;
     z-index: 2;
     width: 100%;
   }
@@ -807,6 +812,10 @@ button {
       flex: 1;
       padding: 0 2em;
       justify-content: flex-start;
+
+      &:empty{
+        display: inline;
+      }
     }
   }
 }
