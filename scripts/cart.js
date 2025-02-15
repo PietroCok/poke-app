@@ -21,7 +21,7 @@ function closeCart() {
  */
 function getCart() {
     // get cart from localStorage
-    let cart = JSON.parse(localStorage.getItem('poke-cart'));
+    let cart = JSON.parse(localStorage.getItem('cart'));
     if (!cart) {
         cart = [];
     }
@@ -32,88 +32,91 @@ function getCart() {
  * Loads the cart from localStorage
  */
 function loadCart() {
-    const cart = getCart();
-
-    updateCart(cart);
+    drawCartItems();
 }
 
 /**
  * Removes all items from cart and deletes it from localStorage
  */
-function clearCart() {
-    if (confirm("Svuotare il carrello?\nL'operazione non è reversibile")) {
+function clearCart(noConfirm) {
+    if (noConfirm || confirm("Svuotare il carrello?\nL'operazione non è reversibile")) {
         let cart = [];
         saveCart(cart);
+        drawCartItems();
     }
 }
 
+
 /**
- * Add selected or current item to cart, then saves it to localStorage
- * 
- * @param {Object} [item={}] 
+ * Checks if item is already in the cart
+*/
+function isCarted(id) {
+    const cart = getCart();
+    const alreadycarted = cart.find(item => item.id == id);
+    if (alreadycarted) return true;
+    return false;
+}
+
+
+/**
+ * Add item from starred
  */
-function addToCart(item = {}, allowDuplicate = false) {
-    let poke = JSON.parse(JSON.stringify(item));
+function addToCartFromStarred(id) {
+    if (!id) return;
 
-    // if no valid object, add to cart current selected poke
-    if (!poke?.dimension) {
-        poke = JSON.parse(JSON.stringify(selected));
-        // try to get the item name from dialog
-        const dialog_addItemName = document.getElementById("add-item-name");
-        const dialog_input = document.querySelector('#add-item-name input');
-        if (dialog_input) {
-            let name = dialog_input.value;
-            if (!name) name = 'Senza nome'
-            poke.name = name;
+    const starred = getStarred();
 
-            dialog_input.value = '';
-            dialog_addItemName.close();
-        }
-    }
+    const item = starred.find(i => i.id == id);
 
+    addToCart(structuredClone(item));
+
+    drawStarredItems();
+}
+
+/**
+ * Add item to cart, then saves it to localStorage
+ */
+function addToCart(item, allowDuplicate = false) {
+    if (!item) return;
+
+    let poke = structuredClone(item);
     const cart = getCart();
 
     if (!poke.id || allowDuplicate) {
         // insert into cart
-        poke.id = Math.random().toString(36).slice(2);
+        poke.id = getRandomId();
         cart.push(poke);
     } else {
-        // update intem in cart
         const index = cart.findIndex(_item => _item.id == poke.id);
-        cart.splice(index, 1, poke);
+        if(index < 0){
+            // add new item
+            cart.push(poke);
+        } else {
+            // update intem in cart
+            cart.splice(index, 1, poke);
+        }
     }
 
     clearConfigurator();
-    
+
     saveCart(cart);
 }
 
 /**
- * Opens dialog to enter name of poke
+ * Update item in cart
  */
-function askItemName() {
-    if (Object.keys(selected.ingredients).length == 0) {
-        alert('Non è possibile aggiungere una poke vuota al carrello!');
-        return;
-    }
+function updateCartItem(item) {
 
-    if(selected.name){
-        const dialog_name = document.querySelector('#add-item-name input');
-        if(dialog_name) dialog_name.value = selected.name;
-    }
-
-    const dialog_addItemName = document.getElementById('add-item-name');
-    if (dialog_addItemName) dialog_addItemName.showModal();
 }
 
 /**
  * Opens preview order dialog
  */
-function showOrderPreview(){
+function showOrderPreview() {
     // check if at least one item in cart
     const cart = getCart();
 
-    if(cart.length == 0){
+    if (cart.length == 0) {
         return;
     }
 
@@ -121,28 +124,28 @@ function showOrderPreview(){
     // order name
     const orderName = localStorage.getItem('order-name');
     const orderNameElem = document.getElementById('order-name');
-    if(orderName && orderNameElem){
+    if (orderName && orderNameElem) {
         orderNameElem.value = orderName;
     }
 
     // order time
     const orderTime = localStorage.getItem('order-time');
     const orderTimeElem = document.getElementById('order-time');
-    if(orderTime && orderTimeElem){
+    if (orderTime && orderTimeElem) {
         orderTimeElem.value = orderTime;
     }
 
     // total price
     let cartSubtotal = 0;
-    for(const item of cart){
+    for (const item of cart) {
         cartSubtotal += item.totalPrice;
     }
     const cartSubtotalElem = document.querySelector('#order-price');
-    if(cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
-    
+    if (cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
+
     // open dialog
     const previewOrderDialog = document.getElementById('preview-order');
-    if(previewOrderDialog) previewOrderDialog.showModal();    
+    if (previewOrderDialog) previewOrderDialog.showModal();
 
     // order message
     generateOrderMessage();
@@ -151,7 +154,7 @@ function showOrderPreview(){
 /**
  * Generate the order string to display on order confirmation window
  */
-function generateOrderMessage(){
+function generateOrderMessage() {
 
     const cart = getCart();
     const orderTime = document.getElementById('order-time');
@@ -159,10 +162,10 @@ function generateOrderMessage(){
 
     let simple_order_string = '';
 
-    for(const [index, item] of Object.entries(cart)){
+    for (const [index, item] of Object.entries(cart)) {
         let single_order = ''
-        single_order += `${Number(index)+1}) ${item.dimension.toUpperCase()}: `;
-        
+        single_order += `${Number(index) + 1}) ${item.dimension.toUpperCase()}: `;
+
         for (const elements of Object.values(item.ingredients)) {
             for (const element of elements) {
                 single_order += element.id.replaceAll("-", " ").replaceAll("--", "'") + (element.quantity > 1 ? " x" + element.quantity : "") + ", ";
@@ -175,30 +178,30 @@ function generateOrderMessage(){
 
         simple_order_string += single_order;
     }
-    
-    const complete_order_string = 
-    `Buongiorno,
-vorrei ordinare ${cart.length > 1 ? cart.length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ?" a nome: " + orderName.value : ""}.
+
+    const complete_order_string =
+        `Buongiorno,
+vorrei ordinare ${cart.length > 1 ? cart.length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ? " a nome: " + orderName.value : ""}.
 
 ${simple_order_string}`;
 
     const orderMessageElem = document.getElementById('order-preview');
-    if(orderMessageElem) {
+    if (orderMessageElem) {
         orderMessageElem.value = complete_order_string;
         orderMessageElem.style.height = orderMessageElem.scrollHeight + 3 + 'px';
     }
 }
 
-function setOrderName(elem){
+function setOrderName(elem) {
     generateOrderMessage()
-    if(!elem) return;
+    if (!elem) return;
 
     localStorage.setItem('order-name', elem.value);
 }
 
-function setOrderTime(elem){
+function setOrderTime(elem) {
     generateOrderMessage()
-    if(!elem || !elem.value) return;
+    if (!elem || !elem.value) return;
 
     localStorage.setItem('order-time', elem.value);
 }
@@ -207,12 +210,12 @@ function setOrderTime(elem){
 /**
  * Redirect to application with preloaded order message
  */
-function sendOrder(){
+function sendOrder() {
     // last checks
 
     // time must not be empty
     const time = document.getElementById('order-time');
-    if(!time.value){
+    if (!time.value) {
         // ERROR
         alert("Scegli un orario prima procedere con l'ordine!");
         return
@@ -221,7 +224,7 @@ function sendOrder(){
     // get order string (can have been modified by user after generation)
     const order_preview = document.getElementById('order-preview');
     let order_string = ''
-    if(order_preview) {
+    if (order_preview) {
         order_string = order_preview.value
     } else {
         // ERROR
@@ -231,6 +234,10 @@ function sendOrder(){
 
     // open wa to send message
     window.open(`https://wa.me/${config.numero_telefono}/?text=${encodeURIComponent(order_string)}`);
+
+    clearCart(true);
+    closeDialog('preview-order');
+    closeCart();
 }
 
 /**
@@ -247,74 +254,25 @@ function removeFromCart(id) {
 }
 
 /**
- * Clone and add an item to the cart
- * 
- * @param {String} id - id of item to clone 
- */
-function cloneItem(id) {
-    const cart = getCart();
-
-    const item = cart.find(item => item.id == id);
-
-    const copied_item = JSON.parse(JSON.stringify(item));
-    copied_item.id = Math.random().toString(36).slice(2);
-
-    addToCart(copied_item, true);
-}
-
-
-/**
- * Add an item to starred items
- * 
- * @param {String} id 
- */
-function starItem(id) {
-    // TODO
-}
-
-/**
- * Loads an item in the configurator
- * 
- * @param {String} id 
- */
-function editItem(id) {
-    if(!id) return;
-
-    const cart = getCart();
-
-    const item = cart.find(item => item.id == id);
-    if(!item) return;
-
-    try {
-        loadIntoConfigurator(item);
-    } catch (error) {
-        alert(error);
-        return;     
-    }
-
-    closeCart();
-}
-
-/**
  * Save cart to localStorage and update cart UI
  * 
  * @param {Array} cart - Items in the cart
  */
-function saveCart(cart, update = true) {
+function saveCart(cart) {
     // save cart to localStorage
-    localStorage.setItem('poke-cart', JSON.stringify(cart));
+    localStorage.setItem('cart', JSON.stringify(cart));
 
-    if (update) updateCart(cart);
+    drawCartItems();
 }
 
 /**
  * Updates the UI for cart re-inserting all items
  * 
- * @param {Object} cart - cart with items to show
  */
-function updateCart(cart) {
+function drawCartItems() {
+    const cart = getCart();
     // save ids of open elements
-    const openElems = Array.from(document.querySelectorAll('details[open]'));
+    const openElems = Array.from(document.querySelectorAll('#cart details[open]'));
     let openElemsId = [];
     if (openElems.length > 0) {
         openElemsId = openElems.map(elem => elem.dataset.id)
@@ -330,6 +288,7 @@ function updateCart(cart) {
         const description = toString(item);
         const isOpen = openElemsId?.includes(item.id);
         cartSubtotal += item.totalPrice;
+        const isItemStarrred = isStarred(item.id);
 
         const itemElemStr =
             `<div class="item-container">
@@ -370,31 +329,31 @@ function updateCart(cart) {
 
                 <button 
                     id="edit-item" 
-                    class="icon-button"
+                    class="icon-button icon-color"
                     title="Modifica"
-                    onclick="editItem('${item.id}')"
+                    onclick="editItem('${item.id}', 'cart')"
                 >
                 <i class="fa-solid fa-pen"></i>
+                </button>
+
+                <button 
+                    id="star-item" 
+                    class="icon-button ${isItemStarrred ? 'disabled' : ''}"
+                    title="${isItemStarrred ? 'Elemento già aggiunto ai preferiti' : 'Aggiungi ai preferiti'}"
+                    onclick="starItemFromCart('${item.id}')"
+                >
+                <i class="fa-solid fa-star"></i>
                 </button>
     
                 <button
                     id="clone-item" 
-                    class="icon-button"
+                    class="icon-button icon-color"
                     title="Crea una copia"
-                    onclick="cloneItem('${item.id}')"
+                    onclick="cloneItem('${item.id}', 'cart')"
                 >
                 <i class="fa-solid fa-clone"></i>
                 </button>
     
-                <button 
-                    id="star-item" 
-                    class="icon-button"
-                    title="Aggiungi ai preferiti"
-                    onclick="starItem('${item.id}')"
-                >
-                <i class="fa-solid fa-star"></i>
-                </button>
-                
                 <button 
                     id="remove-item" 
                     class="icon-button"
@@ -408,18 +367,18 @@ function updateCart(cart) {
         </div>
         `;
 
-        // update cart count
-        const menuElem = document.getElementById('cart-menu');
-        if(menuElem) menuElem.dataset.cartcount = cart.length > 0 ? cart.length : '';
-
-        const headerElem = document.getElementById('cart-count');
-        if(headerElem) headerElem.textContent = `( ${cart.length} )`;
-
         const itemElem = convertToHTML(itemElemStr);
         cartElem.append(itemElem);
     }
 
+    // update cart count
+    const menuElem = document.getElementById('cart-menu');
+    if (menuElem) menuElem.dataset.cartcount = cart.length > 0 ? cart.length : '';
+
+    const headerElem = document.getElementById('cart-count');
+    if (headerElem) headerElem.textContent = `( ${cart.length} )`;
+
     // aggiorna il totale UI
     const cartSubtotalElem = document.querySelector('#cart-price span');
-    if(cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
+    if (cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
 }
