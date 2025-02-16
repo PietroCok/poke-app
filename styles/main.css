@@ -254,7 +254,10 @@ input[type="radio"] {
   text-align: center;
   transform: translate(100%);
   color: var(--main-color);
-  background-color: var(--alt-bg);
+}
+
+.order-text{
+  max-height: 40vh;
 }
 
 .input {
