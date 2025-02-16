@@ -8,6 +8,7 @@
   color-scheme: light dark;
   --main-bg: light-dark(#FFF, #121212);
   --main-color: light-dark(#000, #FFF);
+  --alt-bg: light-dark(#ededed, #1d1d1d);
   --accent-1: #df3939;
   --accent-2: #bd8928;
   --accent-3: #0095bc;
@@ -41,10 +42,6 @@ body[data-theme="dark"] {
   color-scheme: dark;
 }
 
-[id^="theme-icon"] {
-  color: var(--main-color);
-}
-
 /* Removes the highlight effect on mobile devices */
 * {
   -webkit-tap-highlight-color: transparent;
@@ -61,6 +58,7 @@ h4 {
   text-align: center;
 }
 
+/* Remove std styles from buttons */
 button {
   all: unset;
 }
@@ -71,6 +69,10 @@ button {
   color: var(--accent-2);
 }
 
+/* 
+  Checkboxes and radios are used for item composition 
+  Style is later applied to mark added ingredients
+*/
 input[type="checkbox"],
 input[type="radio"] {
   display: none;
@@ -205,6 +207,7 @@ input[type="radio"] {
   cursor: pointer;
 }
 
+/* Style checked status from input on correct item */
 .option-container:has(input[type="checkbox"]:checked) {
   border: 2px solid var(--accent-4);
 }
@@ -253,7 +256,11 @@ input[type="radio"] {
   text-align: center;
   transform: translate(100%);
   color: var(--main-color);
-  background-color: var(--main-bg);
+}
+
+/* Avoid scrollbar on whole dialog if order too large */
+.order-text{
+  max-height: 40vh;
 }
 
 .input {
@@ -261,4 +268,10 @@ input[type="radio"] {
   padding: 10px;
   border-radius: 5px;
   border: 1px solid var(--main-color);
+}
+
+/* Removes double scrollbar when menu page in open */
+body:has(#cart:not(.hidden)),
+body:has(#starred:not(.hidden)) {
+  overflow: hidden;
 }

@@ -1,3 +1,5 @@
+/* Rules used to style list of item */
+
 .item-container {
   border: 1px solid var(--main-color);
   border-radius: 10px;

@@ -37,17 +37,6 @@ function closeStarred() {
 }
 
 /**
- * Load item from starred list into cart
-*/
-function loadStarredIntoCart(id) {
-  // TODO
-
-  closeStarred();
-
-  drawStarredItems();
-}
-
-/**
  * Add item into starred (from cart)
 */
 function starItemFromCart(id) {
