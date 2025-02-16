@@ -158,14 +158,14 @@ function drawStarredItems() {
                   <span>${item.totalPrice.toFixed(2)} €</span>
                 </div>
 
-                <button 
+                <!-- <button 
                   id="star-item" 
                   class="ibutton icon icon-only icon-small accent-2 rapid-action ${isItemCarted ? 'disabled' : ''}"
                   title="${isItemCarted ? 'Elemento già nel carrello' : 'Aggiungi al carrello'}"
                   onclick="addToCartFromStarred('${item.id}')"
                 >
                   <i class="fa-solid fa-cart-shopping"></i>
-                </button>
+                </button> -->
 
                 <button 
                   id="remove-item" 
