@@ -42,10 +42,6 @@ body[data-theme="dark"] {
   color-scheme: dark;
 }
 
-[id^="theme-icon"] {
-  color: var(--main-color);
-}
-
 /* Removes the highlight effect on mobile devices */
 * {
   -webkit-tap-highlight-color: transparent;
@@ -62,6 +58,7 @@ h4 {
   text-align: center;
 }
 
+/* Remove std styles from buttons */
 button {
   all: unset;
 }
@@ -72,6 +69,10 @@ button {
   color: var(--accent-2);
 }
 
+/* 
+  Checkboxes and radios are used for item composition 
+  Style is later applied to mark added ingredients
+*/
 input[type="checkbox"],
 input[type="radio"] {
   display: none;
@@ -206,6 +207,7 @@ input[type="radio"] {
   cursor: pointer;
 }
 
+/* Style checked status from input on correct item */
 .option-container:has(input[type="checkbox"]:checked) {
   border: 2px solid var(--accent-4);
 }
@@ -256,6 +258,7 @@ input[type="radio"] {
   color: var(--main-color);
 }
 
+/* Avoid scrollbar on whole dialog if order too large */
 .order-text{
   max-height: 40vh;
 }

@@ -1,3 +1,5 @@
+/* Rules for icons (mainly used fo buttons) */
+
 .icon:has(>i) {
   padding: 5px;
   border-radius: 10px;
