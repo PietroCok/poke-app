@@ -52,7 +52,6 @@ function setTheme(type){
  * Loads theme from localStorage or set default to auto
  */
 function loadTheme(){
-
   const preferred_theme = localStorage.getItem('preferred-theme');
   if(preferred_theme){
     setTheme(preferred_theme);

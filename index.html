@@ -6,8 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
 
-  <link rel="stylesheet" href="./styles/starred.css">
-  <link rel="stylesheet" href="./styles/style.css">
+  <link rel="stylesheet" href="./styles/item.css">
+  <link rel="stylesheet" href="./styles/dialog.css">
+  <link rel="stylesheet" href="./styles/icons.css">
+  <link rel="stylesheet" href="./styles/main.css">
+  <link rel="stylesheet" href="./styles/common.css">
 
   <script src="./scripts/starred.js" defer></script>
   <script src="./scripts/theme.js" defer></script>
@@ -19,34 +22,34 @@
 
 <body>
   <header>
-    <nav id="cart-menu" title="Carello" class="icon-button" onclick="openCart()">
+    <button id="cart-menu" title="Carello" class="cart-count fixed top-0 left-0 z-10 button icon icon-only accent-2" onclick="openCart()">
       <i class="fa-solid fa-cart-shopping"></i>
-    </nav>
+    </button>
 
-    <nav id="main-menu-container" title="Menu principale">
+    <nav id="main-menu-container" class="fixed top-0 right-0 z-100" title="Menu principale">
       <details>
-        <summary>
-          <div id="main-menu" class="icon-button icon-color" onclick="handleMenuClick()">
+        <summary class="flex-self-end">
+          <div id="main-menu" class="button icon icon-only" onclick="handleMenuClick()">
             <i class="fa-solid fa-bars"></i>
           </div>
         </summary>
 
-        <div id="theme-menu-container">
-          <div id="theme-icon-auto" title="AUTO" class="icon-button icon-color hover hidden" onclick="handleTheme('auto')">
+        <div id="theme-menu-container" class="flex">
+          <div id="theme-icon-auto" title="AUTO" class="button icon icon-only  hidden" onclick="handleTheme('auto')">
             <i class="fa-solid fa-a"></i>
           </div>
     
-          <div id="theme-icon-light" title="LIGHT" class="icon-button icon-color hover hidden" onclick="handleTheme('light')">
+          <div id="theme-icon-light" title="LIGHT" class="button icon icon-only  hidden" onclick="handleTheme('light')">
             <i class="fa-solid fa-sun"></i>
           </div>
     
-          <div id="theme-icon-dark" title="DARK" class="icon-button icon-color hover hidden" onclick="handleTheme('dark')">
+          <div id="theme-icon-dark" title="DARK" class="button icon icon-only hidden" onclick="handleTheme('dark')">
             <i class="fa-solid fa-moon"></i>
           </div>
         </div>
 
-        <div id="starred-menu-container">
-          <div id="star-item" class="icon-button icon-color" onclick="openStarredItems()">
+        <div id="starred-menu-container" class="flex-self-end">
+          <div id="star-item" class="button icon icon-only accent-2" onclick="openStarredItems()">
             <i class="fa-solid fa-star"></i>
           </div>
         </div>
@@ -54,120 +57,121 @@
     </nav>
   </header>
 
-  <section id="main">
-    <h2>crea la tua poke bowl</h2>
+  <section id="main" class="flex flex-center flex-column">
+    <h2 id="subtitle" class="subtitle w-100 flex flex-center sticky top-0 padding-1-0 z-1">crea la tua poke bowl</h2>
 
-    <section id="dimensione">
-      <h3>dimensione</h3>
+    <section id="dimensione" class="dimensions-container">
+      <h3 class="hidden">dimensione</h3>
     </section>
 
-    <section id="ingredients">
+    <section id="ingredients" class="w-100">
 
     </section>
 
-    <section class="button-wrapper">
-      <div>
-        <button id="clear-order" title="Svuota configuratore" onclick="clearConfigurator()">Cancella</button>
-        <button id="add-cart" title="Aggiungi al carello" onclick="askItemName()">Salva</button>
-      </div>
+    <section class="button-wrapper sticky bottom-0 flex w-100 z-10">
+      <button id="clear-order" class="button text-button accent-1-invert" title="Svuota configuratore" onclick="clearConfigurator()">Cancella</button>
+      <button id="add-cart" class="button text-button accent-3-invert" title="Aggiungi al carello" onclick="askItemName()">Salva</button>
     </section>
   </section>
 
-  <section id="cart" class="hidden">
-    <header>
-      <button id="close-cart" title="Chiudi carrello" class="icon-button icon-color-bad" onclick="closeCart()">
-        <i class="fa-solid fa-x"></i>
-      </button>
-
-      <div id="cart-price-container">
-        <div id="cart-count" title="Elementi nel carrello"></div>
-        <div class="icon-color">
-          <i class="fa-solid fa-coins"></i>
+  <section id="cart" class="main-bg fixed flex flex-column align-center hidden left-0 top-0 bottom-0 w-100 z-20">
+    <button id="close-cart" title="Chiudi carrello" class="button icon icon-only accent-1 fixed top-0 left-0" onclick="closeCart()">
+      <i class="fa-solid fa-x"></i>
+    </button>
+    <header class="h-header flex flex-center w-100 margin-10">
+      <div class="flex gap-2">
+        <div class="flex gap-1" title="Elementi nel carrello">
+          <div>
+            <i class="fa-solid fa-bowl-food"></i>
+          </div>
+          <div id="cart-count"></div>
         </div>
-        <div id="cart-price" title="Totale carrello"><span></span>€</div>
-      </div>
 
-      <div class="icon-button icon-color hidden-fake">
-        <i class="fa-solid fa-square-full"></i>
+        <div class="flex gap-1" title="Totale carrello">
+          <div class="accent-2">
+            <i class="fa-solid fa-coins"></i>
+          </div>
+          <div id="cart-price"><span></span>€</div>
+        </div>
       </div>
     </header>
 
-    <section id="cart-content">
+    <section id="cart-content" class="w-100 h-100 flex flex-column align-center gap-1 scroll">
     </section>
 
-    <footer class="button-wrapper">
-      <div>
-        <button id="clear-cart" title="Svuota carello" onclick="clearCart()">Svuota</button>
-        <button id="btn-preview-order" title="Visualizza preview ordine" onclick="showOrderPreview()">Invia</button>
-      </div>
+    <footer class="button-wrapper sticky bottom-0 flex w-80 z-10">
+      <button id="clear-cart" class="button text-button accent-1-invert" title="Svuota carello" onclick="clearCart()">Svuota</button>
+      <button id="btn-preview-order" class="button text-button accent-3-invert" title="Visualizza preview ordine" onclick="showOrderPreview()">Preview</button>
     </footer>
   </section>
 
-  <section id="starred" class="hidden">
-    <header>
-      <button id="close-starred" title="Chiudi preferiti" class="icon-button icon-color-bad" onclick="closeStarred()">
-        <i class="fa-solid fa-x"></i>
-      </button>
+  <section id="starred" class="main-bg fixed flex flex-column align-center hidden left-0 top-0 bottom-0 w-100 z-20 hidden">
+    <button id="close-starred" title="Chiudi preferiti" class="button icon icon-only accent-1 fixed top-0 left-0" onclick="closeStarred()">
+      <i class="fa-solid fa-x"></i>
+    </button>
 
+    <header class="h-header flex flex-center w-100 margin-10">
       <h3>Preferiti</h3>
-
-
-      <div class="icon-button hidden-fake">
-        <i class="fa-solid fa-square-full"></i>
-      </div>
     </header>
 
-    <section id="starred-content">
+    <section id="starred-content" class="w-100 h-100 flex flex-column align-center gap-1 scroll">
 
     </section>
 
   </section>
 
-  <dialog id="add-item-name">
-    <label for="item-name">Dai un nome alla tua poke<input type="text" name="item-name" id="item-name"></label>
-
-    <footer>
-
-      <button class="icon-button bad" onclick="closeDialog('add-item-name')">
-        <i class="fa-solid fa-x"></i>
-      </button>
-
-      <button class="icon-button" onclick="saveItem()">
-        <i class="fa-solid fa-check"></i>
-      </button>
-
-    </footer>
+  <dialog id="add-item-name" class="dialog">
+    <div class="flex flex-column gap-1 padding-1">
+      <label class="label" for="item-name">Dai un nome alla tua poke
+      </label>
+      <input class="input" type="text" name="item-name" id="item-name">
+  
+      <footer class="button-wrapper w-100 padding-0">
+        <button title="Annulla" class="button text-button accent-1-invert" onclick="closeDialog('add-item-name')">
+          Annulla
+        </button>
+  
+        <button title="Salva" class="button text-button accent-3-invert" onclick="saveItem()">
+          Conferma
+        </button>
+      </footer>
+    </div>
   </dialog>
 
-  <dialog id="preview-order">
-
-    <div id="order-name-container">
-      <label for="order-name">Nome</label>
-      <input type="text" name="order-name" id="order-name" onchange="setOrderName(this)">
-    </div>
-
-    <div id="order-time-container">
-      <label for="order-time">Orario</label>
-      <input type="time" name="order-time" id="order-time" oninput="setOrderTime(this)">
-    </div>
-
-    <div id="order-price-container">
-      <span>Totale:</span>
-      <span><span id="order-price">0,00</span>€</span>
-    </div>
-
-    <!-- <div id="order-preview-controls">
-      <input type="checkbox" name="fullorder-preview" id="fullorder-preview" checked>
-      <label id="full-preview" for="fullorder-preview" class="hidden">Ordine completo</label>
-      <label id="compact-preview" class="hidden" for="fullorder-preview">Ordine compatto</label>
-      <label class="custom-checkbox" for="fullorder-preview"></label>
-    </div> -->
-
-    <textarea name="order-preview" id="order-preview" rows="3"></textarea>
-
-    <div class="button-wrapper">
-      <button id="clear-order" onclick="closeDialog('preview-order')">Annulla</button>
-      <button id="send-order" onclick="sendOrder()">Conferma</button>
+  <dialog id="preview-order" class="dialog">
+    <div class="flex flex-column gap-1 padding-1">
+      <div>
+        <h4>Completa l'ordine</h4>
+      </div>
+  
+      <div class="flex align-center gap-1" id="order-name-container">
+        <label class="label min-w-22" for="order-name">Nome</label>
+        <input class="input min-w-50" type="text" name="order-name" id="order-name" onchange="setOrderName(this)">
+      </div>
+  
+      <div class="flex align-center gap-1" id="order-time-container">
+        <label class="label min-w-22" for="order-time">Orario</label>
+        <input class="input" type="time" name="order-time" id="order-time" oninput="setOrderTime(this)">
+      </div>
+  
+      <div class="flex align-center gap-1" id="order-price-container">
+        <span class="label min-w-22">Totale:</span>
+        <span class="label"><span id="order-price">0,00</span>€</span>
+      </div>
+  
+      <!-- <div id="order-preview-controls">
+        <input type="checkbox" name="fullorder-preview" id="fullorder-preview" checked>
+        <label id="full-preview" for="fullorder-preview" class="hidden">Ordine completo</label>
+        <label id="compact-preview" class="hidden" for="fullorder-preview">Ordine compatto</label>
+        <label class="custom-checkbox" for="fullorder-preview"></label>
+      </div> -->
+  
+      <textarea class="padding-10" name="order-preview" id="order-preview" rows="1"></textarea>
+  
+      <div class="button-wrapper">
+        <button id="clear-order" class="button text-button accent-1-invert" onclick="closeDialog('preview-order')">Annulla</button>
+        <button id="send-order" class="button text-button accent-3-invert" onclick="sendOrder()">Conferma</button>
+      </div>
     </div>
   </dialog>
 
