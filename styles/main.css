@@ -8,6 +8,7 @@
   color-scheme: light dark;
   --main-bg: light-dark(#FFF, #121212);
   --main-color: light-dark(#000, #FFF);
+  --alt-bg: light-dark(#ededed, #1d1d1d);
   --accent-1: #df3939;
   --accent-2: #bd8928;
   --accent-3: #0095bc;
@@ -253,7 +254,7 @@ input[type="radio"] {
   text-align: center;
   transform: translate(100%);
   color: var(--main-color);
-  background-color: var(--main-bg);
+  background-color: var(--alt-bg);
 }
 
 .input {

@@ -2,7 +2,7 @@
   cursor: pointer;
   border: none;
 
-  &:hover{
+  &:not(.disabled):hover{
     box-shadow: 0 0 2px 1px var(--main-color);
   }
 }
