@@ -262,3 +262,9 @@ input[type="radio"] {
   border-radius: 5px;
   border: 1px solid var(--main-color);
 }
+
+/* Removes double scrollbar when menu page in open */
+body:has(#cart:not(.hidden)),
+body:has(#starred:not(.hidden)) {
+  overflow: hidden;
+}
