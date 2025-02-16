@@ -23,21 +23,21 @@ function fillHtml() {
 
 function setTitle(config) {
   const elem =
-    `<div class="title-wrapper">
-    <h1>${config.titolo}</h1>
-    <div>
-      <div>${config.sotto_titolo}</div>
-      <div>${config.sotto_titolo_2}</div>
+    `<div class="title flex flex-center flex-column accent-2 margin-08-0">
+    <h1 class="text-center">${config.titolo}</h1>
+    <div class="flex flex-center flex-column">
+      <div class="text-center text-small margin-5-0">${config.sotto_titolo}</div>
+      <div class="text-center text-small margin-5-0">${config.sotto_titolo_2}</div>
     </div>
   </div>
-  `
+  `;
 
-  // Not needed until final shipping
-  //document.querySelector("header").append(convertToHTML(elem));
+  // Non necessario finchè non vengono valorizzati gli appositi campi nel file di configurazione
+  //document.getElementById('main').insertBefore(convertToHTML(elem), document.getElementById('subtitle'))
 }
 
 function setDimensions(config) {
-  const section = document.querySelector("#dimensione");
+  const section = document.getElementById("dimensione");
   let isFirst = true;
 
   for (const [name, values] of Object.entries(config.dimensioni)) {
@@ -52,19 +52,17 @@ function setDimensions(config) {
       elemLimits.append(convertToHTML(_elem));
     }
 
-
     const elem =
-      `<div>
-        <label class="dim-name" for="dim-${name}"><input id="dim-${name}" type="radio" name="dim" ${isFirst ? "checked" : ""}>${name}</label>
-        <label for="dim-${name}" class="w-100">
-          ${elemLimits.outerHTML}
-        </label>
+      `<div class="flex flex-center flex-column dimension">
+      <label class="dim-name text-uppercase" for="dim-${name}"><input id="dim-${name}" type="radio" name="dim" ${isFirst ? "checked" : ""}>${name}</label>
+      <label for="dim-${name}" class="limits">
+        ${elemLimits.outerHTML}
+      </label>
 
-        <label for="dim-${name}" class="price-container">
-          <div class="price-label">${values.prezzo.toFixed(2).toLocaleString('it-IT')} €</div>
-        </label>
-      </div>
-    `;
+      <label for="dim-${name}" class="flex flex-center">
+        <div class="price-label">${values.prezzo.toFixed(2).toLocaleString('it-IT')} €</div>
+      </label>
+    </div>`;
 
     isFirst = false;
     const _elem = convertToHTML(elem);
@@ -74,7 +72,7 @@ function setDimensions(config) {
 }
 
 function setingredientsGroups(config) {
-  const main_section = document.querySelector("#ingredients");
+  const main_section = document.getElementById("ingredients");
   const groups = config.gruppi;
 
   for (const [name, group] of Object.entries(groups)) {
@@ -82,9 +80,9 @@ function setingredientsGroups(config) {
     // contenitore del gruppo
     const section =
       `<section class="${name}">
-      <div class="section-title-container">
+      <div class="section-title-container flex">
         <span></span>
-        <h3 id="${name}">${name}</h3>
+        <h3 id="${name}" class="group-title">${name}</h3>
         <span class="${name}-limits">
           <span id="${name}-limit-current">0</span> / <span id="${name}-limit-max">-</span>
           <span class="extra-price">
@@ -93,10 +91,10 @@ function setingredientsGroups(config) {
         </span>
 
 
-        <h4>${group.extras}</h4>
+        <h4 class="w-100 extra-label">${group.extras}</h4>
       </div>
 
-      <div class="options">
+      <div class="options flex flex-wrap gap-1 padding-1-0">
 
       </div>
     </section>
@@ -109,10 +107,10 @@ function setingredientsGroups(config) {
       const id = option.name.replaceAll(" ", "-").replaceAll("'", "--");
       const _opt =
         `<div class="option-container">
-        <label for="${id}"> ${option.name} </label>
+        <label for="${id}" class="option-name"> ${option.name} </label>
         <input type="checkbox" id="${id}" data-group="${name}">
-        <span class="extra" title="aggiungi extra" >
-          <i class="fa-solid fa-plus hover" data-group="${name}" data-option="${id}"></i>
+        <span class="button extra-btn icon" title="Aggiungi extra" data-group="${name}" data-option="${id}" onclick="addExtra(this)">
+          <i class="fa-solid fa-plus hover"></i>
         </span>
       </div>
       `
@@ -146,6 +144,7 @@ function checkSelection(evt) {
 
     case 'radio':
       selected.dimension = selectedElem.id.split("-")[1];
+      recalculateLimits();
       break;
   }
 
@@ -153,9 +152,9 @@ function checkSelection(evt) {
   localStorage.setItem("item", JSON.stringify(selected));
 }
 
-function addExtra(evt) {
-  const group = evt.target.dataset.group;
-  const option = evt.target.dataset.option;
+function addExtra(elem) {
+  const group = elem.dataset.group;
+  const option = elem.dataset.option;
 
   addingredient(group, option)
 }
@@ -361,19 +360,6 @@ function sortIngredientGroups(A, B) {
   return config.gruppi[A].ordine - config.gruppi[B].ordine;
 }
 
-function copyOrder() {
-  const text = document.querySelector("#generated-order");
-
-  if (!text.value) {
-    return;
-  }
-
-  text.select();
-  text.setSelectionRange(0, 99999);
-
-  navigator.clipboard.writeText(text.value);
-}
-
 function clearConfigurator() {
   // rimuove tutti i checks
   const _selected = selected.ingredients;
@@ -508,32 +494,11 @@ function updateLimits(group, current, max) {
   }
 }
 
-function changePreviewType() {
-  const previewBtn = document.getElementById('fullorder-preview');
-  const outputElem = document.getElementById("generated-order");
-  const timeElem = document.getElementById('order-time-container');
-
-  if (!outputElem) return;
-  if (!previewBtn) return;
-  if (!timeElem) return;
-
-  if (previewBtn.checked) {
-    outputElem.value = fullOrder;
-    timeElem.style.display = '';
-  } else {
-    outputElem.value = compactOrder;
-    timeElem.style.display = 'none';
-  }
-
-  outputElem.style.height = 'auto';
-  outputElem.style.height = outputElem.scrollHeight + 10 + 'px';
-}
-
 function handleMenuClick() {
   // get details state
   const parentContainer = document.querySelector('#main-menu-container details');
   if (parentContainer && !parentContainer.open) {
-    // close theme menu
+    // close theme menu every time is opened
     loadTheme();
   }
 }
@@ -544,19 +509,6 @@ function closeMenu() {
 }
 
 function addActions() {
-  // extra of the same element
-  document.querySelectorAll(".extra").forEach(elem => {
-    if (elem) elem.onclick = addExtra
-  });
-
-  // recalculate limits on dimension change
-  const btns_change_dim = document.querySelectorAll("#dimensione > div");
-  if (btns_change_dim) btns_change_dim.forEach(elem => elem.onchange = recalculateLimits);
-
-  // message preview
-  const btn_preview_type = document.getElementById('fullorder-preview');
-  if (btn_preview_type) btn_preview_type.onchange = changePreviewType;
-
   // dialogs comfirm with enter
   const dialog_name = document.getElementById('add-item-name');
   if (dialog_name) dialog_name.addEventListener('keypress', (evt) => {
@@ -580,6 +532,17 @@ function addActions() {
     if (!main_menu_container.contains(evt.target)) {
       closeMenu();
     }
+  }
+
+  // close dialog if click outsite of it (requires a div covering the entire dialog area)
+  const dialogs = document.getElementsByTagName('dialog');
+  for (const dialog of dialogs) {
+    dialog.onclick = (evt) => {
+      if (evt.target.tagName == 'DIALOG') {
+        const dialog_id = evt.target.id;
+        closeDialog(dialog_id);
+      }
+    };
   }
 }
 

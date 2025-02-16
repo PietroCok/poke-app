@@ -1,0 +1,56 @@
+.item-container {
+  border: 1px solid var(--main-color);
+  border-radius: 10px;
+  padding: 0 .5em;
+  width: 80%;
+  display: flex;
+  align-items: center;
+}
+
+.item-title {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  font-weight: bold;
+  text-transform: capitalize;
+  width: 100%;
+}
+
+.item-name{
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0 1em;
+
+}
+
+.item-price{
+  min-width: fit-content;
+
+  span{
+    margin-left: 10px
+  }
+}
+
+.item-actions{
+  justify-content: space-between;
+}
+
+.item-description{
+  padding: 0 1em;
+  margin-bottom: 1em;
+}
+
+.details[open] .rapid-action{
+  display: none;
+}
+
+.details[open] .item-title{
+  margin-bottom: 1em;
+  padding-top: .5em;
+}
+
+.details[open] .item-short{
+  padding-right: 6px;
+}

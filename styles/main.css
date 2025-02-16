@@ -1,0 +1,264 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  color-scheme: light dark;
+  --main-bg: light-dark(#FFF, #121212);
+  --main-color: light-dark(#000, #FFF);
+  --accent-1: #df3939;
+  --accent-2: #bd8928;
+  --accent-3: #0095bc;
+  --accent-4: #ec6f95;
+}
+
+body {
+  color: var(--main-color);
+  background-color: var(--main-bg);
+  margin: 0;
+  font-family: sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  user-select: none;
+}
+
+body>section {
+  width: 80%;
+}
+
+/*
+  Can force color scheme from any element in the page 
+  (if it's the only one with the attribute) 
+*/
+body[data-theme="light"] {
+  color-scheme: light;
+}
+
+body[data-theme="dark"] {
+  color-scheme: dark;
+}
+
+[id^="theme-icon"] {
+  color: var(--main-color);
+}
+
+/* Removes the highlight effect on mobile devices */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+details summary {
+  list-style: none;
+}
+
+h2,
+h3,
+h4 {
+  text-transform: uppercase;
+  text-align: center;
+}
+
+button {
+  all: unset;
+}
+
+.title {
+  text-transform: uppercase;
+  font-size: x-large;
+  color: var(--accent-2);
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  display: none;
+}
+
+.subtitle {
+  gap: 20px;
+
+  &::after,
+  &::before {
+    content: '';
+    width: 100%;
+    height: 8px;
+    background-color: var(--accent-4);
+    flex: 1;
+  }
+}
+
+.dimensions-container {
+  display: flex;
+  justify-content: center;
+  gap: 1em;
+  flex-wrap: wrap;
+}
+
+.dimension {
+  display: flex;
+  cursor: pointer;
+  border: 2px solid var(--main-color);
+  border-radius: .5em;
+  min-width: 250px;
+  flex: 1;
+
+  >* {
+    width: 100%;
+    padding: 1em;
+    cursor: pointer;
+    text-align: center;
+  }
+
+  &:has(input[type="radio"]:checked) {
+    border: 2px solid var(--accent-4);
+  }
+
+  .limits {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      width: 50%;
+      padding: 2px;
+      text-align: left;
+    }
+  }
+}
+
+.price-label {
+  color: white;
+  font-weight: bold;
+  padding: 2px 5px;
+  position: relative;
+  background-color: var(--accent-4);
+  width: fit-content;
+}
+
+.section-title-container {
+  position: sticky;
+  top: 0;
+  background-color: var(--main-bg);
+  z-index: 2;
+  flex-direction: column;
+  width: 100%;
+  gap: .5em;
+  padding: 1em;
+}
+
+.group-title {
+  background-color: var(--accent-3);
+  color: var(--main-bg);
+  width: 150px;
+  padding: 5px;
+  position: relative;
+  margin: auto;
+}
+
+.extra-label {
+  color: var(--accent-1);
+  font-size: 0.8em;
+  position: sticky;
+  top: 68px;
+  background: var(--main-bg);
+  z-index: 2;
+  width: 100%;
+}
+
+[class$="-limits"] {
+  text-align: center;
+}
+
+.extra-price {
+  margin: 0 7px;
+  color: var(--accent-1);
+
+  span {
+    margin: 0 5px;
+  }
+
+  &:has(span:empty) {
+    display: none;
+  }
+}
+
+.option-container {
+  text-transform: capitalize;
+  border: 2px solid var(--main-color);
+  border-radius: 5px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  position: relative;
+  min-width: 250px;
+  flex: 1;
+}
+
+.option-name {
+  display: inline-block;
+  padding: 1.2rem;
+  font-size: large;
+  width: 100%;
+  cursor: pointer;
+}
+
+.option-container:has(input[type="checkbox"]:checked) {
+  border: 2px solid var(--accent-4);
+}
+
+.option-container:has(input[type="checkbox"]:checked) .extra-btn {
+  display: flex;
+}
+
+/* extra value */
+.option-container[data-extra]::after {
+  content: 'x' attr(data-extra);
+  position: absolute;
+  right: 0;
+  top: 0;
+  transform: rotate(-20deg) translate(20px, -8px);
+  font-weight: bold;
+  color: var(--accent-1);
+  background-color: var(--main-bg);
+  padding: 5px;
+  border-radius: 50%;
+}
+
+.icon.extra-btn {
+  position: absolute;
+  right: 0;
+  display: none;
+  margin: 0;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.button-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--main-bg);
+  padding: 1.5em 0;
+}
+
+.cart-count::after {
+  content: attr(data-cartcount);
+  font-size: large;
+  position: absolute;
+  top: 0;
+  right: 10px;
+  text-align: center;
+  transform: translate(100%);
+  color: var(--main-color);
+  background-color: var(--main-bg);
+}
+
+.input {
+  font-size: large;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid var(--main-color);
+}
