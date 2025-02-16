@@ -2,6 +2,7 @@
  * Return starred items array form localStorage
  */
 function getStarred() {
+  document.body.classList.add('no-scroll');
   const starredItems = JSON.parse(localStorage.getItem('starred'));
   return starredItems || [];
 }
@@ -32,6 +33,7 @@ function openStarredItems() {
  * Hide starred items list
 */
 function closeStarred() {
+  document.body.classList.remove('no-scroll');
   const starred = document.getElementById('starred');
   if (starred) starred.classList.add('hidden');
 }
