@@ -2,7 +2,6 @@
  * Opens cart page
  */
 function openCart() {
-  document.body.classList.add('no-scroll');
   const cartElem = document.getElementById('cart');
   if (cartElem) cartElem.classList.remove('hidden');
 }
@@ -11,7 +10,6 @@ function openCart() {
  * Closes cart page
  */
 function closeCart() {
-  document.body.classList.remove('no-scroll');
   const cartElem = document.getElementById('cart');
   if (cartElem) cartElem.classList.add('hidden');
 }

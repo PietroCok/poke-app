@@ -20,7 +20,6 @@ function setStarred(items) {
  * Show starred items list
  */
 function openStarredItems() {
-  document.body.classList.add('no-scroll');
   drawStarredItems();
   // show layer
   const starred = document.getElementById('starred');
@@ -33,7 +32,6 @@ function openStarredItems() {
  * Hide starred items list
 */
 function closeStarred() {
-  document.body.classList.remove('no-scroll');
   const starred = document.getElementById('starred');
   if (starred) starred.classList.add('hidden');
 }
