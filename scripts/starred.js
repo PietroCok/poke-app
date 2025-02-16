@@ -2,7 +2,6 @@
  * Return starred items array form localStorage
  */
 function getStarred() {
-  document.body.classList.add('no-scroll');
   const starredItems = JSON.parse(localStorage.getItem('starred'));
   return starredItems || [];
 }
@@ -21,6 +20,7 @@ function setStarred(items) {
  * Show starred items list
  */
 function openStarredItems() {
+  document.body.classList.add('no-scroll');
   drawStarredItems();
   // show layer
   const starred = document.getElementById('starred');

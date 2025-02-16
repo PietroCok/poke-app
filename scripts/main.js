@@ -54,7 +54,7 @@ function setDimensions(config) {
 
     const elem =
       `<div class="flex flex-center flex-column dimension">
-      <label class="dim-name text-uppercase" for="dim-${name}"><input id="dim-${name}" type="radio" name="dim" ${isFirst ? "checked" : ""}>${name}</label>
+      <label class="label text-uppercase" for="dim-${name}"><input id="dim-${name}" type="radio" name="dim" ${isFirst ? "checked" : ""}>${name}</label>
       <label for="dim-${name}" class="limits">
         ${elemLimits.outerHTML}
       </label>
