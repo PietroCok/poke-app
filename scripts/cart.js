@@ -103,13 +103,6 @@ function addToCart(item, allowDuplicate = false) {
 }
 
 /**
- * Update item in cart
- */
-function updateCartItem(item) {
-
-}
-
-/**
  * Opens preview order dialog
  */
 function showOrderPreview() {
@@ -117,6 +110,7 @@ function showOrderPreview() {
   const cart = getCart();
 
   if (cart.length == 0) {
+    alert('Carrello vuoto!');
     return;
   }
 
@@ -379,6 +373,14 @@ function drawCartItems() {
 
   const headerElem = document.getElementById('cart-count');
   if (headerElem) headerElem.textContent = cart.length;
+
+  // enable / disable preview button
+  const preview_btn = document.getElementById('btn-preview-order');
+  if(cart.length == 0){
+    preview_btn.classList.add('disabled');
+  } else {
+    preview_btn.classList.remove('disabled');
+  }
 
   // aggiorna il totale UI
   const cartSubtotalElem = document.querySelector('#cart-price span');

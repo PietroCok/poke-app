@@ -289,7 +289,7 @@ function askItemName() {
   }
   
   if (totalIngredients <= 0) {
-    alert('Non è possibile salvare un elemento vuoto!');
+    alert('Nessun ingrediente selezionato!');
     return;
   }
 
@@ -389,6 +389,7 @@ function clearConfigurator() {
 function recalculateLimits() {
   const _selected = selected.ingredients;
   const extra = {};
+  let totalSelected = 0;
 
   // reset
   for (const [group, max] of Object.entries(config.dimensioni[selected.dimension].limiti)) {
@@ -402,6 +403,8 @@ function recalculateLimits() {
       currentSelection += ingredient.quantity;
     }
 
+    totalSelected += currentSelection;
+
     let maxSelection = config.dimensioni[selected.dimension].limiti[group]
 
     updateLimits(group, currentSelection, maxSelection);
@@ -409,6 +412,14 @@ function recalculateLimits() {
     if (currentSelection > maxSelection) {
       extra[group] = { current: currentSelection, max: maxSelection };
     }
+  }
+
+  // enable / disable save button
+  const add_btn = document.getElementById('add-cart');
+  if(totalSelected == 0){
+    add_btn.classList.add('disabled');
+  } else {
+    add_btn.classList.remove('disabled');
   }
 
   updatePrice(extra);

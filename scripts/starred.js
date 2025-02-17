@@ -41,7 +41,10 @@ function closeStarred() {
 */
 function starItemFromCart(id) {
   const starredItems = getStarred();
-  if (isStarred(id)) return;
+  if (isStarred(id)) {
+    alert('Elemento già presente nei preferiti!');
+    return;
+  };
 
   // for now is support only starring an item from cart
   const cart = getCart();
