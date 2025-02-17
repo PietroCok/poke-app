@@ -64,6 +64,11 @@ function isCarted(id) {
 function addToCartFromStarred(id) {
   if (!id) return;
 
+  if(isCarted(id)){
+    alert('Elemento già nel carrello!');
+    return;
+  }
+
   const starred = getStarred();
 
   const item = starred.find(i => i.id == id);
@@ -93,6 +98,7 @@ function addToCart(item, allowDuplicate = false) {
       cart.push(poke);
     } else {
       // update intem in cart
+      poke.id = getRandomId();
       cart.splice(index, 1, poke);
     }
   }
