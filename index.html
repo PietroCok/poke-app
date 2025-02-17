@@ -20,7 +20,7 @@
   <title>POKE</title>
 </head>
 
-<body>
+<body class="margin-0 flex flex-column align-center accent-main main-bg">
   <header>
     <button id="cart-menu" title="Carello" class="cart-count fixed top-0 left-0 z-10 button icon icon-only accent-2" onclick="openCart()">
       <i class="fa-solid fa-cart-shopping"></i>
@@ -57,18 +57,18 @@
     </nav>
   </header>
 
-  <section id="main" class="flex flex-center flex-column">
-    <h2 id="subtitle" class="subtitle main-bg w-100 flex flex-center sticky top-0 padding-1 z-1">crea la tua poke bowl</h2>
+  <section id="main" class="flex align-center flex-column scroll">
+    <h2 id="subtitle" class="subtitle main-bg w-80 flex flex-center sticky top-0 padding-1 z-1">crea la tua poke bowl</h2>
 
-    <section id="dimensione" class="dimensions-container">
+    <section id="dimensione" class="dimensions-container w-80">
       <h3 class="hidden">dimensione</h3>
     </section>
 
-    <section id="ingredients" class="w-100">
+    <section id="ingredients" class="w-80">
 
     </section>
 
-    <section class="button-wrapper sticky bottom-0 flex w-100 z-10">
+    <section class="button-wrapper fixed bottom-0 flex w-80 z-10">
       <button id="clear-order" class="button text-button accent-1-invert" title="Svuota configuratore" onclick="clearConfigurator()">Cancella</button>
       <button id="add-cart" class="button text-button accent-3-invert" title="Aggiungi al carello" onclick="askItemName()">Salva</button>
     </section>
@@ -99,7 +99,7 @@
     <section id="cart-content" class="w-100 h-100 flex flex-column align-center gap-1 scroll">
     </section>
 
-    <footer class="button-wrapper sticky bottom-0 flex w-80 z-10">
+    <footer class="button-wrapper fixed bottom-0 flex w-80 z-10">
       <button id="clear-cart" class="button text-button accent-1-invert" title="Svuota carello" onclick="clearCart()">Svuota</button>
       <button id="btn-preview-order" class="button text-button accent-3-invert" title="Visualizza preview ordine" onclick="showOrderPreview()">Preview</button>
     </footer>
