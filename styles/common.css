@@ -5,7 +5,13 @@
   cursor: pointer;
   border: none;
 
-  &:not(.disabled):hover{
+  &:not(.disabled):active{
+    box-shadow: 0 0 2px 1px var(--main-color);
+  }
+}
+
+@media (hover: hover) {
+  .button:not(.disabled):hover{
     box-shadow: 0 0 2px 1px var(--main-color);
   }
 }
@@ -155,6 +161,10 @@
 
 .padding-1-0{
   padding: 1em 0;
+}
+
+.padding-0-1{
+  padding: 0 1em;
 }
 
 .margin-0{
