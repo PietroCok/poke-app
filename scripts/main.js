@@ -274,7 +274,7 @@ function loadIntoConfigurator(_item = null) {
     }
   }
 
-  selected = JSON.parse(JSON.stringify(item));
+  selected = structuredClone(item);
   localStorage.setItem("item", JSON.stringify(selected));
 }
 
@@ -282,7 +282,13 @@ function loadIntoConfigurator(_item = null) {
  * Opens dialog to enter name of item
  */
 function askItemName() {
-  if (Object.keys(selected.ingredients).length == 0) {
+  const groups = selected.ingredients;
+  let totalIngredients = 0;
+  for(const group in groups){
+    totalIngredients += groups[group].length;
+  }
+  
+  if (totalIngredients <= 0) {
     alert('Non è possibile salvare un elemento vuoto!');
     return;
   }
