@@ -33,7 +33,7 @@ function setTitle(config) {
   `;
 
   // Non necessario finchè non vengono valorizzati gli appositi campi nel file di configurazione
-  document.getElementById('main').insertBefore(convertToHTML(elem), document.getElementById('subtitle'))
+  // document.getElementById('main').insertBefore(convertToHTML(elem), document.getElementById('subtitle'))
 }
 
 function setDimensions(config) {
