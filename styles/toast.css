@@ -1,0 +1,44 @@
+.not-info{
+  color: var(--accent-info);
+  border-color: var(--accent-info);
+  box-shadow: 0 0 5px 0 var(--accent-info);
+}
+
+.not-warn{
+  color: var(--accent-warn);
+  border-color: var(--accent-warn);
+  box-shadow: 0 0 5px 0 var(--accent-warn);
+}
+
+.not-error{
+  color: var(--accent-error);
+  border-color: var(--accent-error);
+  box-shadow: 0 0 5px 0 var(--accent-error);
+}
+
+#toast-container{
+  top: 90px;
+}
+
+.notification{
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 10px;
+  position: relative;
+  overflow: hidden;
+  background-color: var(--main-bg);
+
+  opacity: 0;
+  transform: translateY(-50px);
+  transition: all 300ms ease-out;
+}
+
+.anim-in{
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.anim-out{
+  opacity: 0;
+  transform: translateY(-50px);
+}

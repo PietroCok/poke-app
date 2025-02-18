@@ -218,7 +218,11 @@ function editItem(id, from = '') {
       try {
         loadIntoConfigurator(item);
       } catch (error) {
-        alert(error);
+        console.error(error);
+        new Notification({
+          message: "Errore nel caricamento nel configuratore!",
+          gravity: 'error'
+        });
         return;
       }
 
@@ -234,7 +238,11 @@ function editItem(id, from = '') {
       try {
         loadIntoConfigurator(item);
       } catch (error) {
-        alert(error);
+        console.error(error);
+        new Notification({
+          message: "Errore nel caricamento nel configuratore!",
+          gravity: 'error'
+        });
         return;
       }
 
@@ -289,7 +297,10 @@ function askItemName() {
   }
   
   if (totalIngredients <= 0) {
-    alert('Nessun ingrediente selezionato!');
+    new Notification({
+      message: 'Nessun ingrediente selezionato!', 
+      gravity: 'error'
+    })
     return;
   }
 

@@ -85,6 +85,10 @@
   display: flex;
 }
 
+.flex-1{
+  flex: 1;
+}
+
 .sticky{
   position: sticky;
 }

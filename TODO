@@ -1,34 +1,16 @@
 DA IMPLEMENTARE
-- toast manager
-- notifiche toast per varie azioni
-- mobile: chiusura di tutte le notifiche tramite slide out of window
--- salvataggio nel carrello ( sia da configuratore sia da preferiti )
--- salvataggio nei preferiti ( sia da configuratore sia da carrello )
--- impossibilità salvataggio per ingredienti vuoti ( aggiungere anche stile disabled su bottone )
--- impossibibilià invio ordine per carrello vuoto ( aggiungere anche stile disabled su bottone )
--- elemento già nel carrello
--- elemento già nei preferiti
-- notifica toast per operazioni reversibili
-- durata maggiore
--- cancellazione oggetto da carrello o preferiti
--- alla rimozione, salva ultima operazione e dai la possibilità di fare un revert dell'operazione ( tramite bottone dedicato ) per un tempo maggiore di una notifica standard
+- custom confirm window
+-- aggiungere finestra di conferma cancellazione ( da carrello e preferiti )
 
 DA CORREGGERE
--- doppie scrollbar:
-mobile: Da carrello e preferiti non è possoibile aggiornare la pagina con uno scroll verso il basso
-prova a racchiudere tutto il contenuto del body in un wrapper ( disabilitare su questo lo scroll quando il carrello o i preferiti sono aperti). 
-
+- le notifiche toast non funzionano nel caso di attivazione mentre una dialog è aperta in modalità modale. Questo a causa del fatto che le dialog vengono posizionate nel top layer che pare non essere accessibile dagli altri elementi normali
 
 DA VALUTARE
 - aggiunta preview (messaggio ordine compatto) singla poke
 
-- aggiunta messaggi di notifica alle azioni dell'utente
--- aggiunta elemento nel carrello
--- caricamento elemento nel configuratore
--- cancellazione elemento dal carrello
--- messaggi di errore (rimuovere gli attuali alert)
 
-- aggiungere persistenza vera con db (nuova versione applicazione)
+- valutare aggiunta persistenza vera con db (nuova versione applicazione)
+- valutare metodi di condivisione alternativi
 
 - rimuovere codice inutilizzato
 - refactoring codice

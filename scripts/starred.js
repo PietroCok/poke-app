@@ -42,7 +42,10 @@ function closeStarred() {
 function starItemFromCart(id) {
   const starredItems = getStarred();
   if (isStarred(id)) {
-    alert('Elemento già presente nei preferiti!');
+    new Notification({
+      message: "Elmento già aggiunto ai preferiti!",
+      gravity: 'error'
+    });
     return;
   };
 
@@ -52,6 +55,11 @@ function starItemFromCart(id) {
   starredItems.push(item);
 
   setStarred(starredItems);
+
+  new Notification({
+    message: "Salvato nei preferiti!",
+    displayTime: .8
+  });
 
   drawCartItems();
 }
@@ -66,8 +74,14 @@ function starItem(item) {
   if (isStarred(item.id)) return;
 
   starredItems.push(item);
-
+  
   setStarred(starredItems);
+
+  new Notification({
+    message: "Salvato nel carrello!",
+    displayTime: .8
+  });
+
   drawStarredItems();
 }
 
