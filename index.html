@@ -5,16 +5,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
+  <link rel="icon" type="image/x-icon" href="./favicon.ico"/>
 
+  <link rel="stylesheet" href="./styles/toast.css">
   <link rel="stylesheet" href="./styles/item.css">
   <link rel="stylesheet" href="./styles/dialog.css">
   <link rel="stylesheet" href="./styles/icons.css">
   <link rel="stylesheet" href="./styles/main.css">
   <link rel="stylesheet" href="./styles/common.css">
 
+  <script src="./scripts/utils.js" defer></script>
+  <script src="./scripts/toastManager.js" defer></script>
   <script src="./scripts/starred.js" defer></script>
   <script src="./scripts/theme.js" defer></script>
-  <script src="./scripts/utils.js" defer></script>
   <script src="./scripts/cart.js" defer></script>
   <script src="./scripts/main.js" defer></script>
   <title>POKE</title>
@@ -57,6 +60,8 @@
     </nav>
   </header>
 
+  <div id="toast-container" class="w-100 fixed flex flex-center z-100"></div>
+  
   <section id="main" class="flex align-center flex-column scroll">
     <h2 id="subtitle" class="subtitle main-bg w-80 flex flex-center sticky top-0 padding-1 z-1">crea la tua poke bowl</h2>
 

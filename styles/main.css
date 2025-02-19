@@ -13,6 +13,9 @@
   --accent-2: #bd8928;
   --accent-3: #0095bc;
   --accent-4: #ec6f95;
+  --accent-info: #2B882B;
+  --accent-warn: #ab7203;
+  --accent-error: #d62929;
 }
 
 body {

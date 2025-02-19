@@ -64,8 +64,11 @@ function isCarted(id) {
 function addToCartFromStarred(id) {
   if (!id) return;
 
-  if(isCarted(id)){
-    alert('Elemento già nel carrello!');
+  if (isCarted(id)) {
+    new Notification({
+      message: "Elmento già aggiunto al carrello!",
+      gravity: 'error'
+    });
     return;
   }
 
@@ -103,16 +106,14 @@ function addToCart(item, allowDuplicate = false) {
     }
   }
 
+  new Notification({
+    message: "Salvato nel carrello!",
+    displayTime: .8
+  });
+
   clearConfigurator();
 
   saveCart(cart);
-}
-
-/**
- * Update item in cart
- */
-function updateCartItem(item) {
-
 }
 
 /**
@@ -123,6 +124,10 @@ function showOrderPreview() {
   const cart = getCart();
 
   if (cart.length == 0) {
+    new Notification({
+      message: "Il carrello è vuoto",
+      gravity: 'error'
+    });
     return;
   }
 
@@ -222,8 +227,13 @@ function sendOrder() {
   // time must not be empty
   const time = document.getElementById('order-time');
   if (!time.value) {
-    // ERROR
-    alert("Scegli un orario prima procedere con l'ordine!");
+    // does not work since it's fired from a modal dialog in the top layer
+    new Notification({
+      message: "Scegli un orario prima di procedere!",
+      gravity: 'warn'
+    });
+
+    alert('Scegli un orario prima di procedere!')
     return
   }
 
@@ -234,7 +244,10 @@ function sendOrder() {
     order_string = order_preview.value
   } else {
     // ERROR
-    alert("ops, qualcosa è andato storto.\nProva più tardi.")
+    new Notification({
+      message: "ops, qualcosa è andato storto.\nProva più tardi.!",
+      gravity: 'error'
+    });
     return
   };
 
@@ -385,6 +398,14 @@ function drawCartItems() {
 
   const headerElem = document.getElementById('cart-count');
   if (headerElem) headerElem.textContent = cart.length;
+
+  // enable / disable preview button
+  const preview_btn = document.getElementById('btn-preview-order');
+  if (cart.length == 0) {
+    preview_btn.classList.add('disabled');
+  } else {
+    preview_btn.classList.remove('disabled');
+  }
 
   // aggiorna il totale UI
   const cartSubtotalElem = document.querySelector('#cart-price span');

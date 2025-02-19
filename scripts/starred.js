@@ -41,7 +41,13 @@ function closeStarred() {
 */
 function starItemFromCart(id) {
   const starredItems = getStarred();
-  if (isStarred(id)) return;
+  if (isStarred(id)) {
+    new Notification({
+      message: "Elmento già aggiunto ai preferiti!",
+      gravity: 'error'
+    });
+    return;
+  };
 
   // for now is support only starring an item from cart
   const cart = getCart();
@@ -49,6 +55,11 @@ function starItemFromCart(id) {
   starredItems.push(item);
 
   setStarred(starredItems);
+
+  new Notification({
+    message: "Salvato nei preferiti!",
+    displayTime: .8
+  });
 
   drawCartItems();
 }
@@ -63,8 +74,14 @@ function starItem(item) {
   if (isStarred(item.id)) return;
 
   starredItems.push(item);
-
+  
   setStarred(starredItems);
+
+  new Notification({
+    message: "Salvato nei preferiti!",
+    displayTime: .8
+  });
+
   drawStarredItems();
 }
 

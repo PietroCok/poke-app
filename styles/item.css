@@ -42,6 +42,7 @@
 .item-description{
   padding: 0 1em;
   margin-bottom: 1em;
+  user-select: all;
 }
 
 .details[open] .rapid-action{
