@@ -230,10 +230,9 @@ function sendOrder() {
     // does not work since it's fired from a modal dialog in the top layer
     new Notification({
       message: "Scegli un orario prima di procedere!",
-      gravity: 'warn'
+      gravity: 'error',
+      targetId: 'toast-container-order'
     });
-
-    alert('Scegli un orario prima di procedere!')
     return
   }
 

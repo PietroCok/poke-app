@@ -252,6 +252,10 @@ input[type="radio"] {
   color: var(--main-color);
 }
 
+#cart-content{
+  margin-bottom: 6em;
+}
+
 /* Avoid scrollbar on whole dialog if order too large */
 .order-text{
   max-height: 40vh;

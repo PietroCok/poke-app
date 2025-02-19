@@ -62,7 +62,15 @@ class ToastManager {
     </div>`;
 
     const elem = convertToHTML(elemStr)
-    this.target.append(elem);
+
+    if(notification.targetId){
+      // Alternate location
+      const altTarget = document.getElementById(notification.targetId);
+      if(altTarget) altTarget.append(elem);
+    } else {
+      // Default location
+      this.target.append(elem);
+    }
 
     setTimeout(() => elem.classList.add('anim-in'), 0);
     
@@ -76,7 +84,12 @@ class ToastManager {
     clearTimeout(this.timeoutId);
     // additional fixed time for animations
     this.timeoutId = setTimeout(() => {
-      this.target.innerHTML = '';
+      if(this.activeNotification.targetId){
+        const altTarget = document.getElementById(this.activeNotification.targetId);
+        altTarget.innerHTML = '';
+      } else {
+        this.target.innerHTML = '';
+      }
       this.activeNotification = null;
       this.serveQueue();
     }, 400 * wait)
@@ -96,12 +109,13 @@ class Notification {
    * @param {string} [options.gravity=info] - gravity of the message -> pilots color
    * @param {Number} [options.displayTime=1] - display time of the message
    */
-  constructor({ message = '', gravity = 'info', displayTime = 2 } = {}) {
+  constructor({ message = '', gravity = 'info', displayTime = 2, targetId = '' } = {}) {
     if (!message) throw new Error("Notification cannot have empty message!");
 
     this.message = message;
     this.gravity = gravity;
     this.displayTime = displayTime;
+    this.targetId = targetId;
 
     toastManager.addToQueue(this);
   }
