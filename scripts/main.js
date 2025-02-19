@@ -369,7 +369,7 @@ function cloneItem(id, from) {
       copy = structuredClone(item);
       copy.id = getRandomId();
       addToCart(copy, true);
-
+      break;
   }
 }
 

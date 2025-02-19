@@ -78,7 +78,7 @@ function starItem(item) {
   setStarred(starredItems);
 
   new Notification({
-    message: "Salvato nel carrello!",
+    message: "Salvato nei preferiti!",
     displayTime: .8
   });
 
