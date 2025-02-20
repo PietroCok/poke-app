@@ -38,12 +38,15 @@ function loadCart() {
 /**
  * Removes all items from cart and deletes it from localStorage
  */
-function clearCart(noConfirm) {
-  if (noConfirm || confirm("Svuotare il carrello?\nL'operazione non è reversibile")) {
-    let cart = [];
-    saveCart(cart);
-    drawCartItems();
+function clearCart(skipConfirm = false) {
+  if(!skipConfirm){
+    _confirm("Svuotare il carrello?\nL'operazione non è reversibile", () => clearCart(true));
+    return;
   }
+
+  let cart = [];
+  saveCart(cart);
+  drawCartItems();
 }
 
 
