@@ -38,12 +38,15 @@ function loadCart() {
 /**
  * Removes all items from cart and deletes it from localStorage
  */
-function clearCart(noConfirm) {
-  if (noConfirm || confirm("Svuotare il carrello?\nL'operazione non è reversibile")) {
-    let cart = [];
-    saveCart(cart);
-    drawCartItems();
+function clearCart(skipConfirm = false) {
+  if(!skipConfirm){
+    _confirm("Svuotare il carrello?\nL'operazione non è reversibile", () => clearCart(true));
+    return;
   }
+
+  let cart = [];
+  saveCart(cart);
+  drawCartItems();
 }
 
 
@@ -263,11 +266,19 @@ function sendOrder() {
  * 
  * @param {String} id - item id on cart 
  */
-function removeFromCart(id) {
+function removeFromCart(id, ask = true) {
   let cart = getCart();
 
+  if(ask){
+    const toBeRemoved = cart.find(item => item.id == id);
+    if(!toBeRemoved) return;
+  
+    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeFromCart(id, false));
+    return;
+  }
+  
   cart = cart.filter(item => item.id != id);
-
+  
   saveCart(cart);
 }
 

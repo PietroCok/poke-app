@@ -110,6 +110,7 @@ function updateStarredItem(item) {
 */
 function isStarred(id) {
   const starredItems = getStarred();
+
   const alreadyStarred = starredItems.find(item => item.id == id);
   if (alreadyStarred) return true;
   return false;
@@ -118,8 +119,17 @@ function isStarred(id) {
 /**
  * Remove item from starred list
 */
-function removeStarred(id) {
+function removeStarred(id, ask = true) {
   let starredItems = getStarred();
+
+  if(ask){
+    const toBeRemoved = starredItems.find(item => item.id == id);
+    if(!toBeRemoved) return;
+
+    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeStarred(id, false));
+
+    return;
+  }
 
   starredItems = starredItems.filter(item => item.id != id);
 

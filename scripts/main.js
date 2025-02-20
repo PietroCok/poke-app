@@ -26,8 +26,8 @@ function setTitle(config) {
     `<div class="title flex flex-center flex-column accent-2 margin-08-0">
     <h1 class="text-center">${config.titolo}</h1>
     <div class="flex flex-center flex-column">
-      <div class="text-center text-small margin-5-0">${config.sotto_titolo}</div>
-      <div class="text-center text-small margin-5-0">${config.sotto_titolo_2}</div>
+      <div class="text-center text-large margin-5-0">${config.sotto_titolo}</div>
+      <div class="text-center text-large margin-5-0">${config.sotto_titolo_2}</div>
     </div>
   </div>
   `;
@@ -563,7 +563,7 @@ function addActions() {
   }
 
   // close dialog if click outsite of it (requires a div covering the entire dialog area)
-  const dialogs = document.getElementsByTagName('dialog');
+  const dialogs = document.querySelectorAll('dialog.out-close');
   for (const dialog of dialogs) {
     dialog.onclick = (evt) => {
       if (evt.target.tagName == 'DIALOG') {

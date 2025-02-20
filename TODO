@@ -1,13 +1,9 @@
 DA IMPLEMENTARE
-- custom confirm window
--- aggiungere finestra di conferma cancellazione ( da carrello e preferiti )
 
 DA CORREGGERE
-- le notifiche toast non funzionano nel caso di attivazione mentre una dialog è aperta in modalità modale. Questo a causa del fatto che le dialog vengono posizionate nel top layer che pare non essere accessibile dagli altri elementi normali
 
 DA VALUTARE
 - aggiunta preview (messaggio ordine compatto) singla poke
-
 
 - valutare aggiunta persistenza vera con db (nuova versione applicazione)
 - valutare metodi di condivisione alternativi
