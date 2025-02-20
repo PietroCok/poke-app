@@ -15,6 +15,7 @@
   <link rel="stylesheet" href="./styles/common.css">
 
   <script src="./scripts/utils.js" defer></script>
+  <script src="./scripts/customConfirm.js" defer></script>
   <script src="./scripts/toastManager.js" defer></script>
   <script src="./scripts/starred.js" defer></script>
   <script src="./scripts/theme.js" defer></script>
@@ -125,7 +126,7 @@
 
   </section>
 
-  <dialog id="add-item-name" class="dialog">
+  <dialog id="add-item-name" class="dialog out-close">
     <div class="flex flex-column gap-1 padding-1">
       <label class="label" for="item-name">Dai un nome alla tua poke
       </label>
@@ -143,7 +144,7 @@
     </div>
   </dialog>
 
-  <dialog id="preview-order" class="dialog">
+  <dialog id="preview-order" class="dialog out-close">
     <div id="toast-container-order" class="w-100 fixed flex flex-center z-100"></div>
 
     <div class="flex flex-column gap-1 padding-1">
@@ -179,6 +180,11 @@
         <button id="clear-order" class="button text-button accent-1-invert" onclick="closeDialog('preview-order')">Annulla</button>
         <button id="send-order" class="button text-button accent-3-invert" onclick="sendOrder()">Conferma</button>
       </div>
+    </div>
+  </dialog>
+
+  <dialog id="custom-confirm" class="dialog out-close">
+    <div id="custom-confirm-container" class="flex flex-column gap-1 padding-1">
     </div>
   </dialog>
 

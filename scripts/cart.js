@@ -263,11 +263,19 @@ function sendOrder() {
  * 
  * @param {String} id - item id on cart 
  */
-function removeFromCart(id) {
+function removeFromCart(id, ask = true) {
   let cart = getCart();
 
+  if(ask){
+    const toBeRemoved = cart.find(item => item.id == id);
+    if(!toBeRemoved) return;
+  
+    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name}`, () => removeFromCart(id, false));
+    return;
+  }
+  
   cart = cart.filter(item => item.id != id);
-
+  
   saveCart(cart);
 }
 

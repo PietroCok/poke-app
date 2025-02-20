@@ -89,6 +89,10 @@
   flex: 1;
 }
 
+.row-reverse{
+  flex-direction: row-reverse;
+}
+
 .sticky{
   position: sticky;
 }
@@ -136,7 +140,7 @@
   text-align: center;
 }
 
-.text-small {
+.text-large {
   font-size: large;
 }
 
