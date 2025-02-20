@@ -1,16 +1,16 @@
-.not-info{
+.toast-info{
   color: var(--accent-info);
   border-color: var(--accent-info);
   box-shadow: 0 0 5px 0 var(--accent-info);
 }
 
-.not-warn{
+.toast-warn{
   color: var(--accent-warn);
   border-color: var(--accent-warn);
   box-shadow: 0 0 5px 0 var(--accent-warn);
 }
 
-.not-error{
+.toast-error{
   color: var(--accent-error);
   border-color: var(--accent-error);
   box-shadow: 0 0 5px 0 var(--accent-error);

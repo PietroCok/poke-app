@@ -1,6 +1,4 @@
 
-
-
 /**
  * Class that handles toast messages on the entire application
  */
@@ -10,6 +8,7 @@ class ToastManager {
     this.activeNotification = null;
     this.target = document.getElementById('toast-container');
     this.timeoutId = null;
+    this.fadeTime = 400; // time allocated for fade animation (out only)
   }
 
   addToQueue(notification) {
@@ -19,8 +18,13 @@ class ToastManager {
 
     // if active refresh timer
     if(this.activeNotification?.message == notification.message){
-      this.refreshActiveTimer()
-      return;
+      const time_left = performance.now() - this.activeNotification.startTimeDisplay - this.activeNotification.displayTime * 1000;
+      
+      // if fade out animation has already started, add the notification as new one
+      if(time_left < 0){
+        this.refreshActiveTimer();
+        return;
+      }
     }
 
     // add to queue
@@ -29,10 +33,12 @@ class ToastManager {
   }
 
   refreshActiveTimer(){
+    this.activeNotification.startTimeDisplay = performance.now();
     clearTimeout(this.timeoutId);
     this.timeoutId = setTimeout(() => {
-      this.closeActiveNotification();
-    }, this.activeNotification.displayTime * 1000);
+      document.getElementById('notification').classList.add('anim-out');
+      this.closeActiveNotification(true);
+    }, this.activeNotification.displayTime * 1000 + this.fadeTime);
   }
 
   /**
@@ -52,7 +58,7 @@ class ToastManager {
    */
   async showNotification(notification) {
     const elemStr =
-      `<div class="notification w-80 text-center margin-1 not-${notification.gravity} flex align-center">
+      `<div id="notification" class="notification w-80 text-center margin-1 toast-${notification.gravity} flex align-center">
       <div class="notification-message flex-1 padding-1">
         ${notification.message}
       </div>
@@ -73,17 +79,20 @@ class ToastManager {
     }
 
     setTimeout(() => elem.classList.add('anim-in'), 0);
+    notification.startTimeDisplay = performance.now();
     
     this.timeoutId = setTimeout(() => {
+      
       elem.classList.add('anim-out');
       this.closeActiveNotification(true);
-    }, notification.displayTime * 1000 + 400);
+    }, notification.displayTime * 1000);
   }
 
   closeActiveNotification(wait = false) {
     clearTimeout(this.timeoutId);
     // additional fixed time for animations
     this.timeoutId = setTimeout(() => {
+      
       if(this.activeNotification.targetId){
         const altTarget = document.getElementById(this.activeNotification.targetId);
         altTarget.innerHTML = '';
@@ -92,7 +101,7 @@ class ToastManager {
       }
       this.activeNotification = null;
       this.serveQueue();
-    }, 400 * wait)
+    }, this.fadeTime * wait)
   }
 }
 
@@ -116,6 +125,7 @@ class Notification {
     this.gravity = gravity;
     this.displayTime = displayTime;
     this.targetId = targetId;
+    this.startTimeDisplay = null; // time when the notification is first shown
 
     toastManager.addToQueue(this);
   }
