@@ -126,7 +126,7 @@ function removeStarred(id, ask = true) {
     const toBeRemoved = starredItems.find(item => item.id == id);
     if(!toBeRemoved) return;
 
-    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name}`, () => removeStarred(id, false));
+    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeStarred(id, false));
 
     return;
   }

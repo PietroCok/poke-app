@@ -273,7 +273,7 @@ function removeFromCart(id, ask = true) {
     const toBeRemoved = cart.find(item => item.id == id);
     if(!toBeRemoved) return;
   
-    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name}`, () => removeFromCart(id, false));
+    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeFromCart(id, false));
     return;
   }
   
