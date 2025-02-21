@@ -537,17 +537,6 @@ function closeMenu() {
 }
 
 function addActions() {
-  // dialogs comfirm with enter
-  const dialog_name = document.getElementById('add-item-name');
-  if (dialog_name) dialog_name.addEventListener('keypress', (evt) => {
-    if (evt.key == 'Enter') saveItem();
-  })
-
-  const dialog_preview = document.getElementById('preview-order');
-  if (dialog_preview) dialog_preview.addEventListener('keypress', (evt) => {
-    if (evt.key == 'Enter') sendOrder();
-  })
-
   // visualizza sempre una singola icona per ogni sottomenu all'apertura del menu
   const main_menu = document.getElementById('main-menu');
   if (main_menu) main_menu.onclick = handleMenuClick;
