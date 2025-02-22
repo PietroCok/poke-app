@@ -21,6 +21,9 @@
   <script src="./scripts/theme.js" defer></script>
   <script src="./scripts/cart.js" defer></script>
   <script src="./scripts/main.js" defer></script>
+
+  <script src="./scripts/firebaseInterface.js" defer></script>
+  <script src="./scripts/firebase.js" type="module" defer></script>
   <title>POKE</title>
 </head>
 
@@ -39,15 +42,15 @@
         </summary>
 
         <div id="theme-menu-container" class="flex">
-          <div id="theme-icon-auto" title="AUTO" class="button icon icon-only accent-main hidden" onclick="handleTheme('auto')">
+          <div id="theme-icon-auto" title="AUTO" class="button icon icon-only accent-main margin-0-0-0-10 hidden" onclick="handleTheme('auto')">
             <i class="fa-solid fa-a"></i>
           </div>
     
-          <div id="theme-icon-light" title="LIGHT" class="button icon icon-only accent-main hidden" onclick="handleTheme('light')">
+          <div id="theme-icon-light" title="LIGHT" class="button icon icon-only accent-main margin-0-0-0-10 hidden" onclick="handleTheme('light')">
             <i class="fa-solid fa-sun"></i>
           </div>
     
-          <div id="theme-icon-dark" title="DARK" class="button icon icon-only accent-main hidden" onclick="handleTheme('dark')">
+          <div id="theme-icon-dark" title="DARK" class="button icon icon-only accent-main margin-0-10 hidden" onclick="handleTheme('dark')">
             <i class="fa-solid fa-moon"></i>
           </div>
         </div>
@@ -57,6 +60,19 @@
             <i class="fa-solid fa-star"></i>
           </div>
         </div>
+
+        <div id="user-logged" class="flex-self-end hidden">
+          <div id="star-item" title="Utente loggato" class="button icon icon-only accent-3" onclick="checkLogin()">
+            <i class="fa-solid fa-user-check"></i>
+          </div>
+        </div>
+
+        <div id="open-login" class="flex-self-end">
+          <div id="star-item" title="Esegui login" class="button icon icon-only accent-3" onclick="showDialog('sign-in')">
+            <i class="fa-solid fa-user"></i>
+          </div>
+        </div>
+
       </details>
     </nav>
   </header>
@@ -179,6 +195,27 @@
       <div class="button-wrapper">
         <button id="clear-order" class="button text-button accent-1-invert" onclick="closeDialog('preview-order')">Annulla</button>
         <button id="send-order" class="button text-button accent-3-invert" onclick="sendOrder()">Conferma</button>
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="sign-in" class="dialog out-close">
+    <div id="toast-container-sign-in" class="w-100 fixed flex flex-center z-100"></div>
+
+    <div class="padding-1">
+      <div id="user-credentials" class="flex flex-column gap-1">
+        <label for="user-email" class="text-large">
+          Email: <input type="text" name="user-email" id="user-email" class="margin-1-0 padding-10">
+        </label>
+    
+        <label for="user-pwd" class="text-large">
+          Password: <input type="password" name="user-pwd" id="user-pwd" class="margin-1-0 padding-10">
+        </label>
+      </div>
+
+      <div class="button-wrapper gap-2">
+        <button id="clear-order" class="button text-button accent-1-invert" onclick="closeDialog('sign-in')">Annulla</button>
+        <button id="send-order" class="button text-button accent-3-invert" onclick="userLogin()">LogIn</button>
       </div>
     </div>
   </dialog>

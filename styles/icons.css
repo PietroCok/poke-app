@@ -24,3 +24,12 @@
   color: var(--accent-3);
   background-color: var(--main-bg);
 }
+
+.icon.margin-0-10{
+  margin: 0 10px;
+}
+
+.icon.margin-0-0-0-10{
+  margin: 0 0 0 10px;
+}
+

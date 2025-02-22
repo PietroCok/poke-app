@@ -38,6 +38,16 @@ function closeDialog(id) {
 }
 
 /**
+ * Show a dialog element by its id
+ * 
+ * @param {String} id 
+ */
+function showDialog(id) {
+  const dialog = document.getElementById(id);
+  if (dialog) dialog.showModal();
+}
+
+/**
  * Converts an item to a string
  * 
  * @param {Object} item
