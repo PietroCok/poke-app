@@ -31,14 +31,14 @@
     </button>
 
     <nav id="main-menu-container" class="fixed top-0 right-0 z-100" title="Menu principale">
-      <details>
-        <summary class="flex-self-end">
+      <details class="flex flex-column align-end">
+        <summary>
           <div id="main-menu" class="button icon icon-only" onclick="handleMenuClick()">
             <i class="fa-solid fa-bars"></i>
           </div>
         </summary>
 
-        <div id="theme-menu-container" class="flex">
+        <div id="theme-menu-container" class="flex just-end">
           <div id="theme-icon-auto" title="AUTO" class="button icon icon-only accent-main hidden" onclick="handleTheme('auto')">
             <i class="fa-solid fa-a"></i>
           </div>
@@ -52,7 +52,7 @@
           </div>
         </div>
 
-        <div id="starred-menu-container" class="flex-self-end">
+        <div id="starred-menu-container" class="flex just-end">
           <div id="star-item" class="button icon icon-only accent-2" onclick="openStarredItems()">
             <i class="fa-solid fa-star"></i>
           </div>
