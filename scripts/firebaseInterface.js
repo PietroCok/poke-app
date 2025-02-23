@@ -1,6 +1,7 @@
 let firebase = {};
 let loginResult = '';
 
+// Tries to log in users
 async function userLogin() {
   const email = document.getElementById('user-email').value;
   const password = document.getElementById('user-pwd').value;
@@ -17,13 +18,8 @@ async function userLogin() {
   await firebase.signIn(email, password);
 
   if(!loginResult) {
-    new Notification({
-      message: 'Utente loggato con successo!',
-      gravity: 'info',
-    });
-    document.getElementById('user-logged').classList.remove('hidden');
-    document.getElementById('open-login').classList.add('hidden');
-
+    
+    handleLogin(true);
     closeDialog('sign-in');
   } else {
     new Notification({
@@ -34,6 +30,45 @@ async function userLogin() {
   }
 }
 
+async function handleLogin(success = false){
+  if(success){
+    new Notification({
+      message: 'Utente loggato con successo!',
+      gravity: 'info',
+    });
+    document.getElementById('user-logged').classList.remove('hidden');
+    document.getElementById('open-login').classList.add('hidden');
+  } else {
+    document.getElementById('user-logged').classList.add('hidden');
+    document.getElementById('open-login').classList.remove('hidden');
+  }
+}
+
+// Checks if user is logged
 async function checkLogin(){
 
+}
+
+// Signs user out
+async function logout(ask = true){
+  // check if user is logged
+
+
+  // ask for comfirmation
+  if(ask){
+    _confirm("Sei sicuro di volerti disconnettere?", () => logout(false));
+    return;
+  }
+
+  // logout
+  const result = firebase.signOut();
+
+  if(result){
+    document.getElementById('user-logged').classList.add('hidden');
+    document.getElementById('open-login').classList.remove('hidden');
+
+    new Notification({
+      message: 'Utente disconnesso!'
+    })
+  }
 }

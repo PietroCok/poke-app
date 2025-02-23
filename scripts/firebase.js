@@ -1,28 +1,37 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
+firebase.init = init;
 firebase.signIn = signIn;
+firebase.signOut = _signOut;
+firebase.checkUserLogged = checkUserLogged;
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBT-bk__Ft7uiBIRA9SriDdvVsHPFLp8B8",
-  authDomain: "testing-grounds-d59c4.firebaseapp.com",
-  databaseURL: "https://testing-grounds-d59c4-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "testing-grounds-d59c4",
-  storageBucket: "testing-grounds-d59c4.firebasestorage.app",
-  messagingSenderId: "934551744902",
-  appId: "1:934551744902:web:ab91aec74058e5c2b83c07"
-};
+let app, auth, database;
 
+async function init(firebaseConfig){
+  if(!firebaseConfig) {
+    console.warn('Firebase configuration not found!');
+    return;
+  }
+  // Initialize Firebase
+  app = initializeApp(firebaseConfig);
+  if(!app) return;
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+  // Initialize Firebase Authentication and get a reference to the service
+  auth = getAuth(app);
+  if(!auth) return;
 
-// Initialize Firebase Authentication and get a reference to the service
-const auth = getAuth(app);
+  // Initialize Realtime Database and get a reference to the service
+  database = getDatabase(app);
+  if(!database) return;
 
-// Initialize Realtime Database and get a reference to the service
-const database = getDatabase(app);
+  console.log('Firebase Initialized!');
+
+  // handle auto login on page reload
+  checkUserLogged();
+}
+
 
 // authentication
 async function signIn(email, password){
@@ -38,4 +47,29 @@ async function signIn(email, password){
       loginResult = false;
       console.warn(errorCode, errorMessage);
     });
+}
+
+// logout
+async function _signOut(){
+  const result = await signOut(auth).then(() => {
+    // Sign-out successful.
+    return true;
+  }).catch((error) => {
+    // An error happened.
+    console.warn(error);
+    return false;
+  });
+
+  return result;
+}
+
+// check for user logged
+async function checkUserLogged(){
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      handleLogin(true);
+    } else {
+      handleLogin(false);
+    }
+  });
 }

@@ -576,6 +576,8 @@ async function setUp() {
   recalculateLimits();
 
   loadCart();
+
+  firebase.init(config.firebaseConfig);
 }
 
 setUp();
