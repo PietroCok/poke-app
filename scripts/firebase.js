@@ -2,17 +2,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebas
 import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
-firebase.init = init;
-firebase.signIn = signIn;
-firebase.signOut = _signOut;
-firebase.checkUserLogged = checkUserLogged;
-firebase.addSharedCart = addSharedCart;
-firebase.addItemToCart = addItemToCart;
-firebase.removeItemFromCart = removeItemFromCart;
-
 let app, auth, database;
 
-async function init(firebaseConfig){
+firebase.init = async function(firebaseConfig){
   if(!firebaseConfig) {
     console.warn('Firebase configuration not found!');
     return;
@@ -32,12 +24,12 @@ async function init(firebaseConfig){
   console.log('Firebase Initialized!');
 
   // handle auto login on page reload
-  checkUserLogged();
+  this.checkUserLogged();
 }
 
 
 // authentication
-async function signIn(email, password){
+firebase.signIn = async function(email, password){
   signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // Signed up 
@@ -53,7 +45,7 @@ async function signIn(email, password){
 }
 
 // logout
-async function _signOut(){
+firebase.signOut = async function(){
   const result = await signOut(auth).then(() => {
     // Sign-out successful.
     return true;
@@ -67,7 +59,7 @@ async function _signOut(){
 }
 
 // check for user logged
-async function checkUserLogged(){
+firebase.checkUserLogged = async function(){
   onAuthStateChanged(auth, (user) => {
     if (user) {
       handleLogin(true);
@@ -82,7 +74,7 @@ async function checkUserLogged(){
  * @param {Object} cart 
  * @returns 
  */
-async function addSharedCart(cart){
+firebase.addSharedCart = async function(cart){
   if(!cart) return;
 
   const key = `cart-${cart.id}`;
@@ -98,7 +90,7 @@ async function addSharedCart(cart){
  * @param {String} cartId 
  * @returns 
  */
-async function removeSharedCart(cartId){
+firebase.removeSharedCart = async function(cartId){
   if(!cartId) return;
 
   const key = `cart-${cartId}`;
@@ -115,7 +107,7 @@ async function removeSharedCart(cartId){
  * @param {Object} item 
  * @returns 
  */
-async function addItemToCart(cartId, item){
+firebase.addItemToCart = async function(cartId, item){
   if(!cartId || !item) return;
 
   const key = `item-${item.id}`;
@@ -132,7 +124,7 @@ async function addItemToCart(cartId, item){
  * @param {String} itemId 
  * @returns 
  */
-async function removeItemFromCart(cartId, itemId){
+firebase.removeItemFromCart = async function(cartId, itemId){
   if(!cartId || !itemId) return;
 
   const key = `item-${itemId}`;
