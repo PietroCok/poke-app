@@ -528,6 +528,10 @@ function handleMenuClick() {
   if (parentContainer && !parentContainer.open) {
     // close theme menu every time is opened
     loadTheme();
+
+    // close shared carts menu
+    const sharedCartsMenu = document.querySelector('#shared-carts-menu input[type="checkbox"');
+    if(sharedCartsMenu) sharedCartsMenu.checked = false;
   }
 }
 

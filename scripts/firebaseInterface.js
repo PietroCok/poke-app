@@ -18,29 +18,36 @@ async function userLogin() {
   await firebase.signIn(email, password);
 
   if(!loginResult) {
-    
     handleLogin(true);
     closeDialog('sign-in');
   } else {
     new Notification({
-      message: 'Qualcosa è andato storto, riprova più tardi!',
+      message: 'Credenziali errate!',
       gravity: 'error',
       targetId: 'toast-container-sign-in'
     });
   }
 }
 
-async function handleLogin(success = false){
+async function handleLogin(success = false, notification = true){
   if(success){
-    new Notification({
-      message: 'Utente loggato con successo!',
-      gravity: 'info',
-    });
-    document.getElementById('user-logged').classList.remove('hidden');
-    document.getElementById('open-login').classList.add('hidden');
+    if(notification){
+      new Notification({
+        message: 'Utente loggato con successo!',
+        gravity: 'info',
+      });
+    }
+    // show
+    document.getElementById('user-logged-container').classList.remove('hidden');
+    document.getElementById('shared-carts-menu').classList.remove('hidden');
+    // hide
+    document.getElementById('open-login-container').classList.add('hidden');
   } else {
-    document.getElementById('user-logged').classList.add('hidden');
-    document.getElementById('open-login').classList.remove('hidden');
+    // show
+    document.getElementById('open-login-container').classList.remove('hidden');
+    // hide
+    document.getElementById('user-logged-container').classList.add('hidden');
+    document.getElementById('shared-carts-menu').classList.add('hidden');
   }
 }
 
@@ -64,11 +71,51 @@ async function logout(ask = true){
   const result = firebase.signOut();
 
   if(result){
-    document.getElementById('user-logged').classList.add('hidden');
-    document.getElementById('open-login').classList.remove('hidden');
+    handleLogin(false, false);
 
     new Notification({
       message: 'Utente disconnesso!'
     })
   }
+}
+
+
+
+// SHARED CARTS
+
+// Creates a new shared cart
+async function createSharedCart(fromDialog = false){
+  if(!fromDialog){
+    // opens custom dialog for cart creation
+    const newSharedCartDialog = document.getElementById('new-shared-cart');
+    if(newSharedCartDialog) newSharedCartDialog.showModal();
+    return;
+  }
+
+  // actual shared cart creation
+  const name = document.getElementById('new-shared-cart-name');
+  const loadNow = document.getElementById('load-now');
+  
+  const sharedCart = {
+    name: name.value,
+    id: getRandomId(),
+    items: []
+  }
+
+  // dialog field reset
+  name.value = '';
+
+  console.log('Creating new shared cart!', sharedCart);
+  
+  const result = await firebase.addSharedCart(sharedCart);
+
+  if(result){
+    console.warn(result);
+  }
+
+  closeDialog('new-shared-cart');
+}
+
+function showSharedCarts(){
+
 }

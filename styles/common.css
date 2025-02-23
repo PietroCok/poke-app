@@ -21,6 +21,10 @@
   font-weight: bold;
 }
 
+.pointer{
+  cursor: pointer;
+}
+
 .disabled {
   opacity: .4;
 }

@@ -1,4 +1,8 @@
 DA IMPLEMENTARE
+- visualizza carrelli condivisi
+- collegamento aggiunta / rimozione elementi da carrello condiviso
+- UI per cancellazione carrello condiviso
+- Ascolto modifiche al carrello condiviso caricato in modo da aggiornarlo in tempo reale (possibilmente con le sole modifiche)
 
 DA CORREGGERE
 

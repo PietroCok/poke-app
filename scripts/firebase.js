@@ -6,6 +6,9 @@ firebase.init = init;
 firebase.signIn = signIn;
 firebase.signOut = _signOut;
 firebase.checkUserLogged = checkUserLogged;
+firebase.addSharedCart = addSharedCart;
+firebase.addItemToCart = addItemToCart;
+firebase.removeItemFromCart = removeItemFromCart;
 
 let app, auth, database;
 
@@ -72,4 +75,70 @@ async function checkUserLogged(){
       handleLogin(false);
     }
   });
+}
+
+/**
+ * Adds shared cart to db
+ * @param {Object} cart 
+ * @returns 
+ */
+async function addSharedCart(cart){
+  if(!cart) return;
+
+  const key = `cart-${cart.id}`;
+  const result = await update(ref(database, '/shared-carts'), {
+    [key] : cart
+  }).catch(error => error);
+  
+  return result;
+}
+
+/**
+ * Removes shared cart from db
+ * @param {String} cartId 
+ * @returns 
+ */
+async function removeSharedCart(cartId){
+  if(!cartId) return;
+
+  const key = `cart-${cartId}`;
+  const result = await update(ref(database, `/shared-carts`), {
+    [key] : null
+  }).catch(error => error);
+  
+  return result;
+}
+
+/**
+ * Adds item to a shared cart
+ * @param {String} cartId 
+ * @param {Object} item 
+ * @returns 
+ */
+async function addItemToCart(cartId, item){
+  if(!cartId || !item) return;
+
+  const key = `item-${item.id}`;
+  const result = await update(ref(database, `/shared-carts/cart-${cartId}`), {
+    [key] : item
+  }).catch(error => error);
+  
+  return result;
+}
+
+/**
+ * Removes item from shared cart
+ * @param {String} cartId 
+ * @param {String} itemId 
+ * @returns 
+ */
+async function removeItemFromCart(cartId, itemId){
+  if(!cartId || !itemId) return;
+
+  const key = `item-${itemId}`;
+  const result = await update(ref(database, `/shared-carts/cart-${cartId}`), {
+    [key] : null
+  }).catch(error => error);
+  
+  return result;
 }
