@@ -35,8 +35,8 @@
     </button>
 
     <nav id="main-menu-container" class="fixed top-0 right-0 z-100" title="Menu principale">
-      <details>
-        <summary class="flex-self-end">
+      <details class="flex flex-column align-end">
+        <summary>
           <div id="main-menu" class="button icon icon-only" onclick="handleMenuClick()">
             <i class="fa-solid fa-bars"></i>
           </div>
@@ -65,20 +65,20 @@
           </div>
         </div>
 
-        <div id="user-logged-container" class="flex-self-end hidden">
+        <div id="user-logged-container" class="flex just-end hidden">
           <div id="user-logged" title="Utente loggato" class="button icon icon-only accent-3" onclick="logout()">
             <i class="fa-solid fa-user-check"></i>
           </div>
         </div>
 
-        <div id="open-login-container" class="flex-self-end hidden">
+        <div id="open-login-container" class="flex just-end hidden">
           <div id="open-login" title="Esegui login" class="button icon icon-only accent-3"
             onclick="showDialog('sign-in')">
             <i class="fa-solid fa-user"></i>
           </div>
         </div>
 
-        <div id="shared-carts-menu" class="flex row-reverse just-end hidden">
+        <div id="shared-carts-menu" class="flex row-reverse hidden">
           <input type="checkbox" name="shared-carts-menu-controller" id="shared-carts-menu-controller">
           <label for="shared-carts-menu-controller">
             <div class="button icon icon-only" title="Carreli condivisi">
