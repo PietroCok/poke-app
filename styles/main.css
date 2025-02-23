@@ -41,8 +41,14 @@ body[data-theme="dark"] {
   -webkit-tap-highlight-color: transparent;
 }
 
+/* Remove arrow from details */
 details summary {
   list-style: none;
+}
+
+/* Should remove details arrows on Safari */
+details summary::-webkit-details-marker{
+  display: none;
 }
 
 h2,
