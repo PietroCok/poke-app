@@ -120,16 +120,16 @@
   align-items: center;
 }
 
+.align-end{
+  align-items: flex-end;
+}
+
 .flex-column {
   flex-direction: column;
 }
 
 .flex-wrap {
   flex-wrap: wrap;
-}
-
-.flex-self-end {
-  justify-self: flex-end;
 }
 
 .text-uppercase {
