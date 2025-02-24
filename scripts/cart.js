@@ -21,9 +21,17 @@ function closeCart() {
  */
 function getCart() {
   // get cart from localStorage
-  let cart = JSON.parse(localStorage.getItem('cart'));
-  if (!cart) {
-    cart = [];
+  let cart;
+  try {
+    cart = JSON.parse(localStorage.getItem('cart'));
+  } catch (error) {
+    cart = null;
+  }
+  if (!cart || !cart.items) {
+    cart = {
+      id: getRandomId(),
+      items: []
+    };
   }
   return cart;
 }
@@ -44,7 +52,10 @@ function clearCart(skipConfirm = false) {
     return;
   }
 
-  let cart = [];
+  let cart = {
+    id: getRandomId(),
+    items: []
+  };
   saveCart(cart);
   drawCartItems();
 }
@@ -55,7 +66,7 @@ function clearCart(skipConfirm = false) {
 */
 function isCarted(id) {
   const cart = getCart();
-  const alreadycarted = cart.find(item => item.id == id);
+  const alreadycarted = cart.items?.find(item => item.id == id);
   if (alreadycarted) return true;
   return false;
 }
@@ -96,23 +107,26 @@ function addToCart(item, allowDuplicate = false) {
   if (!poke.id || allowDuplicate) {
     // insert into cart
     poke.id = getRandomId();
-    cart.push(poke);
+    cart.items.push(poke);
+    new Notification({
+      message: "Salvato nel carrello!",
+      displayTime: .8
+    });
   } else {
-    const index = cart.findIndex(_item => _item.id == poke.id);
+    const index = cart.items.findIndex(_item => _item.id == poke.id);
     if (index < 0) {
       // add new item
-      cart.push(poke);
+      cart.items.push(poke);
     } else {
       // update intem in cart
       poke.id = getRandomId();
-      cart.splice(index, 1, poke);
+      cart.items.splice(index, 1, poke);
     }
+    new Notification({
+      message: "Aggiornato nel carrello!",
+      displayTime: .8
+    });
   }
-
-  new Notification({
-    message: "Salvato nel carrello!",
-    displayTime: .8
-  });
 
   clearConfigurator();
 
@@ -126,7 +140,7 @@ function showOrderPreview() {
   // check if at least one item in cart
   const cart = getCart();
 
-  if (cart.length == 0) {
+  if (cart.items.length == 0) {
     new Notification({
       message: "Il carrello è vuoto",
       gravity: 'error'
@@ -151,7 +165,7 @@ function showOrderPreview() {
 
   // total price
   let cartSubtotal = 0;
-  for (const item of cart) {
+  for (const item of cart.items) {
     cartSubtotal += item.totalPrice;
   }
   const cartSubtotalElem = document.getElementById('order-price');
@@ -176,7 +190,7 @@ function generateOrderMessage() {
 
   let simple_order_string = '';
 
-  for (const [index, item] of Object.entries(cart)) {
+  for (const [index, item] of Object.entries(cart.items)) {
     let single_order = ''
     single_order += `${Number(index) + 1}) ${item.dimension.toUpperCase()}: `;
 
@@ -195,7 +209,7 @@ function generateOrderMessage() {
 
   const complete_order_string =
     `Buongiorno,
-vorrei ordinare ${cart.length > 1 ? cart.length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ? " a nome: " + orderName.value : ""}.
+vorrei ordinare ${cart.items.length > 1 ? cart.items.length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ? " a nome: " + orderName.value : ""}.
 
 ${simple_order_string}`;
 
@@ -270,14 +284,14 @@ function removeFromCart(id, ask = true) {
   let cart = getCart();
 
   if(ask){
-    const toBeRemoved = cart.find(item => item.id == id);
+    const toBeRemoved = cart.items.find(item => item.id == id);
     if(!toBeRemoved) return;
   
     _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeFromCart(id, false));
     return;
   }
   
-  cart = cart.filter(item => item.id != id);
+  cart.items = cart.items.filter(item => item.id != id);
   
   saveCart(cart);
 }
@@ -311,9 +325,20 @@ function drawCartItems() {
   const cartElem = document.getElementById('cart-content');
   if (cartElem) cartElem.innerHTML = '';
 
+  // additional header for remote carts
+  if(cart.shared){
+    const additionalHeaderElemStr = 
+    `<h4 class="w-100 sticky top-0 main-bg flex flex-column">
+      Carrello condiviso
+      <span id="shared-cart-name" class="weight-normal margin-10">${cart.name}</span>
+    </h4>`;
+
+    cartElem.append(convertToHTML(additionalHeaderElemStr));
+  }
+
   let cartSubtotal = 0;
 
-  for (const item of cart) {
+  for (const item of cart.items) {
     const description = toString(item);
     const isOpen = openElemsId?.includes(item.id);
     cartSubtotal += item.totalPrice;
@@ -404,14 +429,14 @@ function drawCartItems() {
 
   // update cart count
   const menuElem = document.getElementById('cart-menu');
-  if (menuElem) menuElem.dataset.cartcount = cart.length > 0 ? cart.length : '';
+  if (menuElem) menuElem.dataset.cartcount = cart.items.length > 0 ? cart.items.length : '';
 
   const headerElem = document.getElementById('cart-count');
-  if (headerElem) headerElem.textContent = cart.length;
+  if (headerElem) headerElem.textContent = cart.items.length;
 
   // enable / disable preview button
   const preview_btn = document.getElementById('btn-preview-order');
-  if (cart.length == 0) {
+  if (cart.items.length == 0) {
     preview_btn.classList.add('disabled');
   } else {
     preview_btn.classList.remove('disabled');

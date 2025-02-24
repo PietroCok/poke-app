@@ -59,7 +59,7 @@
           </div>
         </div>
 
-        <div id="starred-menu-container" class="flex just-end">
+        <div id="starred-menu-container" title="Preferiti" class="flex just-end">
           <div id="star-item" class="button icon icon-only accent-2" onclick="openStarredItems()">
             <i class="fa-solid fa-star"></i>
           </div>
@@ -137,12 +137,12 @@
           <div class="accent-2">
             <i class="fa-solid fa-coins"></i>
           </div>
-          <div id="cart-price"><span></span>€</div>
+          <div id="cart-price"><span class="margin-r10"></span>€</div>
         </div>
       </div>
     </header>
 
-    <section id="cart-content" class="w-100 h-100 margin-1-0 flex flex-column align-center gap-1 scroll">
+    <section id="cart-content" class="w-100 h-100 flex flex-column align-center gap-1 scroll">
     </section>
 
     <footer class="button-wrapper fixed bottom-0 flex w-80 z-10">
@@ -173,16 +173,21 @@
     <div class="flex flex-column gap-1 padding-1">
       <label class="label" for="item-name">Dai un nome alla tua poke
       </label>
-      <input class="input" type="text" name="item-name" id="item-name">
+      <input class="input margin-10" type="text" name="item-name" id="item-name">
 
       <footer class="button-wrapper w-100 padding-0">
-        <button title="Annulla" class="button text-button accent-1-invert" onclick="closeDialog('add-item-name')">
-          Annulla
-        </button>
+        <div title="Annulla" class="button icon icon-only accent-1" onclick="closeDialog('add-item-name')">
+          <i class="fa-solid fa-x"></i>
+        </div>
 
-        <button title="Salva" class="button text-button accent-3-invert" onclick="saveItem()">
-          Conferma
-        </button>
+        <div title="Salva nei preferiti" class="button icon icon-only accent-2" onclick="saveItem('starred')">
+          <i class="fa-solid fa-star"></i>
+        </div>
+
+        <div title="Salva nel carrello" class="button icon icon-only accent-2" onclick="saveItem('cart')">
+          <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+
       </footer>
     </div>
   </dialog>
@@ -267,7 +272,7 @@
       </div>
 
       <div class="flex align-center gap-1" title="Carica subito il carrello una volta creato">
-        <label class="label pointer" for="load-now">Carica subito</label>
+        <label class="label pointer" for="load-now">Collega carrello locale</label>
         <input class="input" type="checkbox" name="load-now" id="load-now" checked>
         <label for="load-now" class="checkbox pointer"></label>
       </div>
@@ -278,6 +283,36 @@
         <button id="create-shared-cart" class="button text-button accent-3-invert" onclick="createSharedCart(true)">Conferma</button>
       </div>
     </div>
+  </dialog>
+
+  <dialog id="shared-cart-selection" class="dialog out-close w-80">
+    <div class="padding-1 padding-top-0 flex flex-column gap-1">
+      <div class="sticky flex align-center padding-1-0 top-0 main-bg">
+        <div title="Chiudi" class="button icon icon-only icon-small accent-1" onclick="closeDialog('shared-cart-selection')">
+          <i class="fa-solid fa-x"></i>
+        </div>
+        <h4 class="flex-1">Carrelli condivisi</h4>
+        <div class="button icon icon-only  icon-fake" tabindex="-1">
+          <i class="fa-solid fa-square"></i>
+        </div>
+      </div>
+
+      <div id="shared-cart-selection-container" class="flex flex-column gap-1">
+
+      </div>
+    </div>
+  </dialog>
+
+  <dialog id="loading-screen">
+    <div class='loading-container'>
+      <div class="loading-spinner">
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+        <div></div>
+      </div>
+    </div> 
   </dialog>
 
 </body>

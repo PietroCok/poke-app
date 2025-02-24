@@ -7,19 +7,29 @@ let app, auth, database;
 firebase.init = async function(firebaseConfig){
   if(!firebaseConfig) {
     console.warn('Firebase configuration not found!');
+    firebase = null;
     return;
   }
   // Initialize Firebase
   app = initializeApp(firebaseConfig);
-  if(!app) return;
+  if(!app) {
+    firebase = null;
+    return;
+  }
 
   // Initialize Firebase Authentication and get a reference to the service
   auth = getAuth(app);
-  if(!auth) return;
+  if(!auth) {
+    firebase = null;
+    return;
+  }
 
   // Initialize Realtime Database and get a reference to the service
   database = getDatabase(app);
-  if(!database) return;
+  if(!database) {
+    firebase = null;
+    return;
+  }
 
   console.log('Firebase Initialized!');
 
@@ -133,4 +143,25 @@ firebase.removeItemFromCart = async function(cartId, itemId){
   }).catch(error => error);
   
   return result;
+}
+
+
+/**
+ * 
+ */
+firebase.getSharedCarts = async function(){
+  const carts = await get(ref(database, `/shared-carts`)).then((snapshot) => {
+    if (snapshot.exists()) {
+      lastSharedCarts = Object.values(snapshot.val());
+    } else {
+      console.log("No data available");
+      lastSharedCarts = [];
+    }
+    return lastSharedCarts;
+  }).catch((error) => {
+    console.error(error);
+    return null;
+  });
+
+  return carts;
 }

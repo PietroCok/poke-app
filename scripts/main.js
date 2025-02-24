@@ -210,7 +210,7 @@ function editItem(id, from = '') {
   switch (from) {
     case 'cart':
       const cart = getCart();
-      item = cart.find(item => item.id == id);
+      item = cart.items.find(item => item.id == id);
       if (!item) return;
       // save from where the item is edited
       if (from) item.from = from;
@@ -316,7 +316,7 @@ function askItemName() {
 /**
  * Save item from configurator
  */
-function saveItem() {
+function saveItem(to) {
   // get loaded item in configurator
   const item = structuredClone(selected);
 
@@ -331,9 +331,11 @@ function saveItem() {
     dialog_addItemName.close();
   }
 
+  let destination = to || item.from;
+
   // check where to save item
   // default to cart
-  switch (item.from) {
+  switch (destination) {
     case 'starred':
       updateStarredItem(item);
       break;
@@ -365,7 +367,7 @@ function cloneItem(id, from) {
 
     case 'cart':
       const cart = getCart();
-      item = cart.find(item => item.id == id);
+      item = cart.items.find(item => item.id == id);
       copy = structuredClone(item);
       copy.id = getRandomId();
       addToCart(copy, true);
@@ -565,6 +567,15 @@ function addActions() {
       }
     };
   }
+}
+
+const loadingElement = document.getElementById('loading-screen');
+function showLoadingScreen(){
+  loadingElement.showModal();
+}
+
+function hideLoadingScreen(){
+  loadingElement.close();
 }
 
 

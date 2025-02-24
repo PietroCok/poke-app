@@ -3,6 +3,8 @@ let loginResult = '';
 
 // Tries to log in users
 async function userLogin() {
+  if(!firebase) return;
+
   const email = document.getElementById('user-email').value;
   const password = document.getElementById('user-pwd').value;
 
@@ -30,6 +32,8 @@ async function userLogin() {
 }
 
 async function handleLogin(success = false, notification = true){
+  if(!firebase) return;
+
   if(success){
     if(notification){
       new Notification({
@@ -58,6 +62,8 @@ async function checkLogin(){
 
 // Signs user out
 async function logout(ask = true){
+  if(!firebase) return;
+
   // check if user is logged
 
 
@@ -79,12 +85,12 @@ async function logout(ask = true){
   }
 }
 
-
-
 // SHARED CARTS
 
 // Creates a new shared cart
 async function createSharedCart(fromDialog = false){
+  if(!firebase) return;
+
   if(!fromDialog){
     // opens custom dialog for cart creation
     const newSharedCartDialog = document.getElementById('new-shared-cart');
@@ -94,16 +100,18 @@ async function createSharedCart(fromDialog = false){
 
   // actual shared cart creation
   const name = document.getElementById('new-shared-cart-name');
-  const loadNow = document.getElementById('load-now');
+  const loadCurrent = document.getElementById('load-now');
   
-  const sharedCart = {
-    name: name.value,
-    id: getRandomId(),
-    items: []
+  let sharedCart = {};
+  if(loadCurrent.checked){
+    sharedCart = getCart();
   }
+  sharedCart.name = name.value;
+  sharedCart.id = getRandomId();
 
-  // dialog field reset
+  // dialog field reset to default
   name.value = '';
+  loadCurrent.checked = true;
 
   console.log('Creating new shared cart!', sharedCart);
   
@@ -116,6 +124,76 @@ async function createSharedCart(fromDialog = false){
   closeDialog('new-shared-cart');
 }
 
-function showSharedCarts(){
 
+let lastSharedCarts = [];
+/**
+ * Retrieves keys information about available shared carts
+ */
+async function showSharedCarts(){
+  lastSharedCarts = [];
+  if(!firebase) return;
+
+  showLoadingScreen();
+  const sharedCarts = await firebase.getSharedCarts();
+
+  const dialog = document.getElementById('shared-cart-selection');
+  const container = document.getElementById('shared-cart-selection-container');
+  container.innerHTML = '';
+
+  console.log(sharedCarts);
+
+  for(const id in sharedCarts){
+    const cart = sharedCarts[id];
+
+    const elemStr = 
+    `<div class="cart-container flex just-between align-center">
+      <div class="cart-name flex-1 text-left margin-10">${cart.name}</div>
+      <div class="cart-items flex gap-1" title="Elementi nel carrello">
+        <span class="flex align-center">${cart.items.length}</span>
+        <div class="flex align-center">
+          <i class="fa-solid fa-bowl-food"></i>
+        </div>
+
+        <div title="Carica nel carrello" class="button icon icon-only icon-small accent-2" onclick="loadSharedCart('${cart.id}')">
+          <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+      </div>
+    </div>`;
+
+    const elem = convertToHTML(elemStr);
+    container.append(elem);
+  }
+
+  hideLoadingScreen();
+
+  dialog.showModal();
 }
+
+/**
+ * Loads shared cart into local cart, then add observer to get changes in realtime
+ * 
+ * @param {String} id 
+ */
+function loadSharedCart(id){
+  const sharedCart = lastSharedCarts.find(cart => cart.id == id);
+  if(!sharedCart){
+    new Notification({
+      message: 'Qualcosa è andato storto durante il recupero del carrello condisivo',
+      gravity: 'error'
+    });
+    return;
+  }
+
+  sharedCart.shared = true;
+
+  saveCart(sharedCart);
+
+  openCart();
+
+  // TODO add realtime sync with database
+
+  closeDialog('shared-cart-selection');
+}
+
+
+

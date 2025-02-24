@@ -51,7 +51,7 @@ function starItemFromCart(id) {
 
   // for now is support only starring an item from cart
   const cart = getCart();
-  const item = cart.find(item => item.id == id);
+  const item = cart.items.find(item => item.id == id);
   starredItems.push(item);
 
   setStarred(starredItems);
@@ -91,16 +91,26 @@ function starItem(item) {
 function updateStarredItem(item) {
   if (!item) return;
 
-  if (!isStarred(item.id)) return;
-
   const starred = getStarred();
 
-  // update id to avoid duplicate ids between cart and starred if one of them is edited
-  item.id = getRandomId();
-
-  // update element in starred
-  const index = starred.findIndex(_item => _item.id == item.id);
-  starred.splice(index, 1, item);
+  if(isStarred(item.id)){
+    // update element in starred
+    const index = starred.findIndex(_item => _item.id == item.id);
+    starred.splice(index, 1, item);
+    new Notification({
+      message: 'Aggiornato nei preferiti!',
+      displayTime: .8
+    })
+  } else {
+    // add new
+    // update id to avoid duplicate ids between cart and starred if one of them is edited
+    item.id = getRandomId();
+    starred.push(item);
+    new Notification({
+      message: 'Salvato nei preferiti!',
+      displayTime: .8
+    })
+  }
 
   setStarred(starred);
 }
