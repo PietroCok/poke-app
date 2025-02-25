@@ -1,8 +1,12 @@
 DA IMPLEMENTARE
 - visualizza carrelli condivisi
 - collegamento aggiunta / rimozione elementi da carrello condiviso
-- UI per cancellazione carrello condiviso
 - Ascolto modifiche al carrello condiviso caricato in modo da aggiornarlo in tempo reale (possibilmente con le sole modifiche)
+- rivedi Grafica visualizzazione carrelli condivisi (nuova pagina???)
+- rivedere logica gestione pagine:
+-- prova a chiudere sempre tutte le altre pagine all'apertura di una nuova pagina
+-- disegna il contenuto della pagina solo all'apertura della pagina o alla modifica sulla pagina stessa
+-- ottimizzazione disegno quando la pagina da aggiornare è attualmente aperta (rimozione e duplicazione diventano puntuali sul DOM, invece di ridisegnare tutto)
 
 DA CORREGGERE
 
