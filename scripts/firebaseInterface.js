@@ -56,8 +56,8 @@ async function handleLogin(success = false, notification = true){
 }
 
 // Checks if user is logged
-async function checkLogin(){
-
+function checkLogin(){
+  return firebase.userLogged || false;
 }
 
 // Signs user out
@@ -125,48 +125,12 @@ async function createSharedCart(fromDialog = false){
 }
 
 
-let lastSharedCarts = [];
 /**
  * Retrieves keys information about available shared carts
  */
-async function showSharedCarts(){
-  lastSharedCarts = [];
-  if(!firebase) return;
-
-  showLoadingScreen();
-  const sharedCarts = await firebase.getSharedCarts();
-
-  const dialog = document.getElementById('shared-cart-selection');
-  const container = document.getElementById('shared-cart-selection-container');
-  container.innerHTML = '';
-
-  console.log(sharedCarts);
-
-  for(const id in sharedCarts){
-    const cart = sharedCarts[id];
-
-    const elemStr = 
-    `<div class="cart-container flex just-between align-center">
-      <div class="cart-name flex-1 text-left margin-10">${cart.name}</div>
-      <div class="cart-items flex gap-1" title="Elementi nel carrello">
-        <span class="flex align-center">${cart.items.length}</span>
-        <div class="flex align-center">
-          <i class="fa-solid fa-bowl-food"></i>
-        </div>
-
-        <div title="Carica nel carrello" class="button icon icon-only icon-small accent-2" onclick="loadSharedCart('${cart.id}')">
-          <i class="fa-solid fa-cart-shopping"></i>
-        </div>
-      </div>
-    </div>`;
-
-    const elem = convertToHTML(elemStr);
-    container.append(elem);
-  }
-
-  hideLoadingScreen();
-
-  dialog.showModal();
+function openSharedCarts(){
+  drawSharedCarts();
+  closeMenu();
 }
 
 /**
@@ -192,8 +156,52 @@ function loadSharedCart(id){
 
   // TODO add realtime sync with database
 
-  closeDialog('shared-cart-selection');
+  closeShared();
 }
 
 
+function closeShared(){
+  const elem = document.getElementById('shared-cart-selection');
+  if(elem) elem.classList.add('hidden');
+}
+
+
+let lastSharedCarts = [];
+async function drawSharedCarts(){
+  lastSharedCarts = [];
+  if(!firebase) return;
+
+  showLoadingScreen();
+  const sharedCarts = await firebase.getSharedCarts();
+
+  const sharedPage = document.getElementById('shared-cart-selection');
+  const container = document.getElementById('shared-cart-selection-container');
+  container.innerHTML = '';
+
+  for(const id in sharedCarts){
+    const cart = sharedCarts[id];
+
+    const elemStr = 
+    `<div class="cart-container flex just-between align-center">
+      <div class="cart-name flex-1 text-left margin-10">${cart.name}</div>
+      <div class="cart-items flex gap-1" title="Elementi nel carrello">
+        <span class="flex align-center">${cart.items.length}</span>
+        <div class="flex align-center">
+          <i class="fa-solid fa-bowl-food"></i>
+        </div>
+
+        <div title="Carica nel carrello" class="button icon icon-only icon-small accent-2" onclick="loadSharedCart('${cart.id}')">
+          <i class="fa-solid fa-cart-shopping"></i>
+        </div>
+      </div>
+    </div>`;
+
+    const elem = convertToHTML(elemStr);
+    container.append(elem);
+  }
+
+  hideLoadingScreen();
+
+  sharedPage.classList.remove('hidden');
+}
 

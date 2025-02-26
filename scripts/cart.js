@@ -2,6 +2,8 @@
  * Opens cart page
  */
 function openCart() {
+  closeAllPages();
+  drawCartItems();
   const cartElem = document.getElementById('cart');
   if (cartElem) cartElem.classList.remove('hidden');
 }
@@ -326,7 +328,7 @@ function drawCartItems() {
   if (cartElem) cartElem.innerHTML = '';
 
   // additional header for remote carts
-  if(cart.shared){
+  if(checkLogin() && cart.shared){
     const additionalHeaderElemStr = 
     `<h4 class="w-100 sticky top-0 main-bg flex flex-column">
       Carrello condiviso

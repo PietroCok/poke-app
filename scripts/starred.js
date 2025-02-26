@@ -13,13 +13,13 @@ function setStarred(items) {
   localStorage.setItem('starred', JSON.stringify(items));
 
   drawStarredItems();
-  drawCartItems();
 }
 
 /**
  * Show starred items list
  */
 function openStarredItems() {
+  closeAllPages();
   drawStarredItems();
   // show layer
   const starred = document.getElementById('starred');
@@ -146,7 +146,6 @@ function removeStarred(id, ask = true) {
   setStarred(starredItems);
 
   drawStarredItems();
-  drawCartItems();
 }
 
 

@@ -9,6 +9,7 @@ let selected = {
 let fullOrder = '';
 let compactOrder = '';
 
+const pages = Array.from(document.getElementsByTagName('SECTION')).filter(page => typeof page.dataset?.page == 'string');
 
 function fillHtml() {
 
