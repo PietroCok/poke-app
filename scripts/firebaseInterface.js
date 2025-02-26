@@ -191,6 +191,7 @@ function loadSharedCart(id){
   openCart();
 
   // TODO add realtime sync with database
+  firebase.observeCart(id, (data) => console.log(data));
 
   closeDialog('shared-cart-selection');
 }

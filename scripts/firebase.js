@@ -4,6 +4,10 @@ import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/fire
 
 let app, auth, database;
 
+const paths = {
+  sharedCarts : 'shared-carts'
+}
+
 firebase.init = async function(firebaseConfig){
   if(!firebaseConfig) {
     console.warn('Firebase configuration not found!');
@@ -88,7 +92,7 @@ firebase.addSharedCart = async function(cart){
   if(!cart) return;
 
   const key = `cart-${cart.id}`;
-  const result = await update(ref(database, '/shared-carts'), {
+  const result = await update(ref(database, `/${paths.sharedCarts}`), {
     [key] : cart
   }).catch(error => error);
   
@@ -104,7 +108,7 @@ firebase.removeSharedCart = async function(cartId){
   if(!cartId) return;
 
   const key = `cart-${cartId}`;
-  const result = await update(ref(database, `/shared-carts`), {
+  const result = await update(ref(database, `/${paths.sharedCarts}`), {
     [key] : null
   }).catch(error => error);
   
@@ -121,7 +125,7 @@ firebase.addItemToCart = async function(cartId, item){
   if(!cartId || !item) return;
 
   const key = `item-${item.id}`;
-  const result = await update(ref(database, `/shared-carts/cart-${cartId}`), {
+  const result = await update(ref(database, `/${paths.sharedCarts}/cart-${cartId}`), {
     [key] : item
   }).catch(error => error);
   
@@ -138,7 +142,7 @@ firebase.removeItemFromCart = async function(cartId, itemId){
   if(!cartId || !itemId) return;
 
   const key = `item-${itemId}`;
-  const result = await update(ref(database, `/shared-carts/cart-${cartId}`), {
+  const result = await update(ref(database, `/${paths.sharedCarts}/cart-${cartId}`), {
     [key] : null
   }).catch(error => error);
   
@@ -150,7 +154,7 @@ firebase.removeItemFromCart = async function(cartId, itemId){
  * 
  */
 firebase.getSharedCarts = async function(){
-  const carts = await get(ref(database, `/shared-carts`)).then((snapshot) => {
+  const carts = await get(ref(database, `/${paths.sharedCarts}`)).then((snapshot) => {
     if (snapshot.exists()) {
       lastSharedCarts = Object.values(snapshot.val());
     } else {
@@ -164,4 +168,23 @@ firebase.getSharedCarts = async function(){
   });
 
   return carts;
+}
+
+const observePath = async function(path, callback){
+  onValue(ref(database, path), (snapshot) => {
+    const data = snapshot.val();
+    callback(data);
+  });
+}
+
+/**
+ * 
+ * @param {String} path - path to observe for changes
+ * @param {Function} callback - function to be called when data changes
+ */
+firebase.observeCart = async function(cartId, callback){
+  const path = `/${paths.sharedCarts}/cart-${cartId}`;
+  observePath(path, callback);
+  console.log('Listening for changes for cart: ' + cartId);
+  
 }
