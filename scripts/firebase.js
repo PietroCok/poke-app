@@ -72,13 +72,17 @@ firebase.signOut = async function(){
   return result;
 }
 
+
+firebase.userLogged = false;
 // check for user logged
 firebase.checkUserLogged = async function(){
   onAuthStateChanged(auth, (user) => {
     if (user) {
-      handleLogin(true);
+      firebase.userLogged = true;
+      handleLogin(firebase.userLogged);
     } else {
-      handleLogin(false);
+      firebase.userLogged = false;
+      handleLogin(firebase.userLogged);
     }
   });
 }

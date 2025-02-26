@@ -76,3 +76,14 @@ function toString(item) {
 
   return str;
 }
+
+
+
+/**
+ * Close all pages
+ */
+function closeAllPages(){
+  for(const page of pages){
+    page.classList.add('hidden');
+  }
+}
