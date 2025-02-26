@@ -349,13 +349,23 @@ function drawCartItems() {
   if(isUserActive() && cart.shared){
     const additionalHeaderElemStr = 
     `<h4 class="w-100 sticky top-0 main-bg flex flex-column">
+      <button 
+        id="unlink-shared-cart" 
+        class="button icon icon-only icon-small rapid-action accent-1 fixed left-1"
+        title="Scollega carrello condiviso"
+        onclick="unlinkSharedCart('${cart.id}')"
+      >
+        <i class="fa-solid fa-link-slash"></i>
+      </button>
+
+
       Carrello condiviso
       <span id="shared-cart-name" class="weight-normal margin-10">${cart.name}</span>
 
       <button 
-        id="remove-item" 
+        id="remove-shared-cart" 
         class="button icon icon-only icon-small rapid-action accent-1 fixed right-1"
-        title="Rimuovi dal carrello"
+        title="Cancella carrello condiviso"
         onclick="deleteSharedCart('${cart.id}')"
       >
         <i class="fa-solid fa-trash"></i>

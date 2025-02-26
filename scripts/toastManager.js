@@ -118,7 +118,7 @@ class Notification {
    * @param {string} [options.gravity=info] - gravity of the message -> pilots color
    * @param {Number} [options.displayTime=1] - display time of the message
    */
-  constructor({ message = '', gravity = 'info', displayTime = 2, targetId = '' } = {}) {
+  constructor({ message = '', gravity = 'info', displayTime = 1, targetId = '' } = {}) {
     if (!message) throw new Error("Notification cannot have empty message!");
 
     this.message = message;

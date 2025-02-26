@@ -118,6 +118,7 @@ const createUserRecord = async function(user){
 // logout
 firebase.signOut = async function(){
   signOut(auth).then(() => {
+    userActive = false;
     console.log('User singed out!')
     // Sign-out successful.
   }).catch((error) => {
@@ -125,7 +126,6 @@ firebase.signOut = async function(){
     console.warn(error);
   });
 }
-
 
 let userActive = false;
 firebase.userActive = function(){
@@ -180,9 +180,18 @@ firebase.addSharedCart = async function(cart){
     [key] : cart
   }).catch(error => error);
 
-  observeCart(cart.id);
-  
-  return result;
+  if(!result){
+    observeCart(cart.id);
+    new Notification({
+      message: "Carrello condiviso creato!"
+    })
+  } else {
+    new Notification({
+      message: "Errore in creazione del carrello condiviso!",
+      gravity: 'error'
+    })
+    console.warn(result);
+  }
 }
 
 /**
@@ -193,48 +202,11 @@ firebase.addSharedCart = async function(cart){
 firebase.removeSharedCart = async function(cartId){
   if(!cartId) return;
 
-  const key = `cart-${cartId}`;
-  const path = `/${paths.sharedCarts}/${key}`;
+  const path = getCartPath(cartId);
 
   await remove(ref(database, path))
   .then(() => console.log(`Node at path: ${path} removed!`))
   .catch(error => console.warn(error));
-}
-
-/**
- * Adds item to a shared cart
- * @param {String} cartId 
- * @param {Object} item 
- * @returns 
- */
-firebase.addItemToCart = async function(cartId, item){
-  return;
-  if(!cartId || !item) return;
-
-  const key = `item-${item.id}`;
-  const result = await update(ref(database, `/${paths.sharedCarts}/cart-${cartId}`), {
-    [key] : item
-  }).catch(error => error);
-  
-  return result;
-}
-
-/**
- * Removes item from shared cart
- * @param {String} cartId 
- * @param {String} itemId 
- * @returns 
- */
-firebase.removeItemFromCart = async function(cartId, itemId){
-  return;
-  if(!cartId || !itemId) return;
-
-  const key = `item-${itemId}`;
-  const result = await update(ref(database, `/${paths.sharedCarts}/cart-${cartId}`), {
-    [key] : null
-  }).catch(error => error);
-  
-  return result;
 }
 
 firebase.getSharedCarts = async function(){
@@ -278,6 +250,25 @@ const observePath = async function(path, callback){
  * @param {Function} callback - function to be called when data changes
  */
 firebase.observeCart = async function(cartId, callback){
-  const path = `/${paths.sharedCarts}/cart-${cartId}`;
+  const path = getCartPath(cartId);
   observePath(path, callback);
+}
+
+/**
+ * 
+ */
+firebase.stopObserveCart = async function(cartId){
+  if(!cartId) return;
+  const path = getCartPath(cartId);
+  off(ref(database, path));
+}
+
+
+/**
+ * Returns cart path on db
+ * @param {String} cartId 
+ * @returns 
+ */
+const getCartPath = function(cartId){
+  return `/${paths.sharedCarts}/cart-${cartId}`;
 }

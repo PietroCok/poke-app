@@ -132,12 +132,18 @@ async function createSharedCart(fromDialog = false){
   let sharedCart = {};
   if(loadCurrent.checked){
     sharedCart = getCart();
+    // if cart is already a shared => duplicate by using another id
+    if(sharedCart.shared){
+      sharedCart.id = getRandomId();
+    }
   } else {
     sharedCart.id = getRandomId();
   }
 
   sharedCart.name = name.value;
   sharedCart.shared = true;
+
+  // load created cart in local cart
   saveCart(sharedCart);
 
   // dialog field reset to default
@@ -146,13 +152,9 @@ async function createSharedCart(fromDialog = false){
 
   console.log('Creating new shared cart!', sharedCart);
   
-  const result = await firebase.addSharedCart(sharedCart);
+  await firebase.addSharedCart(sharedCart);
 
   drawCartItems();
-
-  if(result){
-    console.warn(result);
-  }
 
   closeDialog('new-shared-cart');
 }
@@ -237,6 +239,14 @@ function deleteSharedCart(cartId, ask = true){
   firebase.removeSharedCart(cartId)
 }
 
+/**
+ * Scollega carrello condiviso
+ */
+function unlinkSharedCart(){
+  firebase.stopObserveCart(getCart()?.id);
+  clearCart(true);
+}
+
 function closeShared(){
   const elem = document.getElementById('shared-cart-selection');
   if(elem) elem.classList.add('hidden');
@@ -259,7 +269,7 @@ async function drawSharedCarts(){
     const cart = sharedCarts[id];
 
     const elemStr = 
-    `<div class="cart-container flex just-between align-center">
+    `<div class="cart-container flex just-between align-center border-color border-r-10 padding-10">
       <div class="cart-name flex-1 text-left margin-10">${cart.name}</div>
       <div class="cart-items flex gap-1" title="Elementi nel carrello">
         <span class="flex align-center">${cart.items?.length || 0}</span>
