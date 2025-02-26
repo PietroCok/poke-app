@@ -29,11 +29,15 @@ function getCart() {
   } catch (error) {
     cart = null;
   }
-  if (!cart || !cart.items) {
+  if (!cart) {
     cart = {
       id: getRandomId(),
       items: []
     };
+  }
+
+  if(!cart.items && cart.shared){
+    cart.items = []
   }
   return cart;
 }
@@ -119,15 +123,24 @@ function addToCart(item, allowDuplicate = false) {
     if (index < 0) {
       // add new item
       cart.items.push(poke);
+      new Notification({
+        message: "Salvato nel carrello!",
+        displayTime: .8
+      });
     } else {
       // update intem in cart
       poke.id = getRandomId();
       cart.items.splice(index, 1, poke);
+      new Notification({
+        message: "Aggiornato nel carrello!",
+        displayTime: .8
+      });
     }
-    new Notification({
-      message: "Aggiornato nel carrello!",
-      displayTime: .8
-    });
+    
+  }
+
+  if(cart.shared){
+    updateRemoteCart(cart);
   }
 
   clearConfigurator();
@@ -272,7 +285,8 @@ function sendOrder() {
   // open wa to send message
   window.open(`https://wa.me/${config.numero_telefono}/?text=${encodeURIComponent(order_string)}`);
 
-  clearCart(true);
+  // For now cart is not emptied after sending order as we cannot be sure the procedure has been completed
+  //clearCart(true);
   closeDialog('preview-order');
   closeCart();
 }
@@ -294,6 +308,10 @@ function removeFromCart(id, ask = true) {
   }
   
   cart.items = cart.items.filter(item => item.id != id);
+
+  if(cart.shared){
+    updateRemoteCart(cart);
+  }
   
   saveCart(cart);
 }
@@ -328,12 +346,22 @@ function drawCartItems() {
   if (cartElem) cartElem.innerHTML = '';
 
   // additional header for remote carts
-  if(checkLogin() && cart.shared){
+  if(isUserActive() && cart.shared){
     const additionalHeaderElemStr = 
     `<h4 class="w-100 sticky top-0 main-bg flex flex-column">
       Carrello condiviso
       <span id="shared-cart-name" class="weight-normal margin-10">${cart.name}</span>
-    </h4>`;
+
+      <button 
+        id="remove-item" 
+        class="button icon icon-only icon-small rapid-action accent-1 fixed right-1"
+        title="Rimuovi dal carrello"
+        onclick="deleteSharedCart('${cart.id}')"
+      >
+        <i class="fa-solid fa-trash"></i>
+      </button>
+      
+      </h4>`;
 
     cartElem.append(convertToHTML(additionalHeaderElemStr));
   }

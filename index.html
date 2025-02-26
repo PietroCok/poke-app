@@ -73,7 +73,7 @@
 
         <div id="open-login-container" class="flex just-end hidden">
           <div id="open-login" title="Esegui login" class="button icon icon-only accent-3"
-            onclick="showDialog('sign-in')">
+            onclick="openSignIn()">
             <i class="fa-solid fa-user"></i>
           </div>
         </div>
@@ -252,15 +252,19 @@
     <div id="toast-container-sign-in" class="w-100 fixed flex flex-center z-100"></div>
 
     <div class="padding-1">
-      <div id="user-credentials" class="flex flex-column gap-1">
-        <label for="user-email" class="text-large">
-          Email: <input type="text" name="user-email" id="user-email" class="margin-1-0 padding-10">
+      <div id="user-credentials" class="flex flex-column">
+        <label for="sign-in-user-email" class="text-large">
+          Email: <input type="text" name="sign-in-user-email" id="sign-in-user-email" class="margin-1-0 padding-10 flex just-center w-100">
         </label>
 
-        <label for="user-pwd" class="text-large">
-          Password: <input type="password" name="user-pwd" id="user-pwd" class="margin-1-0 padding-10">
+        <label for="sign-in-user-pwd" class="text-large">
+          Password: <input type="password" name="sign-in-user-pwd" id="sign-in-user-pwd" class="margin-1-0 padding-10 flex just-center w-100">
         </label>
       </div>
+
+      <span>Senza account?
+        <span onclick="openSignUp()" class="pointer underline" title="Form di registrazione">Registrati</span>
+      </span>
 
       <div class="button-wrapper gap-2">
         <button id="clear-order" class="button text-button accent-1-invert"
@@ -270,11 +274,41 @@
     </div>
   </dialog>
 
+  <dialog id="sign-up" class="dialog out-close">
+    <div id="toast-container-sign-up" class="w-100 fixed flex flex-center z-100"></div>
+
+    <div class="padding-1">
+      <div id="user-credentials" class="flex flex-column">
+        <label for="sign-up-user-email" class="text-large">
+          Email: <input type="text" name="sign-upuser-email" id="sign-up-user-email" class="margin-1-0 padding-10 flex just-center w-100">
+        </label>
+
+        <label for="sign-up-user-pwd" class="text-large">
+          Password: <input type="password" name="sign-up-user-pwd" id="sign-up-user-pwd" class="margin-1-0 padding-10 flex just-center w-100">
+        </label>
+
+        <label for="sign-up-user-pwd-check" class="text-large">
+          Verifica Password: <input type="password" name="sign-up-user-pwd-check" id="sign-up-user-pwd-check" class="margin-1-0 padding-10 flex just-center w-100">
+        </label>
+      </div>
+
+      <span>
+        Hai già un account?
+        <span onclick="openSignIn()" class="pointer underline" title="Form di accesso">Accedi</span>
+      </span>
+
+      <div class="button-wrapper gap-2">
+        <button id="clear-order" class="button text-button accent-1-invert"
+          onclick="closeDialog('sign-up')">Annulla</button>
+        <button id="send-order" class="button text-button accent-3-invert" onclick="userSingup()">Registrati</button>
+      </div>
+    </div>
+  </dialog>
+
   <dialog id="custom-confirm" class="dialog out-close">
     <div id="custom-confirm-container" class="flex flex-column gap-1 padding-1">
     </div>
   </dialog>
-
 
   <dialog id="new-shared-cart" class="dialog out-close">
     <div class="flex flex-column gap-1 padding-1">

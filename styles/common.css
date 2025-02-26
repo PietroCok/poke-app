@@ -231,6 +231,10 @@
   width: 80%;
 }
 
+.w-fit{
+  width: fit-content;
+}
+
 .gap-1 {
   gap: 1em;
 }
@@ -271,6 +275,10 @@
   right: 0;
 }
 
+.right-1 {
+  right: 1em;
+}
+
 .h-header{
   min-height: 58px;
 }
@@ -293,4 +301,8 @@
 
 .hidden {
   display: none;
+}
+
+.underline{
+  text-decoration: underline;
 }

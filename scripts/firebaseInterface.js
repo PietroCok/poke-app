@@ -1,12 +1,11 @@
 let firebase = {};
-let loginResult = '';
 
 // Tries to log in users
 async function userLogin() {
   if(!firebase) return;
 
-  const email = document.getElementById('user-email').value;
-  const password = document.getElementById('user-pwd').value;
+  const email = document.getElementById('sign-in-user-email').value;
+  const password = document.getElementById('sign-in-user-pwd').value;
 
   if(!email || !password){
     new Notification({
@@ -17,55 +16,83 @@ async function userLogin() {
     return;
   }
 
-  await firebase.signIn(email, password);
+  firebase.signIn(email, password);
+}
 
-  if(!loginResult) {
-    handleLogin(true);
-    closeDialog('sign-in');
-  } else {
+async function userSingup() {
+  if(!firebase) return;
+
+  const email = document.getElementById('sign-up-user-email').value;
+  const password = document.getElementById('sign-up-user-pwd').value;
+  const password_check = document.getElementById('sign-up-user-pwd-check').value;
+
+  if(!email || !password || !password_check){
     new Notification({
-      message: 'Credenziali errate!',
+      message: 'Email e password non possono essere vuote!',
       gravity: 'error',
       targetId: 'toast-container-sign-in'
     });
+    return;
   }
+
+  if(password != password_check){
+    new Notification({
+      message: 'La password non corrisponde!',
+      gravity: 'error',
+      targetId: 'toast-container-sign-in'
+    });
+    return;
+  }
+
+  firebase.signUp(email, password);
+  closeDialog('sign-up');
 }
 
-async function handleLogin(success = false, notification = true){
+async function handleLogin(success = false, active = false, notification = true){
   if(!firebase) return;
 
   if(success){
-    if(notification){
-      new Notification({
-        message: 'Utente loggato con successo!',
-        gravity: 'info',
-      });
-    }
-    // show
+    // logged
+    // always show user icon to logout and change account
     document.getElementById('user-logged-container').classList.remove('hidden');
-    document.getElementById('shared-carts-menu').classList.remove('hidden');
-    // hide
     document.getElementById('open-login-container').classList.add('hidden');
+
+    if(active){
+      // show also shared carts menu
+      document.getElementById('shared-carts-menu').classList.remove('hidden');
+      new Notification({
+        message: 'Accesso eseguito!',
+        gravity: 'info'
+      })
+    } else {
+      new Notification({
+        message: 'Utente NON abilitato. Contattare un amministratore!',
+        gravity: 'warn'
+      })
+    }
+
   } else {
-    // show
+    // not logged
     document.getElementById('open-login-container').classList.remove('hidden');
-    // hide
     document.getElementById('user-logged-container').classList.add('hidden');
     document.getElementById('shared-carts-menu').classList.add('hidden');
+    return;
+  }
+
+  // check if current loaded cart is a shared cart and listen for it
+  const localCart = getCart();
+  if(localCart.shared) {
+    observeCart(localCart.id);
   }
 }
 
-// Checks if user is logged
-function checkLogin(){
-  return firebase.userLogged || false;
+async function isUserActive(){
+  return firebase.userActive();
 }
 
 // Signs user out
 async function logout(ask = true){
   if(!firebase) return;
-
-  // check if user is logged
-
 
   // ask for comfirmation
   if(ask){
@@ -105,9 +132,13 @@ async function createSharedCart(fromDialog = false){
   let sharedCart = {};
   if(loadCurrent.checked){
     sharedCart = getCart();
+  } else {
+    sharedCart.id = getRandomId();
   }
+
   sharedCart.name = name.value;
-  sharedCart.id = getRandomId();
+  sharedCart.shared = true;
+  saveCart(sharedCart);
 
   // dialog field reset to default
   name.value = '';
@@ -117,6 +148,8 @@ async function createSharedCart(fromDialog = false){
   
   const result = await firebase.addSharedCart(sharedCart);
 
+  drawCartItems();
+
   if(result){
     console.warn(result);
   }
@@ -124,11 +157,20 @@ async function createSharedCart(fromDialog = false){
   closeDialog('new-shared-cart');
 }
 
+async function updateRemoteCart(cart){
+  const result = await firebase.addSharedCart(cart);
+
+  if(result){
+    console.warn(result);
+  }
+}
+
 
 /**
  * Retrieves keys information about available shared carts
  */
 function openSharedCarts(){
+  closeAllPages();
   drawSharedCarts();
   closeMenu();
 }
@@ -154,12 +196,46 @@ function loadSharedCart(id){
 
   openCart();
 
-  // TODO add realtime sync with database
-  firebase.observeCart(id, (data) => console.log(data));
+  observeCart(id);
 
   closeShared();
 }
 
+function observeCart(cartId){
+  firebase.observeCart(cartId, handleDataChange);
+}
+
+function handleDataChange(data){
+  console.log('Shared cart data changed: ', data);
+  
+  // update current local cart
+  const cart = getCart();
+  if(cart.id != data.id){
+    return;
+  }
+
+  if(data.deleted){
+    cart.shared = false;
+    // shared cart deleted on server are not deleted on local device
+    saveCart(null)
+  } else {
+    saveCart(data);
+  }
+}
+
+/**
+ * Deletes a shared cart
+ * 
+ * @param {String} cartId 
+ */
+function deleteSharedCart(cartId, ask = true){
+  if(ask){
+    _confirm("Eliminare il carrello condiviso?", () => deleteSharedCart(cartId, false))
+    return;
+  }
+
+  firebase.removeSharedCart(cartId)
+}
 
 function closeShared(){
   const elem = document.getElementById('shared-cart-selection');
@@ -186,7 +262,7 @@ async function drawSharedCarts(){
     `<div class="cart-container flex just-between align-center">
       <div class="cart-name flex-1 text-left margin-10">${cart.name}</div>
       <div class="cart-items flex gap-1" title="Elementi nel carrello">
-        <span class="flex align-center">${cart.items.length}</span>
+        <span class="flex align-center">${cart.items?.length || 0}</span>
         <div class="flex align-center">
           <i class="fa-solid fa-bowl-food"></i>
         </div>
@@ -206,3 +282,14 @@ async function drawSharedCarts(){
   sharedPage.classList.remove('hidden');
 }
 
+function openSignIn(){
+  closeDialog('sign-up');
+  const dialog = document.getElementById('sign-in');
+  dialog.showModal();
+}
+
+function openSignUp(){
+  closeDialog('sign-in');
+  const dialog = document.getElementById('sign-up');
+  dialog.showModal();
+}
