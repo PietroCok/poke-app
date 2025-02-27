@@ -86,8 +86,8 @@ async function handleLogin(success = false, active = false, notification = true)
   }
 }
 
-async function isUserActive(){
-  return firebase.userActive();
+function isUserActive(){
+  return firebase?.userActive() || false;
 }
 
 // Signs user out
@@ -111,6 +111,11 @@ async function logout(ask = true){
     })
   }
 }
+
+function getUser(){
+  return firebase?.getUser() || "Anonymous";
+}
+
 
 // SHARED CARTS
 
@@ -159,12 +164,38 @@ async function createSharedCart(fromDialog = false){
   closeDialog('new-shared-cart');
 }
 
-async function updateRemoteCart(cart){
-  const result = await firebase.addSharedCart(cart);
+/**
+ * 
+ * @param {Object} item - Item to be added to the cart
+ * @returns 
+ */
+async function addItemToSharedCart(item){
+  if(!firebase) return false;
 
-  if(result){
-    console.warn(result);
-  }
+  await firebase.addItemTocart(item, getCart()?.id || null);
+}
+
+/**
+ * 
+ * @param {String} id - id of item to remove 
+ * @returns 
+ */
+async function removeItemFromSharedCart(id){
+  if(!firebase) return false;
+
+  await firebase.removeItemFromCart(id, getCart()?.id || null)
+}
+
+
+/**
+ * 
+ * @param {Object} item - item to update on cart
+ * @returns 
+ */
+async function editItemInSharedCart(item){
+  if(!firebase) return false;
+
+  await firebase.updateItemInCart(item, getCart()?.id || null)
 }
 
 
@@ -267,12 +298,13 @@ async function drawSharedCarts(){
 
   for(const id in sharedCarts){
     const cart = sharedCarts[id];
+    const cartItems = Object.values(cart.items || {}).length || 0;
 
     const elemStr = 
     `<div class="cart-container flex just-between align-center border-color border-r-10 padding-10">
       <div class="cart-name flex-1 text-left margin-10">${cart.name}</div>
       <div class="cart-items flex gap-1" title="Elementi nel carrello">
-        <span class="flex align-center">${cart.items?.length || 0}</span>
+        <span class="flex align-center">${cartItems}</span>
         <div class="flex align-center">
           <i class="fa-solid fa-bowl-food"></i>
         </div>

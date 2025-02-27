@@ -32,12 +32,12 @@ function getCart() {
   if (!cart) {
     cart = {
       id: getRandomId(),
-      items: []
+      items: {}
     };
   }
 
   if(!cart.items && cart.shared){
-    cart.items = []
+    cart.items = {};
   }
   return cart;
 }
@@ -60,7 +60,7 @@ function clearCart(skipConfirm = false) {
 
   let cart = {
     id: getRandomId(),
-    items: []
+    items: {}
   };
   saveCart(cart);
   drawCartItems();
@@ -72,7 +72,7 @@ function clearCart(skipConfirm = false) {
 */
 function isCarted(id) {
   const cart = getCart();
-  const alreadycarted = cart.items?.find(item => item.id == id);
+  const alreadycarted = cart.items?.id;
   if (alreadycarted) return true;
   return false;
 }
@@ -97,50 +97,52 @@ function addToCartFromStarred(id) {
   const item = starred.find(i => i.id == id);
 
   addToCart(structuredClone(item));
-
-  drawStarredItems();
 }
 
 /**
  * Add item to cart, then saves it to localStorage
  */
-function addToCart(item, allowDuplicate = false) {
+async function addToCart(item, allowDuplicate = false) {
   if (!item) return;
 
   let poke = structuredClone(item);
   const cart = getCart();
-
+  let prevItem = null;
   if (!poke.id || allowDuplicate) {
     // insert into cart
     poke.id = getRandomId();
-    cart.items.push(poke);
-    new Notification({
-      message: "Salvato nel carrello!",
-      displayTime: .8
-    });
   } else {
-    const index = cart.items.findIndex(_item => _item.id == poke.id);
-    if (index < 0) {
-      // add new item
-      cart.items.push(poke);
-      new Notification({
-        message: "Salvato nel carrello!",
-        displayTime: .8
-      });
-    } else {
-      // update intem in cart
+    prevItem = cart.items[`${poke.id}`];
+    if (prevItem > 0) {
       poke.id = getRandomId();
-      cart.items.splice(index, 1, poke);
-      new Notification({
-        message: "Aggiornato nel carrello!",
-        displayTime: .8
-      });
     }
-    
   }
 
-  if(cart.shared){
-    updateRemoteCart(cart);
+  // local update
+  cart.items[`${poke.id}`] = poke;
+
+  // remote update
+  let operationResult = true;
+  if(prevItem){
+    // aggiornamento
+    if(cart.shared){
+      operationResult = await editItemInSharedCart(poke);
+    }
+    if(operationResult){
+      new Notification({
+        message: "Aggiornato nel carrello"
+      })
+    }
+  } else {
+    // nuovo inserimento
+    if(cart.shared){
+      operationResult = await addItemToSharedCart(poke);
+    }
+    if(operationResult){
+      new Notification({
+        message: "Salvato nel carrello"
+      })
+    }
   }
 
   clearConfigurator();
@@ -180,7 +182,7 @@ function showOrderPreview() {
 
   // total price
   let cartSubtotal = 0;
-  for (const item of cart.items) {
+  for (const item of Object.values(cart.items)) {
     cartSubtotal += item.totalPrice;
   }
   const cartSubtotalElem = document.getElementById('order-price');
@@ -300,17 +302,17 @@ function removeFromCart(id, ask = true) {
   let cart = getCart();
 
   if(ask){
-    const toBeRemoved = cart.items.find(item => item.id == id);
+    const toBeRemoved = cart.items[id];
     if(!toBeRemoved) return;
   
     _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeFromCart(id, false));
     return;
   }
   
-  cart.items = cart.items.filter(item => item.id != id);
+  delete cart.items[id];
 
   if(cart.shared){
-    updateRemoteCart(cart);
+    removeItemFromSharedCart(id);
   }
   
   saveCart(cart);
@@ -378,7 +380,7 @@ function drawCartItems() {
 
   let cartSubtotal = 0;
 
-  for (const item of cart.items) {
+  for (const item of Object.values(cart.items)) {
     const description = toString(item);
     const isOpen = openElemsId?.includes(item.id);
     cartSubtotal += item.totalPrice;
@@ -467,16 +469,17 @@ function drawCartItems() {
     cartElem.append(itemElem);
   }
 
+  const cartItems = Object.values(cart.items).length
   // update cart count
   const menuElem = document.getElementById('cart-menu');
-  if (menuElem) menuElem.dataset.cartcount = cart.items.length > 0 ? cart.items.length : '';
+  if (menuElem) menuElem.dataset.cartcount = cartItems > 0 ?  cartItems : '';
 
   const headerElem = document.getElementById('cart-count');
-  if (headerElem) headerElem.textContent = cart.items.length;
+  if (headerElem) headerElem.textContent =  cartItems;
 
   // enable / disable preview button
   const preview_btn = document.getElementById('btn-preview-order');
-  if (cart.items.length == 0) {
+  if ( cartItems == 0) {
     preview_btn.classList.add('disabled');
   } else {
     preview_btn.classList.remove('disabled');

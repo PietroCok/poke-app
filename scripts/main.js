@@ -211,7 +211,7 @@ function editItem(id, from = '') {
   switch (from) {
     case 'cart':
       const cart = getCart();
-      item = cart.items.find(item => item.id == id);
+      item = cart.items[id];
       if (!item) return;
       // save from where the item is edited
       if (from) item.from = from;
@@ -363,14 +363,16 @@ function cloneItem(id, from) {
       item = starred.find(item => item.id == id);
       copy = structuredClone(item);
       copy.id = getRandomId();
+      copy.createdBy = null;
       starItem(copy)
       break;
 
     case 'cart':
       const cart = getCart();
-      item = cart.items.find(item => item.id == id);
+      item = cart.items[id];
       copy = structuredClone(item);
       copy.id = getRandomId();
+      copy.createdBy = null;
       addToCart(copy, true);
       break;
   }

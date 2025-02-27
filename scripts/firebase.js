@@ -3,6 +3,7 @@ import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, on
 import { getDatabase, ref, get, set, update, onValue, remove, off } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 let app, auth, database;
+let userActive = false;
 
 const paths = {
   sharedCarts : 'shared-carts'
@@ -41,7 +42,7 @@ firebase.init = async function(firebaseConfig){
     console.log('auth change');
     if (user) {
       // user logged in
-      isUserActive(user);
+      firebase.isUserActive(user);
     } else {
       // user not logged in
       console.log('User not logged in!');
@@ -127,12 +128,15 @@ firebase.signOut = async function(){
   });
 }
 
-let userActive = false;
 firebase.userActive = function(){
-  return userActive;
+  return userActive || false;
 }
 
-const isUserActive = async function(user){
+const getUserUid = function(){
+  return auth?.currentUser?.uid;
+}
+
+firebase.isUserActive = async function(user){
   let currentUser = user;
   if(!currentUser){
     currentUser = auth?.currentUser;
@@ -167,6 +171,100 @@ const isUserActive = async function(user){
   });
 }
 
+
+/**
+ * 
+ */
+firebase.addItemTocart = async function(item , cartId){
+  if(!cartId || !item) return false;
+  
+  item.createdBy = getUserUid();
+
+  const path = getItemsPath(cartId);
+  const result = await update(ref(database, path), {
+    [item.id] : item
+  })
+  .then(() => {
+    console.log("Item added to cart: ", item, cartId)
+    return true;
+  })
+  .catch(error => {
+    console.warn(error);
+    new Notification({
+      message: "Errore durante l'aggiunte dell'elemento al carrello condiviso!",
+      gravity: 'error'
+    })
+  });
+
+  console.log(result);
+
+  return result;
+}
+
+/**
+ * 
+ */
+firebase.updateItemInCart = async function(item, cartId){
+  if(!cartId || !item) return false;
+
+  const path = getItemsPath(cartId);
+  const result = await update(ref(database, path), {
+    [item.id] : item
+  })
+  .then(() => {
+    console.log("Item updated in cart: ", item, cartId)
+    return true;
+  })
+  .catch(error => {
+    console.warn(error);
+    if(error.code == "PERMISSION_DENIED"){
+      new Notification({
+        message: "Non puoi modificare un elemento creato da un altro utente!",
+        gravity: 'error'
+      })
+    } else {
+      new Notification({
+        message: "Errore durante la modifica dell'elemento!",
+        gravity: 'error'
+      })
+    }
+  });
+
+  return result;
+}
+
+/**
+ * 
+ */
+firebase.removeItemFromCart = async function(itemId, cartId){
+  if(!cartId || !itemId) return false;
+
+  const path = getItemsPath(cartId);
+  const result = await update(ref(database, path), {
+    [itemId] : null
+  })
+  .then(() => {
+    console.log("Item removed from cart: ", itemId, cartId)
+    return true;
+  })
+  .catch(error => {
+    console.warn(error);
+    if(error.code == "PERMISSION_DENIED"){
+      new Notification({
+        message: "Non puoi modificare un elemento creato da un altro utente!",
+        gravity: 'error'
+      })
+    } else {
+      new Notification({
+        message: "Errore durante l'eliminazione dell'elemento!",
+        gravity: 'error'
+      })
+    }
+  });
+
+  return result;
+}
+
 /**
  * Adds shared cart to db
  * @param {Object} cart 
@@ -175,12 +273,20 @@ const isUserActive = async function(user){
 firebase.addSharedCart = async function(cart){
   if(!cart) return;
 
+  cart.createdBy = getUserUid();
+
+  // check if all items have the createdBy property
+  for(const item of Object.values(cart.items)){
+    if(!item.createdBy)  item.createdBy = getUserUid();
+  }
+
   const key = `cart-${cart.id}`;
   const result = await update(ref(database, `/${paths.sharedCarts}`), {
     [key] : cart
   }).catch(error => error);
 
   if(!result){
+    // listen for edits on carts
     observeCart(cart.id);
     new Notification({
       message: "Carrello condiviso creato!"
@@ -204,9 +310,28 @@ firebase.removeSharedCart = async function(cartId){
 
   const path = getCartPath(cartId);
 
-  await remove(ref(database, path))
-  .then(() => console.log(`Node at path: ${path} removed!`))
-  .catch(error => console.warn(error));
+  const result = await remove(ref(database, path))
+  .then(() => {
+    console.log(`Node at path: ${path} removed!`);
+    return true;
+  })
+  .catch(error => {
+    console.warn(error);
+    if(error.code == "PERMISSION_DENIED"){
+      new Notification({
+        message: "Non puoi modificare un elemento creato da un altro utente!",
+        gravity: 'error'
+      })
+    } else {
+      new Notification({
+        message: "Errore durante l'eliminazione del carrello condiviso!",
+        gravity: 'error'
+      })
+    }
+    return false;
+  });
+
+  return result;
 }
 
 firebase.getSharedCarts = async function(){
@@ -229,17 +354,21 @@ firebase.getSharedCarts = async function(){
 const observePath = async function(path, callback){
   onValue(ref(database, path), (snapshot) => {
     let data = snapshot.val();
-    if(!data) {
-      data = {
-        deleted: true,
-        id: path.slice(path.lastIndexOf('/')+1).replace('cart-', '')
-      }
-      console.log("Data deleted on server: ", data)
-    };
-    if(data.id == getCart().id){
+    console.log(path);
+    
+    if(data){
       callback(data);
     } else {
-      off(ref(database, path));
+      console.log('Data not on server anymore: ' + path)
+      if(path.indexOf('shared-carts') > 0 && path.indexOf('cart-') > 0 && path.indexOf('item-') < 0){
+        // catturata cancellazione del carrello
+        callback({
+          id: path.slice(path.lastIndexOf('-')+1),
+          deleted: true
+        })
+      } else {
+        off(ref(database, path));
+      }
     }
   });
 }
@@ -271,4 +400,8 @@ firebase.stopObserveCart = async function(cartId){
  */
 const getCartPath = function(cartId){
   return `/${paths.sharedCarts}/cart-${cartId}`;
+}
+
+const getItemsPath = function(cartId){
+  return `${getCartPath(cartId)}/items`;
 }
