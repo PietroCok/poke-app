@@ -169,6 +169,7 @@ async function createSharedCart(fromDialog = false){
 
   sharedCart.name = name.value;
   sharedCart.shared = true;
+  sharedCart.items = null;
 
   // load created cart in local cart
   saveCart(sharedCart);
@@ -397,6 +398,7 @@ function openProfile(){
   if(!firebase) return;
   if(!firebase.getUserUid()) return;
   closeMenu();
+  closeAllPages();
 
   const page = document.getElementById('user-profile');
   if(page) page.classList.remove('hidden');

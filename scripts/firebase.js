@@ -328,8 +328,10 @@ firebase.addSharedCart = async function(cart){
   cart.createdBy = firebase.getUserUid();
 
   // check if all items have the createdBy property
-  for(const item of Object.values(cart.items)){
-    if(!item.createdBy)  item.createdBy = firebase.getUserUid();
+  if(cart.items){
+    for(const item of Object.values(cart.items)){
+      if(!item.createdBy)  item.createdBy = firebase.getUserUid();
+    }
   }
 
   const key = `cart-${cart.id}`;
