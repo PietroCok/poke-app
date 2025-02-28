@@ -29,14 +29,6 @@ function openStarredItems() {
 }
 
 /**
- * Hide starred items list
-*/
-function closeStarred() {
-  const starred = document.getElementById('starred');
-  if (starred) starred.classList.add('hidden');
-}
-
-/**
  * Add item into starred (from cart)
 */
 function starItemFromCart(id) {

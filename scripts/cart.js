@@ -9,14 +9,6 @@ function openCart() {
 }
 
 /**
- * Closes cart page
- */
-function closeCart() {
-  const cartElem = document.getElementById('cart');
-  if (cartElem) cartElem.classList.add('hidden');
-}
-
-/**
  * Retrieve cart from localStorage
  * 
  * @returns array of item in the cart
@@ -293,7 +285,7 @@ function sendOrder() {
   // For now cart is not emptied after sending order as we cannot be sure the procedure has been completed
   //clearCart(true);
   closeDialog('preview-order');
-  closeCart();
+  closePage('cart');
 }
 
 /**

@@ -66,7 +66,7 @@
         </div>
 
         <div id="user-logged-container" class="flex just-end hidden">
-          <div id="user-logged" title="Utente loggato" class="button icon icon-only accent-3" onclick="logout()">
+          <div id="user-logged" title="Utente loggato" class="button icon icon-only accent-3" onclick="openProfile()">
             <i class="fa-solid fa-user-check"></i>
           </div>
         </div>
@@ -121,7 +121,7 @@
 
   <section id="cart" data-page="cart" class="main-bg fixed flex flex-column align-center hidden left-0 top-0 bottom-0 w-100 z-20">
     <button id="close-cart" title="Chiudi carrello" class="button icon icon-only accent-1 fixed top-0 left-0"
-      onclick="closeCart()">
+      onclick="closePage('cart')">
       <i class="fa-solid fa-x"></i>
     </button>
     <header class="h-header flex flex-center w-100 margin-10">
@@ -155,7 +155,7 @@
 
   <section id="starred" data-page="starred" class="main-bg fixed flex flex-column align-center left-0 top-0 bottom-0 w-100 z-20 hidden">
     <button id="close-starred" title="Chiudi preferiti" class="button icon icon-only accent-1 fixed top-0 left-0"
-      onclick="closeStarred()">
+      onclick="closePage('starred')">
       <i class="fa-solid fa-x"></i>
     </button>
 
@@ -171,7 +171,7 @@
 
   <section id="shared-cart-selection" data-page="shared-cart-selection" class="main-bg fixed flex flex-column align-center left-0 top-0 bottom-0 w-100 z-20 hidden">
     <button id="close-starred" title="Chiudi carrelli condivisi" class="button icon icon-only accent-1 fixed top-0 left-0"
-      onclick="closeShared()">
+      onclick="closePage('shared-cart-selection')">
       <i class="fa-solid fa-x"></i>
     </button>
 
@@ -183,6 +183,49 @@
 
     </div>
     </div>
+  </section>
+
+  <section id="user-profile" data-page="user-profile" class="main-bg fixed flex flex-column align-center left-0 top-0 bottom-0 w-100 z-20 hidden">
+    <button id="close-starred" title="Chiudi carrelli condivisi" class="button icon icon-only accent-1 fixed top-0 left-0"
+      onclick="closePage('user-profile')">
+      <i class="fa-solid fa-x"></i>
+    </button>
+
+    <header class="h-header flex flex-center w-100 margin-10">
+      <h3>Profilo</h3>
+    </header>
+
+    <div id="user-profile-container" class="flex flex-column gap-2 w-80 padding-1">
+      
+      <div class="flex gap-1 align-center">
+        <div for="user-profile-email" class="label margin-10">Email</div>
+        <input type="text" id="user-profile-email" class="input flex-1 w-20 text-right" value="" disabled>
+      </div>
+
+      <!-- <div class="flex gap-1 align-center">
+        <div for="user-profile-password" class="label margin-10">Password</div>
+        <input type="password" class="input flex-1 w-20 text-right" id="user-profile-password" value="##############" disabled>
+      </div> -->
+
+      <div class="flex gap-1 align-center">
+        <div for="user-profile-status" class="label margin-10">Stato</div>
+        <input type="text" id="user-profile-status" class="input flex-1 w-20 text-right" value="Sconosciuto" disabled>
+      </div>
+    </div>
+
+    <footer class="button-wrapper fixed bottom-0 w-80">
+      <button id="user-delete" title="Elmina account" class="button text-button accent-1 flex align-center gap-1"
+        onclick="deleteAccount()">
+        <i class="fa-solid fa-trash"></i>
+        Elimina
+      </button>
+
+      <button id="user-logout" title="Esegui disconnesione" class="button accent-1-invert text-button flex align-center gap-1"
+      onclick="logout()">
+        <i class="fa-solid fa-solid fa-right-from-bracket"></i>
+        Logout
+      </button>
+    </footer>
   </section>
 
   <dialog id="add-item-name" class="dialog out-close">
@@ -252,6 +295,8 @@
     <div id="toast-container-sign-in" class="w-100 fixed flex flex-center z-100"></div>
 
     <div class="padding-1">
+      <div id="sign-in-message" class="padding-10"></div>
+
       <div id="user-credentials" class="flex flex-column">
         <label for="sign-in-user-email" class="text-large">
           Email: <input type="text" name="sign-in-user-email" id="sign-in-user-email" class="margin-1-0 padding-10 flex just-center w-100">
@@ -300,7 +345,7 @@
       <div class="button-wrapper gap-2">
         <button id="clear-order" class="button text-button accent-1-invert"
           onclick="closeDialog('sign-up')">Annulla</button>
-        <button id="send-order" class="button text-button accent-3-invert" onclick="userSingup()">Registrati</button>
+        <button id="send-order" class="button text-button accent-3-invert" onclick="userSignup()">Registrati</button>
       </div>
     </div>
   </dialog>

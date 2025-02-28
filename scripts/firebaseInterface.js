@@ -19,7 +19,7 @@ async function userLogin() {
   firebase.signIn(email, password);
 }
 
-async function userSingup() {
+async function userSignup() {
   if(!firebase) return;
 
   const email = document.getElementById('sign-up-user-email').value;
@@ -30,8 +30,28 @@ async function userSingup() {
     new Notification({
       message: 'Email e password non possono essere vuote!',
       gravity: 'error',
-      targetId: 'toast-container-sign-in'
+      targetId: 'toast-container-sign-up'
     });
+    return;
+  }
+
+  if(!checkEmailFormat(email)){
+    new Notification({
+      message: 'Formato mail non valido!',
+      gravity: 'error',
+      displayTime: 1.5,
+      targetId: 'toast-container-sign-up'
+    })
+    return;
+  }
+
+  if(!checkPasswordFormat(password)){
+    new Notification({
+      message: 'Password troppo corta: inserisci una password lunga almeno 6 caratteri',
+      gravity: 'error',
+      displayTime: 1.5,
+      targetId: 'toast-container-sign-up'
+    })
     return;
   }
 
@@ -39,7 +59,7 @@ async function userSingup() {
     new Notification({
       message: 'La password non corrisponde!',
       gravity: 'error',
-      targetId: 'toast-container-sign-in'
+      targetId: 'toast-container-sign-up'
     });
     return;
   }
@@ -110,10 +130,12 @@ async function logout(ask = true){
       message: 'Utente disconnesso!'
     })
   }
+
+  closePage('user-profile')
 }
 
-function getUser(){
-  return firebase?.getUser() || "Anonymous";
+function getUserEmail(){
+  return firebase?.getUserEmail() || '';
 }
 
 
@@ -255,7 +277,7 @@ function loadSharedCart(id){
 
   observeCart(id);
 
-  closeShared();
+  closePage('shared-carts-selection');
 }
 
 function observeCart(cartId){
@@ -328,10 +350,6 @@ function unlinkSharedCart(){
   clearCart(true);
 }
 
-function closeShared(){
-  const elem = document.getElementById('shared-cart-selection');
-  if(elem) elem.classList.add('hidden');
-}
 
 // local cache for shared carts
 let sharedCartCache = [];
@@ -374,8 +392,50 @@ async function drawSharedCarts(){
   sharedPage.classList.remove('hidden');
 }
 
-function openSignIn(){
+
+function openProfile(){
+  if(!firebase) return;
+  if(!firebase.getUserUid()) return;
+  closeMenu();
+
+  const page = document.getElementById('user-profile');
+  if(page) page.classList.remove('hidden');
+
+  // build page
+  const container = document.getElementById('user-profile-container');
+  const email = document.getElementById('user-profile-email');
+  const status = document.getElementById('user-profile-status');
+  if(email) email.value = getUserEmail();
+  if(status) status.value = isUserActive() ? 'Attivo' : 'Non attivo';
+}
+
+async function deleteAccount(ask = true){
+  if(ask){
+    _confirm("Confermi la cancellazione dell'account?<br> L'operazione non è reversibile!", () => deleteAccount(false));
+    return;
+  }
+
+  // delete from database
+  let result = await firebase.deleteAccountRecord();
+
+  // delete from authentication
+  result = await firebase.deleteAccount();
+
+  if(result) {
+    new Notification({
+      message: "Utente eliminato con successo"
+    })
+
+    setTimeout(() => window.location.reload(), 1000);
+  }
+}
+
+function openSignIn(message = ''){
   closeDialog('sign-up');
+  if(message) {
+    const target = document.getElementById('sign-in-message');
+    target.textContent = message;
+  }
   const dialog = document.getElementById('sign-in');
   dialog.showModal();
 }

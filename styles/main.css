@@ -270,18 +270,22 @@ input[type="radio"] {
   border: 1px solid var(--main-color);
 }
 
+.input:disabled{
+  border: var(--main-bg);
+  background: var(--main-bg);
+}
+
 /* Show / hide shared carts submenu items */
 #shared-carts-menu:has(input[type="checkbox"]:checked) #add-shared-cart,
 #shared-carts-menu:has(input[type="checkbox"]:checked) #load-shared-cart{
   display: block;
 }
 
-
-
 .input.custom{
   display: block;
   opacity: 0;
 }
+
 .checkbox{
   width: 1.5em;
   height: 1.5em;

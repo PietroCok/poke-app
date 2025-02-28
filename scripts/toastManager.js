@@ -57,6 +57,7 @@ class ToastManager {
    * Show single notification
    */
   async showNotification(notification) {
+    
     const elemStr =
       `<div id="notification" class="notification w-80 text-center margin-1 toast-${notification.gravity} flex align-center">
       <div class="notification-message flex-1 padding-1">
@@ -137,6 +138,8 @@ class Notification {
           this.displayTime = 1
           break;
       }
+    } else {
+      this.displayTime = displayTime;
     }
     this.targetId = targetId;
     this.startTimeDisplay = null; // time when the notification is first shown

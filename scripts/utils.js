@@ -78,6 +78,32 @@ function toString(item) {
 }
 
 
+function checkEmailFormat(email){
+  const regex = /.+@.+\..+/;
+  if(!email.match(regex)){
+    return false;
+  }
+  return true;
+}
+
+function checkPasswordFormat(password){
+  if(!password || password.length < 6){
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Close single page
+ * 
+ * @param {String} id 
+ */
+function closePage(id){
+  if(!id) return;
+
+  const page = document.getElementById(id);
+  if(page) page.classList.add('hidden');
+}
 
 /**
  * Close all pages

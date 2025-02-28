@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getDatabase, ref, get, set, update, onValue, remove, off } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 let app, auth, database;
@@ -41,6 +41,8 @@ firebase.init = async function(firebaseConfig){
   onAuthStateChanged(auth, (user) => {
     console.log('auth change');
     if (user) {
+      console.log(user);
+      
       // user logged in
       firebase.isUserActive(user);
     } else {
@@ -55,11 +57,12 @@ firebase.init = async function(firebaseConfig){
 
 // authentication
 firebase.signIn = async function(email, password){
-  signInWithEmailAndPassword(auth, email, password)
+  return await signInWithEmailAndPassword(auth, email, password)
     .then((userCredential) => {
       // signed in
       console.log("signIn", userCredential);
       closeDialog('sign-in');
+      return true;
     })
     .catch((error) => {
       const errorCode = error.code;
@@ -79,6 +82,7 @@ firebase.signIn = async function(email, password){
           targetId: 'toast-container-sign-in'
         })
       }
+      return false;
     });
 }
 
@@ -118,14 +122,56 @@ const createUserRecord = async function(user){
 
 // logout
 firebase.signOut = async function(){
-  signOut(auth).then(() => {
+  return await signOut(auth).then(() => {
     userActive = false;
-    console.log('User singed out!')
+    console.log('User signed out!')
     // Sign-out successful.
+    return true;
   }).catch((error) => {
     // An error happened.
     console.warn(error);
+    return false;
   });
+}
+
+firebase.deleteAccount = async function(){
+  let failError = '';
+  let result = await deleteUser(auth.currentUser)
+    .then(() => {
+      return true;
+    })
+    .catch((error) => {
+      console.warn(error.code)
+      failError = error.code;
+      return false;
+    })
+  
+  if(!result && failError == 'auth/requires-recent-login'){
+    // force user to login again
+    openSignIn("La cancellazione richiede un accesso recente, conferma le credenziali e prova di nuovo!");
+
+    return false;
+  }
+
+  return result;
+}
+
+firebase.deleteAccountRecord = async function(){
+  const uid = this.getUserUid();
+  if(!uid) return false;
+
+  const path = `/users`;
+
+  const result = await update(ref(database, path), {
+    [uid]: null
+  }).then(() => {
+    return true;
+  }).catch((error) => {
+    console.warn(error);
+    return false;
+  })
+
+  return result;
 }
 
 firebase.userActive = function(){
@@ -133,7 +179,11 @@ firebase.userActive = function(){
 }
 
 firebase.getUserUid = function(){
-  return auth?.currentUser?.uid;
+  return auth?.currentUser?.uid || '';
+}
+
+firebase.getUserEmail = function(){
+  return auth?.currentUser?.email || '';
 }
 
 firebase.isUserActive = async function(user){

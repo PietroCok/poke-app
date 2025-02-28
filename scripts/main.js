@@ -227,7 +227,7 @@ function editItem(id, from = '') {
         return;
       }
 
-      closeCart();
+      closePage('cart');
       break;
     case 'starred':
       const starred = getStarred();
@@ -247,8 +247,7 @@ function editItem(id, from = '') {
         return;
       }
 
-      closeCart();
-      closeStarred();
+      closePage('starred');
       break;
   }
 
