@@ -180,10 +180,24 @@ async function addItemToSharedCart(item){
  * @param {String} id - id of item to remove 
  * @returns 
  */
-async function removeItemFromSharedCart(id){
-  if(!firebase) return false;
+async function removeItemFromSharedCart(item){
+  if(!firebase || !item) return false;
 
-  await firebase.removeItemFromCart(id, getCart()?.id || null)
+  // check if userid is the same as creator of the item
+  if(getCart().createdBy != firebase.getUserUid() && item.createdBy != firebase.getUserUid()){
+    new Notification({
+      message: "Non puoi rimuovere un elemento creato da un altro utente!",
+      gravity: 'error'
+    })
+    return false;
+  }
+
+  const result = await firebase.removeItemFromCart(item.id, getCart()?.id || null);
+  
+  if(result){
+    delete getCart()?.items[item.id];
+  }
+  return result;
 }
 
 
@@ -193,9 +207,19 @@ async function removeItemFromSharedCart(id){
  * @returns 
  */
 async function editItemInSharedCart(item){
-  if(!firebase) return false;
+  if(!firebase || !item) return false;
 
-  await firebase.updateItemInCart(item, getCart()?.id || null)
+  // check if userid is the same as creator of the item
+  if(item.createdBy != firebase.getUserUid()){
+    new Notification({
+      message: "Non puoi modificare un elemento creato da un altro utente!",
+      gravity: 'error'
+    })
+    return false;
+  }
+
+  const result = await firebase.updateItemInCart(item, getCart()?.id || null)
+  return result;
 }
 
 
@@ -214,7 +238,7 @@ function openSharedCarts(){
  * @param {String} id 
  */
 function loadSharedCart(id){
-  const sharedCart = lastSharedCarts.find(cart => cart.id == id);
+  const sharedCart = sharedCartCache.find(cart => cart.id == id);
   if(!sharedCart){
     new Notification({
       message: 'Qualcosa è andato storto durante il recupero del carrello condisivo',
@@ -250,8 +274,17 @@ function handleDataChange(data){
   if(data.deleted){
     cart.shared = false;
     // shared cart deleted on server are not deleted on local device
+    // update local cache for cart
+    sharedCartCache.filter(cart => cart.id != data.id);
     saveCart(null)
   } else {
+    // update local cache for cart
+    let local = sharedCartCache.find(cart => cart.id != data.id);
+    if (local){
+      local = data;
+    } else {
+      sharedCartCache.push(data)
+    }
     saveCart(data);
   }
 }
@@ -261,13 +294,30 @@ function handleDataChange(data){
  * 
  * @param {String} cartId 
  */
-function deleteSharedCart(cartId, ask = true){
+async function deleteSharedCart(cartId, ask = true){
   if(ask){
     _confirm("Eliminare il carrello condiviso?", () => deleteSharedCart(cartId, false))
     return;
   }
 
-  firebase.removeSharedCart(cartId)
+  console.log(sharedCartCache);
+  const cartToRemove = sharedCartCache.find(cart => cart.id == cartId);
+  if(!cartToRemove) return;
+
+  // check if userid is the same as creator of the item
+  if(cartToRemove.createdBy != firebase.getUserUid()){
+    new Notification({
+      message: "Non puoi eliminare un carrello creato da un altro utente!",
+      gravity: 'error'
+    })
+    return false;
+  }
+
+  const result = await firebase.removeSharedCart(cartId);
+
+  if(result){
+    clearCart(true);
+  }
 }
 
 /**
@@ -283,10 +333,10 @@ function closeShared(){
   if(elem) elem.classList.add('hidden');
 }
 
-
-let lastSharedCarts = [];
+// local cache for shared carts
+let sharedCartCache = [];
 async function drawSharedCarts(){
-  lastSharedCarts = [];
+  sharedCartCache = [];
   if(!firebase) return;
 
   showLoadingScreen();

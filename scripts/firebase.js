@@ -132,7 +132,7 @@ firebase.userActive = function(){
   return userActive || false;
 }
 
-const getUserUid = function(){
+firebase.getUserUid = function(){
   return auth?.currentUser?.uid;
 }
 
@@ -178,7 +178,7 @@ firebase.isUserActive = async function(user){
 firebase.addItemTocart = async function(item , cartId){
   if(!cartId || !item) return false;
   
-  item.createdBy = getUserUid();
+  item.createdBy = firebase.getUserUid();
 
   const path = getItemsPath(cartId);
   const result = await update(ref(database, path), {
@@ -228,6 +228,7 @@ firebase.updateItemInCart = async function(item, cartId){
         gravity: 'error'
       })
     }
+    return false;
   });
 
   return result;
@@ -260,6 +261,7 @@ firebase.removeItemFromCart = async function(itemId, cartId){
         gravity: 'error'
       })
     }
+    return false;
   });
 
   return result;
@@ -273,11 +275,11 @@ firebase.removeItemFromCart = async function(itemId, cartId){
 firebase.addSharedCart = async function(cart){
   if(!cart) return;
 
-  cart.createdBy = getUserUid();
+  cart.createdBy = firebase.getUserUid();
 
   // check if all items have the createdBy property
   for(const item of Object.values(cart.items)){
-    if(!item.createdBy)  item.createdBy = getUserUid();
+    if(!item.createdBy)  item.createdBy = firebase.getUserUid();
   }
 
   const key = `cart-${cart.id}`;
@@ -319,7 +321,7 @@ firebase.removeSharedCart = async function(cartId){
     console.warn(error);
     if(error.code == "PERMISSION_DENIED"){
       new Notification({
-        message: "Non puoi modificare un elemento creato da un altro utente!",
+        message: "Non puoi eliminare un carrello creato da un altro utente!",
         gravity: 'error'
       })
     } else {
@@ -337,12 +339,12 @@ firebase.removeSharedCart = async function(cartId){
 firebase.getSharedCarts = async function(){
   const carts = await get(ref(database, `/${paths.sharedCarts}`)).then((snapshot) => {
     if (snapshot.exists()) {
-      lastSharedCarts = Object.values(snapshot.val());
+      sharedCartCache = Object.values(snapshot.val());
     } else {
       console.log("No data available");
-      lastSharedCarts = [];
+      sharedCartCache = [];
     }
-    return lastSharedCarts;
+    return sharedCartCache;
   }).catch((error) => {
     console.error(error);
     return null;

@@ -51,7 +51,9 @@ function starItemFromCart(id) {
 
   // for now is support only starring an item from cart
   const cart = getCart();
-  const item = cart.items.find(item => item.id == id);
+  const item = cart.items[id];
+  // remove creator
+  delete item.createdBy;
   starredItems.push(item);
 
   setStarred(starredItems);

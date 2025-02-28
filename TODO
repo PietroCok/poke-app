@@ -5,6 +5,8 @@ DA FARE
 -- utente non abilitato
 -- utente abilitato
 
+- pagina admin per abilitazione/disabilitazione utenti
+
 - Pagina profilo utente
 -- logout
 -- modifica/reset password
@@ -12,9 +14,12 @@ DA FARE
 -- username ??
 
 DA CORREGGERE
+- non sempre il creatore del carrelo può cancellare tutti gli elementi, compresi quelli creati da altri utenti
 
 DA VALUTARE
 - ottimizzazione disegno quando la pagina da aggiornare è attualmente aperta (rimozione e duplicazione diventano puntuali sul DOM, invece di ridisegnare tutto)
+
+- gruppi per migliore organizzazione dei carrelli condivisi
 
 - preferiti salvati, per utente, sul database, in modo da essere accessibili da qualsiasi dispositivo
 

@@ -72,7 +72,9 @@ function clearCart(skipConfirm = false) {
 */
 function isCarted(id) {
   const cart = getCart();
-  const alreadycarted = cart.items?.id;
+  if(!cart.items) return false;
+
+  const alreadycarted = cart.items[id];
   if (alreadycarted) return true;
   return false;
 }
@@ -97,6 +99,7 @@ function addToCartFromStarred(id) {
   const item = starred.find(i => i.id == id);
 
   addToCart(structuredClone(item));
+  drawStarredItems();
 }
 
 /**
@@ -123,17 +126,7 @@ async function addToCart(item, allowDuplicate = false) {
 
   // remote update
   let operationResult = true;
-  if(prevItem){
-    // aggiornamento
-    if(cart.shared){
-      operationResult = await editItemInSharedCart(poke);
-    }
-    if(operationResult){
-      new Notification({
-        message: "Aggiornato nel carrello"
-      })
-    }
-  } else {
+  if(!prevItem){
     // nuovo inserimento
     if(cart.shared){
       operationResult = await addItemToSharedCart(poke);
@@ -141,6 +134,16 @@ async function addToCart(item, allowDuplicate = false) {
     if(operationResult){
       new Notification({
         message: "Salvato nel carrello"
+      })
+    }
+  } else {
+    // aggiornamento
+    if(cart.shared){
+      operationResult = await editItemInSharedCart(poke);
+    }
+    if(operationResult){
+      new Notification({
+        message: "Aggiornato nel carrello"
       })
     }
   }
@@ -309,13 +312,13 @@ function removeFromCart(id, ask = true) {
     return;
   }
   
-  delete cart.items[id];
-
-  if(cart.shared){
-    removeItemFromSharedCart(id);
-  }
   
-  saveCart(cart);
+  if(cart.shared){
+    removeItemFromSharedCart(cart.items[id]);
+  } else {
+    delete cart.items[id];
+    saveCart(cart);
+  }
 }
 
 /**
