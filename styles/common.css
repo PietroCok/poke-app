@@ -36,6 +36,10 @@
   font-weight: normal;
 }
 
+.weight-bold{
+  font-weight: bold;
+}
+
 .pointer{
   cursor: pointer;
 }
@@ -171,6 +175,10 @@
   text-align: right;
 }
 
+.text-small {
+  font-size: small;
+}
+
 .text-large {
   font-size: large;
 }
@@ -261,6 +269,10 @@
 
 .gap-2 {
   gap: 2em;
+}
+
+.gap-5 {
+  gap: 5px;
 }
 
 .z-1{
