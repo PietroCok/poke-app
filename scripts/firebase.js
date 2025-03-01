@@ -317,6 +317,23 @@ firebase.removeItemFromCart = async function(itemId, cartId){
   return result;
 }
 
+firebase.removeAllItemsFromCart = async function(cartId){
+  if(!cartId) return;
+
+  const path = getCartPath(cartId);
+  const result = await update(ref(database, path), {
+    items: null
+  }).then(() => {
+    console.log('Removed all time from remote cart')
+    return true;
+  }).catch((error) => {
+    console.warn(error)
+    return false;
+  })
+
+  return result;
+}
+
 /**
  * Adds shared cart to db
  * @param {Object} cart 

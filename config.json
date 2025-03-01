@@ -237,6 +237,7 @@
   "sotto_titolo": "Breve descrizione",
   "sotto_titolo_2": "Info aggiuntive",
   "numero_telefono": "",
+  "cart_limit": 50,
   "firebaseConfig" : {
     "apiKey": "AIzaSyBT-bk__Ft7uiBIRA9SriDdvVsHPFLp8B8",
     "authDomain": "testing-grounds-d59c4.firebaseapp.com",

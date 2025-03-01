@@ -8,20 +8,16 @@ DA FARE
 - pagina admin per abilitazione/disabilitazione utenti
 
 - Pagina profilo utente
--- logout
--- modifica/reset password
--- cancellazione account
--- username ??
+-- modifica/reset email/password => non si può fare senza un indirizzo mail verificato (scartato per il momento)
 
 DA CORREGGERE
 - non sempre il creatore del carrelo può cancellare tutti gli elementi, compresi quelli creati da altri utenti
+- per alcune operazioni non vengono correttamente lanciate le notifiche
 
 DA VALUTARE
 - ottimizzazione disegno quando la pagina da aggiornare è attualmente aperta (rimozione e duplicazione diventano puntuali sul DOM, invece di ridisegnare tutto)
 
-- gruppi per migliore organizzazione dei carrelli condivisi
-
-- preferiti salvati, per utente, sul database, in modo da essere accessibili da qualsiasi dispositivo
+- gestione dei carrelli per gruppi ad invito, in modo da rendere l'applicazione più generica.
 
 - rimuovere codice inutilizzato
 - refactoring codice

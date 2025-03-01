@@ -247,6 +247,22 @@ async function editItemInSharedCart(item){
 
 
 /**
+ * Removes all item from shared cart but keeping the cart
+ */
+async function clearRemoteCart(cartId){
+  const result = await firebase.removeAllItemsFromCart(cartId)
+  if(!result){
+    new Notification({
+      messagge: "Errore durante la cancellazione degli elementi nel carrello condiviso!",
+      gravity: 'error'
+    })
+  }
+
+  return result;
+}
+
+
+/**
  * Retrieves keys information about available shared carts
  */
 function openSharedCarts(){
@@ -348,7 +364,7 @@ async function deleteSharedCart(cartId, ask = true){
  */
 function unlinkSharedCart(){
   firebase.stopObserveCart(getCart()?.id);
-  clearCart(true);
+  clearCart(true, true);
 }
 
 

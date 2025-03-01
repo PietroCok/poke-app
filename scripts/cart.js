@@ -43,17 +43,28 @@ function loadCart() {
 
 /**
  * Removes all items from cart and deletes it from localStorage
+ * @param {boolean} [skipConfirm=false] - skips confirmation prompt
+ * @param {boolean} [localOnly=true] - clear only local version of the cart
  */
-function clearCart(skipConfirm = false) {
+async function clearCart(skipConfirm = false, localOnly = false) {
   if(!skipConfirm){
-    _confirm("Svuotare il carrello?\nL'operazione non è reversibile", () => clearCart(true));
+    _confirm("Svuotare il carrello?<br>L'operazione non è reversibile", () => clearCart(true));
     return;
   }
 
-  let cart = {
-    id: getRandomId(),
-    items: {}
-  };
+  const cart = getCart();
+  if(!localOnly && cart?.shared && firebase){
+    // remove all items from shared cart
+    const result = clearRemoteCart(cart.id);
+    if(!result){
+      return;
+    }
+  }
+  
+  delete cart.shared;
+  cart.items = {};
+  cart.id = getRandomId();
+
   saveCart(cart);
   drawCartItems();
 }
@@ -100,8 +111,18 @@ function addToCartFromStarred(id) {
 async function addToCart(item, allowDuplicate = false) {
   if (!item) return;
 
-  let poke = structuredClone(item);
   const cart = getCart();
+  const cartLimit = config.cart_limit;
+  if(cartLimit && getCartItems().length >= cartLimit){
+    new Notification({
+      message: `Non è possibile aggiungere altri elementi al carrello, max (${cartLimit})`,
+      gravity: 'warn',
+      displayTime: 2
+    })
+    return;
+  }
+
+  let poke = structuredClone(item);
   let prevItem = null;
   if (!poke.id || allowDuplicate) {
     // insert into cart
@@ -152,7 +173,7 @@ function showOrderPreview() {
   // check if at least one item in cart
   const cart = getCart();
 
-  if (cart.items.length == 0) {
+  if (getCartItems().length == 0) {
     new Notification({
       message: "Il carrello è vuoto",
       gravity: 'error'
@@ -177,7 +198,7 @@ function showOrderPreview() {
 
   // total price
   let cartSubtotal = 0;
-  for (const item of Object.values(cart.items)) {
+  for (const item of getCartItems()) {
     cartSubtotal += item.totalPrice;
   }
   const cartSubtotalElem = document.getElementById('order-price');
@@ -202,7 +223,7 @@ function generateOrderMessage() {
 
   let simple_order_string = '';
 
-  for (const [index, item] of Object.entries(cart.items)) {
+  for (const [index, item] of Object.entries(getCartItems())) {
     let single_order = ''
     single_order += `${Number(index) + 1}) ${item.dimension.toUpperCase()}: `;
 
@@ -221,7 +242,7 @@ function generateOrderMessage() {
 
   const complete_order_string =
     `Buongiorno,
-vorrei ordinare ${cart.items.length > 1 ? cart.items.length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ? " a nome: " + orderName.value : ""}.
+vorrei ordinare ${getCartItems().length > 1 ? getCartItems().length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ? " a nome: " + orderName.value : ""}.
 
 ${simple_order_string}`;
 
@@ -282,8 +303,10 @@ function sendOrder() {
   // open wa to send message
   window.open(`https://wa.me/${config.numero_telefono}/?text=${encodeURIComponent(order_string)}`);
 
-  // For now cart is not emptied after sending order as we cannot be sure the procedure has been completed
+  // ask if order has been completed to clear the cart
   //clearCart(true);
+
+
   closeDialog('preview-order');
   closePage('cart');
 }
@@ -375,7 +398,7 @@ function drawCartItems() {
 
   let cartSubtotal = 0;
 
-  for (const item of Object.values(cart.items)) {
+  for (const item of getCartItems()) {
     const description = toString(item);
     const isOpen = openElemsId?.includes(item.id);
     cartSubtotal += item.totalPrice;
@@ -464,7 +487,7 @@ function drawCartItems() {
     cartElem.append(itemElem);
   }
 
-  const cartItems = Object.values(cart.items).length
+  const cartItems = getCartItems().length
   // update cart count
   const menuElem = document.getElementById('cart-menu');
   if (menuElem) menuElem.dataset.cartcount = cartItems > 0 ?  cartItems : '';
@@ -483,4 +506,9 @@ function drawCartItems() {
   // aggiorna il totale UI
   const cartSubtotalElem = document.querySelector('#cart-price span');
   if (cartSubtotalElem) cartSubtotalElem.textContent = cartSubtotal.toFixed(2);
+}
+
+
+function getCartItems(){
+  return Object.values(getCart().items || {});
 }
