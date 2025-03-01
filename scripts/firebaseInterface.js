@@ -169,7 +169,6 @@ async function createSharedCart(fromDialog = false){
 
   sharedCart.name = name.value;
   sharedCart.shared = true;
-  sharedCart.items = null;
 
   // load created cart in local cart
   saveCart(sharedCart);

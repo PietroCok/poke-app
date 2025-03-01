@@ -342,14 +342,8 @@ firebase.removeAllItemsFromCart = async function(cartId){
 firebase.addSharedCart = async function(cart){
   if(!cart) return;
 
+  // set ownership of cart
   cart.createdBy = firebase.getUserUid();
-
-  // check if all items have the createdBy property
-  if(cart.items){
-    for(const item of Object.values(cart.items)){
-      if(!item.createdBy)  item.createdBy = firebase.getUserUid();
-    }
-  }
 
   const key = `cart-${cart.id}`;
   const result = await update(ref(database, `/${paths.sharedCarts}`), {

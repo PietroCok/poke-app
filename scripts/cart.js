@@ -141,23 +141,23 @@ async function addToCart(item, allowDuplicate = false) {
   let operationResult = true;
   if(!prevItem){
     // nuovo inserimento
-    if(cart.shared){
-      operationResult = await addItemToSharedCart(poke);
-    }
     if(operationResult){
       new Notification({
         message: "Salvato nel carrello"
       })
     }
+    if(cart.shared){
+      operationResult = await addItemToSharedCart(poke);
+    }
   } else {
     // aggiornamento
-    if(cart.shared){
-      operationResult = await editItemInSharedCart(poke);
-    }
     if(operationResult){
       new Notification({
         message: "Aggiornato nel carrello"
       })
+    }
+    if(cart.shared){
+      operationResult = await editItemInSharedCart(poke);
     }
   }
 
