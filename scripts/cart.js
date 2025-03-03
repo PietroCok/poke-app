@@ -319,21 +319,26 @@ function sendOrder() {
 function removeFromCart(id, ask = true) {
   let cart = getCart();
 
+  const toBeRemoved = cart.items[id];
+  if(!toBeRemoved) return;
+
   if(ask){
-    const toBeRemoved = cart.items[id];
-    if(!toBeRemoved) return;
-  
     _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeFromCart(id, false));
     return;
   }
   
-  
-  if(cart.shared){
+  // if cart is shared but user is not logged =>  unlink and "convert" to normal cart
+  if(cart.shared && firebase && firebase.getUserUid()){
     removeItemFromSharedCart(cart.items[id]);
+    return;
   } else {
-    delete cart.items[id];
-    saveCart(cart);
-  }
+    delete cart.createdBy;
+    cart.shared = false;
+    cart.id = getRandomId();
+  } 
+
+  delete cart.items[id];
+  saveCart(cart);
 }
 
 /**

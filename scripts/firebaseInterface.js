@@ -37,9 +37,8 @@ async function userSignup() {
 
   if(!checkEmailFormat(email)){
     new Notification({
-      message: 'Formato mail non valido!',
+      message: 'Mail non valida!',
       gravity: 'error',
-      displayTime: 1.5,
       targetId: 'toast-container-sign-up'
     })
     return;
@@ -47,9 +46,8 @@ async function userSignup() {
 
   if(!checkPasswordFormat(password)){
     new Notification({
-      message: 'Password troppo corta: inserisci una password lunga almeno 6 caratteri',
+      message: 'Password troppo corta: min 6 caratteri!',
       gravity: 'error',
-      displayTime: 1.5,
       targetId: 'toast-container-sign-up'
     })
     return;
@@ -57,7 +55,7 @@ async function userSignup() {
 
   if(password != password_check){
     new Notification({
-      message: 'La password non corrisponde!',
+      message: 'Le password non corrispondono!',
       gravity: 'error',
       targetId: 'toast-container-sign-up'
     });
@@ -203,7 +201,7 @@ async function addItemToSharedCart(item){
  * @returns 
  */
 async function removeItemFromSharedCart(item){
-  if(!firebase || !item) return false;
+  if(!item || !firebase) return false;
 
   // check if userid is the same as creator of the item
   if(getCart().createdBy != firebase.getUserUid() && item.createdBy != firebase.getUserUid()){
