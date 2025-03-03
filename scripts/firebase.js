@@ -186,6 +186,10 @@ firebase.getUserEmail = function(){
   return auth?.currentUser?.email || '';
 }
 
+firebase.isEmailVerified = function(){
+  return auth?.currentUser?.emailVerified || false;
+}
+
 firebase.isUserActive = async function(user){
   let currentUser = user;
   if(!currentUser){

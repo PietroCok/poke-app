@@ -414,16 +414,69 @@ function openProfile(){
   if(!firebase.getUserUid()) return;
   closeMenu();
   closeAllPages();
-
+  
   const page = document.getElementById('user-profile');
-  if(page) page.classList.remove('hidden');
+  if(!page) return; 
+  drawProfilePage();
+  page.classList.remove('hidden');
+}
 
-  // build page
-  const container = document.getElementById('user-profile-container');
-  const email = document.getElementById('user-profile-email');
-  const status = document.getElementById('user-profile-status');
-  if(email) email.value = getUserEmail();
-  if(status) status.value = isUserActive() ? 'Attivo' : 'Non attivo';
+function drawProfilePage(){
+  const profileContainer = document.getElementById('user-profile-container');
+  if(!profileContainer) return;
+  profileContainer.innerHTML = '';
+
+  const emailVerified = firebase.isEmailVerified();
+  const userActive = isUserActive();
+  const userStatus = userActive ? 'Attivo' : 'Non attivo';
+
+  const emailElem = 
+  `<div class="flex gap-1 align-center">
+    <div for="user-profile-email" class="label margin-10">Email</div>
+
+    <input type="text" id="user-profile-email" class="input flex-1 w-20 text-right ${emailVerified ? 'accent-info' : 'accent-warn'}" title="Email ${emailVerified ? 'verficata' : 'non verificata'}" value="${getUserEmail()}" disabled>
+  </div>`;
+
+  const verifyEmail = 
+  `
+  <div class="flex just-end">
+    <button onclick="verifyEmail()" class="accent-3-invert button text-button w-fit">Verifica la tua mail</button>
+  </div>
+  `;
+
+  // shown only if email is verified
+  const editEmail = '';
+  const resetPassword = ``;
+
+  const statusElem = 
+  `<div class="flex gap-1 align-center">
+    <div for="user-profile-status" class="label margin-10">Stato account</div>
+
+    <input type="text" id="user-profile-status" class="input flex-1 w-20 text-right ${userActive ? 'accent-info' : 'accent-warn'}" value="${userStatus}" disabled>
+  </div>`;
+
+  profileContainer.insertAdjacentHTML('beforeend', emailElem);
+  if(!emailVerified) profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
+  profileContainer.insertAdjacentHTML('beforeend', statusElem);
+}
+
+
+// starts procedure to verify the user email
+async function verifyEmail(ask = true){
+  new Notification({
+    message: "Funzionalità non non ancora disponibile!",
+    gravity: 'warn',
+    displayTime: 2
+  })
+  return;
+
+
+  if(ask){_confirm("Iniziare la procedura di verifica della mail?<div class='text-normal margin-10'>Questa operazione richiede che l'utente abbia accesso all'account di posta</div>", () => {verifyEmail(false)})
+
+    return;
+  }
+
+
 }
 
 async function deleteAccount(ask = true){

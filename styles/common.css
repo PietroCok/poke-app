@@ -80,6 +80,22 @@
   background-color: var(--accent-4);
 }
 
+.accent-info{
+  color: var(--accent-info);
+}
+
+.accent-info-invert{
+  background-color: var(--accent-info);
+}
+
+.accent-warn{
+  color: var(--accent-warn);
+}
+
+.accent-warn-invert{
+  background-color: var(--accent-warn);
+}
+
 .accent-main{
   color: var(--main-color);
 }
@@ -177,6 +193,10 @@
 
 .text-small {
   font-size: small;
+}
+
+.text-normal {
+  font-size: medium;
 }
 
 .text-large {
