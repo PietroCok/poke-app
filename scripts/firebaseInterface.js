@@ -419,7 +419,7 @@ function openProfile(){
   page.classList.remove('hidden');
 }
 
-function drawProfilePage(){
+async function drawProfilePage(){
   const profileContainer = document.getElementById('user-profile-container');
   if(!profileContainer) return;
   profileContainer.innerHTML = '';
@@ -461,20 +461,20 @@ function drawProfilePage(){
 
 // starts procedure to verify the user email
 async function verifyEmail(ask = true){
-  new Notification({
-    message: "Funzionalità non non ancora disponibile!",
-    gravity: 'warn',
-    displayTime: 2
-  })
-  return;
 
-
-  if(ask){_confirm("Iniziare la procedura di verifica della mail?<div class='text-normal margin-10'>Questa operazione richiede che l'utente abbia accesso all'account di posta</div>", () => {verifyEmail(false)})
-
+  if(ask){
+    _confirm("Iniziare la procedura di verifica della mail?<div class='text-normal margin-10'>Questa operazione richiede che l'utente abbia accesso all'account di posta</div>", () => {verifyEmail(false)})
     return;
   }
 
+  // new Notification({
+  //   message: "Funzionalità non ancora disponibile!",
+  //   gravity: 'warn',
+  //   displayTime: 2
+  // })
+  // return;
 
+  firebase.verifyEmail();
 }
 
 async function deleteAccount(ask = true){
@@ -485,6 +485,13 @@ async function deleteAccount(ask = true){
 
   // delete from database
   let result = await firebase.deleteAccountRecord();
+  if(!result){
+    new Notification({
+      message: "Si è verificato un problema durante l'eliminazione dell'account",
+      gravity: 'error'
+    })
+    return;
+  }
 
   // delete from authentication
   result = await firebase.deleteAccount();
@@ -495,6 +502,11 @@ async function deleteAccount(ask = true){
     })
 
     setTimeout(() => window.location.reload(), 1000);
+  } else {
+    new Notification({
+      message: "Si è verificato un problema durante l'eliminazione dell'account",
+      gravity: 'error'
+    })
   }
 }
 

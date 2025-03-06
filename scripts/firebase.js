@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser, sendEmailVerification} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getDatabase, ref, get, set, update, onValue, remove, off } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 let app, auth, database;
@@ -39,7 +39,7 @@ firebase.init = async function(firebaseConfig){
   console.log('Firebase Initialized!');
 
   onAuthStateChanged(auth, (user) => {
-    console.log('auth change');
+    console.log('auth state change');
     if (user) {
       console.log(user);
       
@@ -111,7 +111,7 @@ firebase.signUp = async function(email, password){
 const createUserRecord = async function(user){
   set(ref(database, `/users/${user.uid}`), {
     email: user.email,
-    status: "pending"
+    status: 'pending'
   })
   .then(() => {
     console.log('User account created!');
@@ -160,11 +160,10 @@ firebase.deleteAccountRecord = async function(){
   const uid = this.getUserUid();
   if(!uid) return false;
 
-  const path = `/users`;
+  const path = `/users/${uid}`;
 
-  const result = await update(ref(database, path), {
-    [uid]: null
-  }).then(() => {
+  const result = await remove(ref(database, path))
+  .then(() => {
     return true;
   }).catch((error) => {
     console.warn(error);
@@ -174,26 +173,35 @@ firebase.deleteAccountRecord = async function(){
   return result;
 }
 
+function getUser(){
+  return auth?.currentUser;
+}
+
 firebase.userActive = function(){
   return userActive || false;
 }
 
 firebase.getUserUid = function(){
-  return auth?.currentUser?.uid || '';
+  return getUser()?.uid || '';
 }
 
 firebase.getUserEmail = function(){
-  return auth?.currentUser?.email || '';
+  return getUser()?.email || '';
 }
 
 firebase.isEmailVerified = function(){
-  return auth?.currentUser?.emailVerified || false;
+  return getUser()?.emailVerified || false;
+}
+
+firebase.reloadUser = async function(){
+  const user = getUser();
+  if(user) await user.reload();
 }
 
 firebase.isUserActive = async function(user){
   let currentUser = user;
   if(!currentUser){
-    currentUser = auth?.currentUser;
+    currentUser = getUser();
   }
   if(!currentUser){
     return false;
@@ -206,7 +214,7 @@ firebase.isUserActive = async function(user){
       const status = snapshot.val();
       console.log('User: ' + currentUser.email + " => status: " + status);
 
-      if(status== 'active'){
+      if(status && status == 'active'){
         userActive = true;
         handleLogin(true, true);
       } else {
@@ -225,6 +233,43 @@ firebase.isUserActive = async function(user){
   });
 }
 
+
+firebase.verifyEmail = async function(){
+  sendEmailVerification(getUser())
+  .then(() => {
+    console.log('Verfication email sent!');
+    // poll for a couple of minute to check if user actually verified the mail
+
+    const pollInterval = 10; // seconds
+    const maxPollTime = 3; // minutes
+    let tries = 1;
+
+    let emailVerificationPollingId = setInterval(async () => {
+      const user = getUser();
+      try {
+        // Reload user to ensure we're getting the latest state
+        await user.reload();
+
+        if (user.emailVerified) {
+          console.log("Email is verified!");
+          clearInterval(emailVerificationPollingId);
+          drawProfilePage();
+        } else {
+          console.log(`Email is not verified yet. (${tries}|${maxPollTime * 60 / pollInterval})`);
+          tries += 1;
+        }
+      } catch (error) {
+        console.error('Error during user reload:', error);
+        clearInterval(emailVerificationPollingId);
+      }
+    }, pollInterval*1000);
+
+    setTimeout(() => clearInterval(emailVerificationPollingId), maxPollTime*60*1000);
+  })
+  .catch((error) => {
+    console.error(error);
+  })
+}
 
 /**
  * 
