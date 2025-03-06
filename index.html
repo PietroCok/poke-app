@@ -287,9 +287,14 @@
         </label>
       </div>
 
-      <span>Senza account?
-        <span onclick="openSignUp()" class="pointer underline" title="Form di registrazione">Registrati</span>
-      </span>
+      <div class="flex align-center">
+        <span>Senza account?</span>
+        <span onclick="openSignUp()" class="pointer underline margin-10" title="Form di registrazione">Registrati</span>
+      </div>
+
+      <div class="flex align-center">
+        <span onclick="passwordReset()" class="pointer underline" title="Invia mail per reset della password">Reset password</span>
+      </div>
 
       <div class="button-wrapper gap-2">
         <button id="clear-order" class="button text-button accent-1-invert"

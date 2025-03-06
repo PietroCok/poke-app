@@ -444,7 +444,8 @@ async function drawProfilePage(){
 
   // shown only if email is verified
   const editEmail = '';
-  const resetPassword = ``;
+  const resetPassword = 
+  ``;
 
   const statusElem = 
   `<div class="flex gap-1 align-center">
@@ -454,8 +455,44 @@ async function drawProfilePage(){
   </div>`;
 
   profileContainer.insertAdjacentHTML('beforeend', emailElem);
-  if(!emailVerified) profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
+  if(!emailVerified) {
+    profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
+  }
   profileContainer.insertAdjacentHTML('beforeend', statusElem);
+}
+
+
+async function passwordReset(ask = true){
+  // check if mail is correct
+  const email = document.getElementById('sign-in-user-email');
+
+  if(!email.value){
+    new Notification({
+      message: "Inserire un indirizzo mail!",
+      gravity: "warn"
+    })
+    return;
+  }
+
+  if(ask){
+    _confirm("Conferma invio email per reset della password?", () => {passwordReset(false)})
+    return;
+  }
+
+  const result = await firebase.passwordReset(email.value);
+
+  closeDialog('sign-in');
+  if(result){
+    new Notification({
+      message: 'Email per il reset della password inviata!',
+      displayTime: 2
+    })
+  } else {
+    new Notification({
+      message: "Errore durante l'invio della mail per il reset della password!",
+      gravity: "error"
+    })
+  }
 }
 
 

@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser, sendEmailVerification} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut, deleteUser, sendEmailVerification, sendPasswordResetEmail} from "https://www.gstatic.com/firebasejs/11.3.1/firebase-auth.js";
 import { getDatabase, ref, get, set, update, onValue, remove, off } from "https://www.gstatic.com/firebasejs/11.3.1/firebase-database.js";
 
 let app, auth, database;
@@ -269,6 +269,20 @@ firebase.verifyEmail = async function(){
   .catch((error) => {
     console.error(error);
   })
+}
+
+firebase.passwordReset = async function(email){
+  const result = await sendPasswordResetEmail(auth, email)
+  .then(() => {
+    console.log('Password reset email sent!')
+    return true;
+  })
+  .catch((error) => {
+    console.warn(error);
+    return false;
+  });
+
+  return result;
 }
 
 /**
