@@ -11,8 +11,12 @@ async function loadConfig() {
 /**
  * Returns random id string
  */
-function getRandomId() {
-  return Math.random().toString(36).slice(2);
+function getRandomId(minlength = 0) {
+  let id = '';
+  do {
+    id += Math.random().toString(36).slice(2)
+  } while (id.length < minlength)
+  return id;
 }
 
 /**

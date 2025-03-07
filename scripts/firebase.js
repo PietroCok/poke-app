@@ -408,12 +408,21 @@ firebase.addSharedCart = async function(cart){
   // set ownership of cart
   cart.createdBy = firebase.getUserUid();
 
-  const key = `cart-${cart.id}`;
-  const result = await update(ref(database, `/${paths.sharedCarts}`), {
-    [key] : cart
-  }).catch(error => error);
+  const updates = {};
+  const cart_path = `/shared-carts/cart-${cart.id}`;
+  const accessible_carts_path = `/users/${this.getUserUid()}/carts/cart-${cart.id}`;
 
-  if(!result){
+  updates[cart_path] = cart;
+  updates[accessible_carts_path] = true;
+
+  const result = await update(ref(database), updates)
+  .then(() => true)
+  .catch(error => {
+    console.warn(error);
+    return false;
+  });
+
+  if(result){
     // listen for edits on carts
     observeCart(cart.id);
     new Notification({
@@ -424,7 +433,6 @@ firebase.addSharedCart = async function(cart){
       message: "Errore in creazione del carrello condiviso!",
       gravity: 'error'
     })
-    console.warn(result);
   }
 }
 
@@ -463,20 +471,53 @@ firebase.removeSharedCart = async function(cartId){
 }
 
 firebase.getSharedCarts = async function(){
-  const carts = await get(ref(database, `/${paths.sharedCarts}`)).then((snapshot) => {
-    if (snapshot.exists()) {
-      sharedCartCache = Object.values(snapshot.val());
-    } else {
-      console.log("No data available");
-      sharedCartCache = [];
-    }
-    return sharedCartCache;
+  // get uids of accessible carts
+  const cartsId = await get(ref(database, `/users/${this.getUserUid()}/carts`))
+  .then((snapshot) => {
+    return snapshot.val();
   }).catch((error) => {
     console.error(error);
     return null;
   });
 
+  if(!cartsId){
+    return [];
+  }
+
+  const carts = [];
+  // get informations about actuals carts
+  for(const id in cartsId){
+    const cart = await get(ref(database, `/shared-carts/${id}`))
+    .then((snapshot) => {
+      return snapshot.val();
+    }).catch((error) => {
+      console.error(error);
+      return null;
+    });
+
+    if(cart){
+      carts[cart.id] = cart;
+    }
+  }
+
+  console.log(carts);
+
   return carts;
+}
+
+firebase.addCartToUser = async function(cartId){
+  if(!cartId) return;
+
+  const result = await update(ref(database, `/users/${this.getUserUid()}/carts`),{
+    [cartId]: true,
+  })
+  .then(() => true)
+  .catch((error) => {
+    consolw.warn(error);
+    return false;
+  })
+
+  return result;
 }
 
 const observePath = async function(path, callback){

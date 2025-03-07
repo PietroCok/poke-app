@@ -159,10 +159,10 @@ async function createSharedCart(fromDialog = false){
     sharedCart = getCart();
     // if cart is already a shared => duplicate by using another id
     if(sharedCart.shared){
-      sharedCart.id = getRandomId();
+      sharedCart.id = getRandomId(40);
     }
   } else {
-    sharedCart.id = getRandomId();
+    sharedCart.id = getRandomId(40);
   }
 
   sharedCart.name = name.value;
@@ -381,6 +381,7 @@ async function drawSharedCarts(){
   for(const id in sharedCarts){
     const cart = sharedCarts[id];
     const cartItems = Object.values(cart.items || {}).length || 0;
+    sharedCartCache.push(cart);
 
     const elemStr = 
     `<div class="cart-container flex just-between align-center border-color border-r-10 padding-10">
