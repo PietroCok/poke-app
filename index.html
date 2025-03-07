@@ -36,8 +36,8 @@
 
     <nav id="main-menu-container" class="fixed top-0 right-0 z-100" title="Menu principale">
       <details class="flex flex-column align-end">
-        <summary>
-          <div id="main-menu" class="button icon icon-only" onclick="handleMenuClick()">
+        <summary class="flex just-end">
+          <div id="main-menu" class="button icon icon-only w-fit" onclick="handleMenuClick()">
             <i class="fa-solid fa-bars"></i>
           </div>
         </summary>
@@ -287,9 +287,14 @@
         </label>
       </div>
 
-      <span>Senza account?
-        <span onclick="openSignUp()" class="pointer underline" title="Form di registrazione">Registrati</span>
-      </span>
+      <div class="flex align-center">
+        <span>Senza account?</span>
+        <span onclick="openSignUp()" class="pointer underline margin-10" title="Form di registrazione">Registrati</span>
+      </div>
+
+      <div class="flex align-center">
+        <span onclick="passwordReset()" class="pointer underline" title="Invia mail per reset della password">Reset password</span>
+      </div>
 
       <div class="button-wrapper gap-2">
         <button id="clear-order" class="button text-button accent-1-invert"
@@ -309,7 +314,7 @@
         </label>
 
         <label for="sign-up-user-pwd" class="text-large">
-          Password: <input type="password" name="sign-up-user-pwd" id="sign-up-user-pwd" class="margin-1-0 padding-10 flex just-center w-100">
+          Password: <input type="password" name="sign-up-user-pwd" id="sign-up-user-pwd" class="margin-1-0 padding-10 flex just-center w-100" placeholder="6+ caratteri">
         </label>
 
         <label for="sign-up-user-pwd-check" class="text-large">

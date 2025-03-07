@@ -63,7 +63,7 @@ async function clearCart(skipConfirm = false, localOnly = false) {
   
   delete cart.shared;
   cart.items = {};
-  cart.id = getRandomId();
+  cart.id = getRandomId(40);
 
   saveCart(cart);
   drawCartItems();
@@ -334,7 +334,7 @@ function removeFromCart(id, ask = true) {
   } else {
     delete cart.createdBy;
     cart.shared = false;
-    cart.id = getRandomId();
+    cart.id = getRandomId(40);
   } 
 
   delete cart.items[id];

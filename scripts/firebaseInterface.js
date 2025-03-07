@@ -159,10 +159,10 @@ async function createSharedCart(fromDialog = false){
     sharedCart = getCart();
     // if cart is already a shared => duplicate by using another id
     if(sharedCart.shared){
-      sharedCart.id = getRandomId();
+      sharedCart.id = getRandomId(40);
     }
   } else {
-    sharedCart.id = getRandomId();
+    sharedCart.id = getRandomId(40);
   }
 
   sharedCart.name = name.value;
@@ -381,6 +381,7 @@ async function drawSharedCarts(){
   for(const id in sharedCarts){
     const cart = sharedCarts[id];
     const cartItems = Object.values(cart.items || {}).length || 0;
+    sharedCartCache.push(cart);
 
     const elemStr = 
     `<div class="cart-container flex just-between align-center border-color border-r-10 padding-10">
@@ -419,7 +420,7 @@ function openProfile(){
   page.classList.remove('hidden');
 }
 
-function drawProfilePage(){
+async function drawProfilePage(){
   const profileContainer = document.getElementById('user-profile-container');
   if(!profileContainer) return;
   profileContainer.innerHTML = '';
@@ -444,7 +445,8 @@ function drawProfilePage(){
 
   // shown only if email is verified
   const editEmail = '';
-  const resetPassword = ``;
+  const resetPassword = 
+  ``;
 
   const statusElem = 
   `<div class="flex gap-1 align-center">
@@ -454,27 +456,64 @@ function drawProfilePage(){
   </div>`;
 
   profileContainer.insertAdjacentHTML('beforeend', emailElem);
-  if(!emailVerified) profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
+  if(!emailVerified) {
+    profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
+  }
   profileContainer.insertAdjacentHTML('beforeend', statusElem);
+}
+
+
+async function passwordReset(ask = true){
+  // check if mail is correct
+  const email = document.getElementById('sign-in-user-email');
+
+  if(!email.value){
+    new Notification({
+      message: "Inserire un indirizzo mail!",
+      gravity: "warn",
+      targetId: "toast-container-sign-in"
+    })
+    return;
+  }
+
+  if(ask){
+    _confirm("Conferma invio email per reset della password?", () => {passwordReset(false)})
+    return;
+  }
+
+  const result = await firebase.passwordReset(email.value);
+
+  closeDialog('sign-in');
+  if(result){
+    new Notification({
+      message: 'Email per il reset della password inviata!',
+      displayTime: 2
+    })
+  } else {
+    new Notification({
+      message: "Errore durante l'invio della mail per il reset della password!",
+      gravity: "error"
+    })
+  }
 }
 
 
 // starts procedure to verify the user email
 async function verifyEmail(ask = true){
-  new Notification({
-    message: "Funzionalità non non ancora disponibile!",
-    gravity: 'warn',
-    displayTime: 2
-  })
-  return;
 
-
-  if(ask){_confirm("Iniziare la procedura di verifica della mail?<div class='text-normal margin-10'>Questa operazione richiede che l'utente abbia accesso all'account di posta</div>", () => {verifyEmail(false)})
-
+  if(ask){
+    _confirm("Iniziare la procedura di verifica della mail?<div class='text-normal margin-10'>Questa operazione richiede che l'utente abbia accesso all'account di posta</div>", () => {verifyEmail(false)})
     return;
   }
 
+  // new Notification({
+  //   message: "Funzionalità non ancora disponibile!",
+  //   gravity: 'warn',
+  //   displayTime: 2
+  // })
+  // return;
 
+  firebase.verifyEmail();
 }
 
 async function deleteAccount(ask = true){
@@ -485,6 +524,13 @@ async function deleteAccount(ask = true){
 
   // delete from database
   let result = await firebase.deleteAccountRecord();
+  if(!result){
+    new Notification({
+      message: "Si è verificato un problema durante l'eliminazione dell'account",
+      gravity: 'error'
+    })
+    return;
+  }
 
   // delete from authentication
   result = await firebase.deleteAccount();
@@ -495,6 +541,11 @@ async function deleteAccount(ask = true){
     })
 
     setTimeout(() => window.location.reload(), 1000);
+  } else {
+    new Notification({
+      message: "Si è verificato un problema durante l'eliminazione dell'account",
+      gravity: 'error'
+    })
   }
 }
 
