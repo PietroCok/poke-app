@@ -469,7 +469,8 @@ async function passwordReset(ask = true){
   if(!email.value){
     new Notification({
       message: "Inserire un indirizzo mail!",
-      gravity: "warn"
+      gravity: "warn",
+      targetId: "toast-container-sign-in"
     })
     return;
   }
