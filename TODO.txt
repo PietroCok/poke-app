@@ -1,15 +1,19 @@
 DA FARE
+- dare la possiblità di generare un url che è possibile usare per aggiungersi al carrello condiviso
+- finendo all'indirizzo viene fatta una lettura per capire se si è già registrato il carrello indicato
+- altrimenti chiedo all'utente se vuole essere aggiunto
+- posso modificare l'url senza ricaricare la pagina??? window.history.replaceState({}, document.title, "/" + "my-new-url.html");
+
 - verificare corretto funzionamento firebase integration nelle varie modalità:
 -- configurazione non presente
 -- utente non loggato
 -- utente non abilitato
 -- utente abilitato
 
-- pagina admin per abilitazione/disabilitazione utenti
+- pagina admin per abilitazione/disabilitazione utenti direttamente dall'applicazione
 
 - Pagina profilo utente
--- implementazione verifica della mail
--- questa operazione rende possibile la modifica della passowrd dell'utente
+-- modifica password da pagina del profilo
 
 DA CORREGGERE
 - non sempre il creatore del carrelo può cancellare tutti gli elementi, compresi quelli creati da altri utenti
