@@ -384,7 +384,9 @@ function drawCartItems() {
       </button>
 
       <span id="shared-cart-name">${cart.name}</span>
-      <span class="weight-normal text-small">Carrello condiviso</span>
+      <div class="underline text-small text-capitalize pointer" onclick="generatedCartLink('${cart.id}', '${cart.name}')">
+      Genera link invito
+      </div>
 
       <button 
         id="remove-shared-cart" 
@@ -398,6 +400,15 @@ function drawCartItems() {
       </h4>`;
 
     cartElem.append(convertToHTML(additionalHeaderElemStr));
+
+
+    // invite link generation
+    const inviteLinkElem = 
+    `
+    
+    `;
+
+    cartElem.insertAdjacentHTML('beforeend', inviteLinkElem);
   }
 
   let cartSubtotal = 0;

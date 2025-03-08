@@ -580,7 +580,6 @@ function hideLoadingScreen(){
   loadingElement.close();
 }
 
-
 async function setUp() {
   await loadConfig();
 
