@@ -1,9 +1,4 @@
 DA FARE
-- dare la possiblità di generare un url che è possibile usare per aggiungersi al carrello condiviso
-- finendo all'indirizzo viene fatta una lettura per capire se si è già registrato il carrello indicato
-- altrimenti chiedo all'utente se vuole essere aggiunto
-- posso modificare l'url senza ricaricare la pagina??? window.history.replaceState({}, document.title, "/" + "my-new-url.html");
-
 - verificare corretto funzionamento firebase integration nelle varie modalità:
 -- configurazione non presente
 -- utente non loggato
@@ -21,8 +16,6 @@ DA CORREGGERE
 
 DA VALUTARE
 - ottimizzazione disegno quando la pagina da aggiornare è attualmente aperta (rimozione e duplicazione diventano puntuali sul DOM, invece di ridisegnare tutto)
-
-- valutare gestione dei carrelli per gruppi ad invito, in modo da rendere l'applicazione più generica.
 
 - rimuovere codice inutilizzato
 - refactoring codice

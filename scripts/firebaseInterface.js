@@ -97,11 +97,75 @@ async function handleLogin(success = false, active = false, notification = true)
     return;
   }
 
+  // check if url has a cart code
+  const urlParams = new URLSearchParams(window.location.search)
+  const invitedCartId = urlParams.get('cart');
+  const cartname = urlParams.get('cart-name');
+  if(invitedCartId){
+    // check if user is already invited
+    handleCartInvite(invitedCartId, cartname);
+  }
+
   // check if current loaded cart is a shared cart and listen for it
   const localCart = getCart();
   if(localCart.shared) {
     observeCart(localCart.id);
   }
+}
+
+async function generatedCartLink(cartId, name){
+  if(!cartId) return;
+
+  const inviteLink = window.location.origin + window.location.pathname + "?cart=" + cartId + "&cart-name=" + name;
+
+  if(clipboard.navigator){
+    await navigator.clipboard.writeText(inviteLink);
+
+    new Notification({
+      message: "Link di invito copiato negli appunti!"
+    })
+  } else {
+    // clipboard not supported
+    alert("Link di invito: " + inviteLink)
+  }
+}
+
+async function handleCartInvite(id, name){
+  console.log('invited to shared cart: ', id, name);
+  const alreadyAdded = await firebase.isCartAccessible(id);
+  if(alreadyAdded){
+    // load cart into local cart
+    loadSharedCart(id);
+
+    clearUrl();
+  } else {
+    // ask user if wants to adds the cart
+    addUserToCart(id, name);
+  }
+}
+
+async function addUserToCart(cartId, cartName, ask = true){
+  if(!cartId) return false;
+
+  if(ask){
+    _confirm(`Sei stato invitato al carrello condiviso: ${cartName}.<div class="margin-10">Confermi la partecipazione?</div>`, () => addUserToCart(cartId, cartName, false));
+    return false;
+  }
+
+  const result = firebase.addCartToUser(`cart-${cartId}`);
+  if(result){
+    clearUrl();
+    new Notification({
+      message: `Carrello condiviso ${cartName} ora disponibile!`
+    })
+
+    // load cart into local cart
+    loadSharedCart(cartId);
+  }
+}
+
+function clearUrl(){
+  history.replaceState({}, '', window.location.origin + window.location.pathname);
 }
 
 function isUserActive(){
@@ -273,14 +337,22 @@ function openSharedCarts(){
  * 
  * @param {String} id 
  */
-function loadSharedCart(id){
-  const sharedCart = sharedCartCache.find(cart => cart.id == id);
+async function loadSharedCart(id){
+  console.log('Loading cart: ', id, sharedCartCache);
+  
+  let sharedCart = sharedCartCache[id];
   if(!sharedCart){
-    new Notification({
-      message: 'Qualcosa è andato storto durante il recupero del carrello condisivo',
-      gravity: 'error'
-    });
-    return;
+    // try to update the cache
+    sharedCartCache = await firebase.getSharedCarts();
+    sharedCart = sharedCartCache[id];
+
+    if(!sharedCart){
+      new Notification({
+        message: 'Qualcosa è andato storto durante il recupero del carrello condisivo',
+        gravity: 'error'
+      });
+      return;
+    }
   }
 
   sharedCart.shared = true;
@@ -311,15 +383,15 @@ function handleDataChange(data){
     cart.shared = false;
     // shared cart deleted on server are not deleted on local device
     // update local cache for cart
-    sharedCartCache.filter(cart => cart.id != data.id);
+    delete sharedCartCache[data.id];
     saveCart(null)
   } else {
     // update local cache for cart
-    let local = sharedCartCache.find(cart => cart.id != data.id);
+    let local = sharedCartCache[data.id];
     if (local){
       local = data;
     } else {
-      sharedCartCache.push(data)
+      sharedCartCache[data.id] = data;
     }
     saveCart(data);
   }
@@ -337,16 +409,15 @@ async function deleteSharedCart(cartId, ask = true){
   }
 
   console.log(sharedCartCache);
-  const cartToRemove = sharedCartCache.find(cart => cart.id == cartId);
+  const cartToRemove = sharedCartCache[cartId];
   if(!cartToRemove) return;
 
-  // check if userid is the same as creator of the item
+  // if cart is shared and i'm not the creator i remove the cart from the one i have access to
   if(cartToRemove.createdBy != firebase.getUserUid()){
-    new Notification({
-      message: "Non puoi eliminare un carrello creato da un altro utente!",
-      gravity: 'error'
-    })
-    return false;
+    if(await firebase.removeCartAccess(cartId)){
+      clearCart(true, true);
+    }
+    return;
   }
 
   const result = await firebase.removeSharedCart(cartId);
@@ -366,9 +437,9 @@ function unlinkSharedCart(){
 
 
 // local cache for shared carts
-let sharedCartCache = [];
+let sharedCartCache = {};
 async function drawSharedCarts(){
-  sharedCartCache = [];
+  sharedCartCache = {};
   if(!firebase) return;
 
   showLoadingScreen();
@@ -381,7 +452,7 @@ async function drawSharedCarts(){
   for(const id in sharedCarts){
     const cart = sharedCarts[id];
     const cartItems = Object.values(cart.items || {}).length || 0;
-    sharedCartCache.push(cart);
+    sharedCartCache[id] = cart;
 
     const elemStr = 
     `<div class="cart-container flex just-between align-center border-color border-r-10 padding-10">
@@ -563,4 +634,9 @@ function openSignUp(){
   closeDialog('sign-in');
   const dialog = document.getElementById('sign-up');
   dialog.showModal();
+}
+
+function afterSignOut(){
+  // unlink local cart if shared
+  unlinkSharedCart();
 }

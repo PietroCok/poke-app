@@ -125,6 +125,7 @@ firebase.signOut = async function(){
   return await signOut(auth).then(() => {
     userActive = false;
     console.log('User signed out!')
+    afterSignOut();
     // Sign-out successful.
     return true;
   }).catch((error) => {
@@ -481,10 +482,10 @@ firebase.getSharedCarts = async function(){
   });
 
   if(!cartsId){
-    return [];
+    return {};
   }
 
-  const carts = [];
+  const carts = {};
   // get informations about actuals carts
   for(const id in cartsId){
     const cart = await get(ref(database, `/shared-carts/${id}`))
@@ -506,12 +507,45 @@ firebase.getSharedCarts = async function(){
 }
 
 firebase.addCartToUser = async function(cartId){
-  if(!cartId) return;
+  if(!cartId) return false;
 
   const result = await update(ref(database, `/users/${this.getUserUid()}/carts`),{
     [cartId]: true,
   })
   .then(() => true)
+  .catch((error) => {
+    consolw.warn(error);
+    return false;
+  })
+
+  return result;
+}
+
+firebase.isCartAccessible = async function(cartId){
+  if(!cartId) return false;
+
+  const result = await get(ref(database, `/users/${this.getUserUid()}/carts/cart-${cartId}`))
+  .then((snapshot) => {
+    return !!snapshot.val();
+  })
+  .catch((error) => {
+    consolw.warn(error);
+    return false;
+  })
+
+  return result;
+}
+
+firebase.removeCartAccess = async function(cartId){
+  if(!cartId) return false;
+
+  const updates = {};
+  updates[`users/${this.getUserUid()}/carts/cart-${cartId}`] = null;
+
+  const result = await update(ref(database), updates)
+  .then(() => {
+    return true;
+  })
   .catch((error) => {
     consolw.warn(error);
     return false;
