@@ -116,9 +116,9 @@ async function handleLogin(success = false, active = false, notification = true)
 async function generatedCartLink(cartId, name){
   if(!cartId) return;
 
-  const inviteLink = window.location.origin + window.location.pathname + "?cart=" + cartId + "&cart-name=" + name;
+  const inviteLink = encodeURI(window.location.origin + window.location.pathname + "?cart=" + cartId + "&cart-name=" + name);
 
-  if(clipboard.navigator){
+  if(navigator.clipboard){
     await navigator.clipboard.writeText(inviteLink);
 
     new Notification({
@@ -126,7 +126,7 @@ async function generatedCartLink(cartId, name){
     })
   } else {
     // clipboard not supported
-    alert("Link di invito: " + inviteLink)
+    _confirm("Link di invito:<br>" + inviteLink)
   }
 }
 
