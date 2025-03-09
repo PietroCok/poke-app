@@ -5,8 +5,9 @@ DA FARE
 -- utente non abilitato
 -- utente abilitato
 
-- visualizzare stato pending con un colore diverso dal rosso
--- ordinare gli utenti con il seguente ordine: 'pending', 'inactive', 'active'
+- css: 
+-- em => rem
+-- px => rem
 
 - Pagina profilo utente
 -- modifica password da pagina del profilo

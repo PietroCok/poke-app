@@ -644,13 +644,36 @@ async function deleteAccount(ask = true){
 // ADMIN ONLY
 function openUsersStatus(){
   closeMenu();
-  closeAllPages();
+  //closeAllPages();
   const statusPage = document.getElementById('users-status');
   if(statusPage) statusPage.classList.remove('hidden');
 
   drawUsersStatusPage();
 }
 
+const states = {
+  'pending': {
+    order: 0,
+    color: 'accent-warn',
+    label: 'In attesa di attivazione',
+    label_action: 'Conferma attivazione',
+    opposite_color: 'accent-info'
+  },
+  'inactive': {
+    order: 1,
+    color: 'accent-1',
+    label: 'Disattivato',
+    label_action: 'Attiva',
+    opposite_color: 'accent-info'
+  },
+  'active': {
+    order: 2,
+    color: 'accent-info',
+    label: 'Attivo',
+    label_action: 'Disattiva',
+    opposite_color: 'accent-1'
+  }
+}
 async function drawUsersStatusPage(){
   const statusPageContainer = document.getElementById('users-status-container');
   if(!statusPageContainer) return;
@@ -659,27 +682,29 @@ async function drawUsersStatusPage(){
 
   showLoadingScreen();
   const users = await firebase.getUsers();
+
+  // removes current user
+  users.splice(users.findIndex(u => u.uid == firebase.getUserUid()), 1);
   
-  // order users by inactive first
+  // order users (inactive first)
   users.sort((A, B) => {
-    return (A.status == 'active') - (B.status == 'active');
+    return states[A.status].order - states[B.status].order;
   })
 
   for(const user of users){
-    const userActive = user.status == 'active';
     const userElem = 
     `
       <div class="flex align-center">
         <div class="flex-1 margin-10">${user.email}</div>
-        <div class="margin-10 ${userActive ? 'accent-info' : 'accent-1'}" title="${userActive ? 'abilitato' : 'disabilitato'}">
+        <div class="margin-10 ${states[user.status].color}" title="${states[user.status].label}">
           <i class="fa-solid fa-circle"></i>
         </div>
         <div 
-          class="button icon icon-only icon-small ${userActive ? 'accent-1' : 'accent-info'}" 
-          title="${userActive ? 'Disabilita' : 'Abilita'}"
-          onclick="${userActive ? 'disableUser' : 'enableUser'}('${user.uid}')"
+          class="button icon icon-only icon-small ${states[user.status].opposite_color}" 
+          title="${states[user.status].label_action}"
+          onclick="${user.status == 'active' ? 'disableUser' : 'enableUser'}('${user.uid}')"
         >
-          ${userActive ? '<i class="fa-solid fa-x"></i>' : '<i class="fa-solid fa-check"></i>'}
+          ${user.status == 'active' ? '<i class="fa-solid fa-x"></i>' : '<i class="fa-solid fa-check"></i>'}
         </div>
       </div>
     `;
