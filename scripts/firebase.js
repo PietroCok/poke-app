@@ -251,6 +251,8 @@ firebase.isAdmin = async function() {
     console.warn(error);
     return false;
   })
+
+  return result;
 }
 
 firebase.isUserActive = async function(user){

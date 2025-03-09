@@ -525,16 +525,6 @@ async function drawProfilePage(){
     <input type="text" id="user-profile-status" class="input flex-1 w-20 text-right ${userActive ? 'accent-info' : 'accent-warn'}" value="${userStatus}" disabled>
   </div>`;
 
-  const adminPanel = 
-  `
-  <div>
-    <div class="button text-button accent-3-invert flex align-center gap-1 margin-10 w-fit" onclick="openUsersStatus()">
-      <i class="fa-solid fa-shield"></i>
-      Utenti
-    </div>
-  </div>
-  `;
-
   // email
   profileContainer.insertAdjacentHTML('beforeend', emailElem);
 
@@ -548,8 +538,17 @@ async function drawProfilePage(){
 
 
   // pannello admin
-  if(firebase.isAdmin()){
-
+  const admin = await firebase.isAdmin();
+  if(admin){
+    const adminPanel = 
+    `
+    <div>
+      <div class="button text-button accent-3-invert flex align-center gap-1 margin-10 w-fit" onclick="openUsersStatus()">
+        <i class="fa-solid fa-shield"></i>
+        Utenti
+      </div>
+    </div>
+    `;
     profileContainer.insertAdjacentHTML("beforeend", adminPanel)
   }
 }
@@ -717,7 +716,8 @@ async function drawUsersStatusPage(){
 }
 
 async function enableUser(uid){
-  if(!firebase.isAdmin()) return;
+  const admin = await firebase.isAdmin();
+  if(!admin) return;
 
   const result = await firebase.changeUserStatus(uid, 'active');
   if(!result){
@@ -732,8 +732,9 @@ async function enableUser(uid){
 }
 
 async function disableUser(uid){
-  if(!firebase.isAdmin()) return;
-  
+  const admin = await firebase.isAdmin();
+  if(!admin) return;
+
   const result = await firebase.changeUserStatus(uid, 'inactive');
 
   if(!result){
