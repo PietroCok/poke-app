@@ -9,6 +9,8 @@ DA FARE
 -- em => rem
 -- px => rem
 
+- indicazione per l'utente degli elementi che non può rimuovere/modificare dal carrello
+
 - Pagina profilo utente
 -- modifica password da pagina del profilo
 

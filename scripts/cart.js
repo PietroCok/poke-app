@@ -62,6 +62,7 @@ async function clearCart(skipConfirm = false, localOnly = false) {
   }
   
   delete cart.shared;
+  delete cart.createdBy;
   cart.items = {};
   cart.id = getRandomId(40);
 
@@ -134,32 +135,36 @@ async function addToCart(item, allowDuplicate = false) {
     }
   }
 
-  // local update
-  cart.items[`${poke.id}`] = poke;
-
   // remote update
   let operationResult = true;
   if(!prevItem){
+    if(cart.shared){
+      operationResult = await addItemToSharedCart(poke);
+    }
     // nuovo inserimento
     if(operationResult){
       new Notification({
         message: "Salvato nel carrello"
       })
-    }
-    if(cart.shared){
-      operationResult = await addItemToSharedCart(poke);
+    } else {
+      return;
     }
   } else {
+    if(cart.shared){
+      operationResult = await editItemInSharedCart(poke);
+    }
     // aggiornamento
     if(operationResult){
       new Notification({
         message: "Aggiornato nel carrello"
       })
-    }
-    if(cart.shared){
-      operationResult = await editItemInSharedCart(poke);
+    } else {
+      return;
     }
   }
+
+  // local update
+  cart.items[`${poke.id}`] = poke;
 
   clearConfigurator();
 

@@ -90,6 +90,8 @@ function updateStarredItem(item) {
   if(isStarred(item.id)){
     // update element in starred
     const index = starred.findIndex(_item => _item.id == item.id);
+    // new id to un-link from item in cart
+    item.id = getRandomId();
     starred.splice(index, 1, item);
     new Notification({
       message: 'Aggiornato nei preferiti!',

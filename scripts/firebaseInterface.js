@@ -403,15 +403,22 @@ function handleDataChange(data){
  * @param {String} cartId 
  */
 async function deleteSharedCart(cartId, ask = true){
-  if(ask){
-    _confirm("Eliminare il carrello condiviso?", () => deleteSharedCart(cartId, false))
-    return;
-  }
-
-  console.log(sharedCartCache);
   const cartToRemove = sharedCartCache[cartId];
   if(!cartToRemove) return;
 
+
+  if(ask){
+    let message = "Eliminare il carrello condiviso?";
+
+    if(cartToRemove.createdBy != firebase.getUserUid()){
+      message = "Rimuovere il carrello condiviso?";
+    }
+
+    _confirm(message, () => deleteSharedCart(cartId, false))
+    return;
+  }
+
+  
   // if cart is shared and i'm not the creator i remove the cart from the one i have access to
   if(cartToRemove.createdBy != firebase.getUserUid()){
     if(await firebase.removeCartAccess(cartId)){
