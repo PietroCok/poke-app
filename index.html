@@ -186,7 +186,7 @@
   </section>
 
   <section id="user-profile" data-page="user-profile" class="main-bg fixed flex flex-column align-center left-0 top-0 bottom-0 w-100 z-20 hidden">
-    <button id="close-profile" title="Chiudi carrelli condivisi" class="button icon icon-only accent-1 fixed top-0 left-0"
+    <button id="close-profile" title="Chiudi pagina profilo" class="button icon icon-only accent-1 fixed top-0 left-0"
       onclick="closePage('user-profile')">
       <i class="fa-solid fa-x"></i>
     </button>
@@ -195,7 +195,7 @@
       <h3>Profilo</h3>
     </header>
 
-    <div id="user-profile-container" class="flex flex-column gap-2 padding-1">
+    <div id="user-profile-container" class="flex flex-column gap-2 padding-1 w-100">
       
       
     </div>
@@ -213,6 +213,23 @@
         Logout
       </button>
     </footer>
+  </section>
+
+
+  <section id="users-status" data-page="users-status" class="main-bg fixed flex flex-column align-center left-0 top-0 bottom-0 w-100 z-20 hidden">
+    <button id="close-users-status" title="Chiudi" class="button icon icon-only accent-1 fixed top-0 left-0"
+      onclick="closePage('users-status')">
+      <i class="fa-solid fa-x"></i>
+    </button>
+
+    <header class="h-header flex flex-center w-100 margin-10">
+      <h3>Utenti</h3>
+    </header>
+
+    <div id="users-status-container" class="flex flex-column gap-2 padding-1 w-100">
+      
+    </div>
+
   </section>
 
   <dialog id="add-item-name" class="dialog out-close">

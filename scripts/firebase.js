@@ -174,6 +174,46 @@ firebase.deleteAccountRecord = async function(){
   return result;
 }
 
+firebase.getUsers = async function(){
+  const result = await get(ref(database, `/users`))
+  .then((snapshot) => {
+    if(snapshot.val()){
+      const arr = Object.entries(snapshot.val()).map(u => {
+          const user = u[1];
+          user.uid = u[0];
+          return user;
+        });
+
+      return arr;
+    }
+
+    return [];
+  })
+  .catch((error) => {
+    console.warn(error);
+    return [];
+  })
+
+  return result;
+}
+
+firebase.changeUserStatus = async function(uid, newStatus){
+  if(!uid || !newStatus) return false;
+
+  const result = await update(ref(database, `/users/${uid}`), {
+    status: newStatus
+  })
+  .then(() => {
+    return true;
+  })
+  .catch((error) => {
+    console.warn(error);
+    return false;
+  })
+
+  return result;
+}
+
 function getUser(){
   return auth?.currentUser;
 }
@@ -197,6 +237,20 @@ firebase.isEmailVerified = function(){
 firebase.reloadUser = async function(){
   const user = getUser();
   if(user) await user.reload();
+}
+
+firebase.isAdmin = async function() {
+  const result = await get(ref(database, `/users/${this.getUserUid()}/role`))
+  .then((snapshot) => {
+    if(snapshot.exists() && snapshot.val() === 'admin'){
+      return true;
+    }
+    return false;
+  })
+  .catch((error) => {
+    console.warn(error);
+    return false;
+  })
 }
 
 firebase.isUserActive = async function(user){

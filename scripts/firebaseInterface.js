@@ -486,7 +486,7 @@ function openProfile(){
   closeAllPages();
   
   const page = document.getElementById('user-profile');
-  if(!page) return; 
+  if(!page) return;
   drawProfilePage();
   page.classList.remove('hidden');
 }
@@ -515,8 +515,7 @@ async function drawProfilePage(){
   `;
 
   // shown only if email is verified
-  const editEmail = '';
-  const resetPassword = 
+  const editPassword = 
   ``;
 
   const statusElem = 
@@ -526,11 +525,33 @@ async function drawProfilePage(){
     <input type="text" id="user-profile-status" class="input flex-1 w-20 text-right ${userActive ? 'accent-info' : 'accent-warn'}" value="${userStatus}" disabled>
   </div>`;
 
+  const adminPanel = 
+  `
+  <div>
+    <div class="button text-button accent-3-invert flex align-center gap-1 margin-10 w-fit" onclick="openUsersStatus()">
+      <i class="fa-solid fa-shield"></i>
+      Utenti
+    </div>
+  </div>
+  `;
+
+  // email
   profileContainer.insertAdjacentHTML('beforeend', emailElem);
+
+  // verifica email
   if(!emailVerified) {
     profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
   }
+
+  // abilitazione
   profileContainer.insertAdjacentHTML('beforeend', statusElem);
+
+
+  // pannello admin
+  if(firebase.isAdmin()){
+
+    profileContainer.insertAdjacentHTML("beforeend", adminPanel)
+  }
 }
 
 
@@ -618,6 +639,87 @@ async function deleteAccount(ask = true){
       gravity: 'error'
     })
   }
+}
+
+// ADMIN ONLY
+function openUsersStatus(){
+  closeMenu();
+  closeAllPages();
+  const statusPage = document.getElementById('users-status');
+  if(statusPage) statusPage.classList.remove('hidden');
+
+  drawUsersStatusPage();
+}
+
+async function drawUsersStatusPage(){
+  const statusPageContainer = document.getElementById('users-status-container');
+  if(!statusPageContainer) return;
+
+  statusPageContainer.innerHTML = '';
+
+  showLoadingScreen();
+  const users = await firebase.getUsers();
+  
+  // order users by inactive first
+  users.sort((A, B) => {
+    return (A.status == 'active') - (B.status == 'active');
+  })
+
+  for(const user of users){
+    const userActive = user.status == 'active';
+    const userElem = 
+    `
+      <div class="flex align-center">
+        <div class="flex-1 margin-10">${user.email}</div>
+        <div class="margin-10 ${userActive ? 'accent-info' : 'accent-1'}" title="${userActive ? 'abilitato' : 'disabilitato'}">
+          <i class="fa-solid fa-circle"></i>
+        </div>
+        <div 
+          class="button icon icon-only icon-small ${userActive ? 'accent-1' : 'accent-info'}" 
+          title="${userActive ? 'Disabilita' : 'Abilita'}"
+          onclick="${userActive ? 'disableUser' : 'enableUser'}('${user.uid}')"
+        >
+          ${userActive ? '<i class="fa-solid fa-x"></i>' : '<i class="fa-solid fa-check"></i>'}
+        </div>
+      </div>
+    `;
+
+    statusPageContainer.insertAdjacentHTML('beforeend', userElem);
+  }
+
+  hideLoadingScreen();
+
+}
+
+async function enableUser(uid){
+  if(!firebase.isAdmin()) return;
+
+  const result = await firebase.changeUserStatus(uid, 'active');
+  if(!result){
+    new Notification({
+      message: 'Errore durante modifica stato!',
+      gravity: 'error'
+    })
+    return;
+  }
+
+  drawUsersStatusPage();
+}
+
+async function disableUser(uid){
+  if(!firebase.isAdmin()) return;
+  
+  const result = await firebase.changeUserStatus(uid, 'inactive');
+
+  if(!result){
+    new Notification({
+      message: 'Errore durante modifica stato!',
+      gravity: 'error'
+    })
+    return;
+  }
+
+  drawUsersStatusPage();
 }
 
 function openSignIn(message = ''){
