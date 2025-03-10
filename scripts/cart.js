@@ -38,6 +38,10 @@ function getCart() {
  * Loads the cart from localStorage
  */
 function loadCart() {
+  if(typeof getCart()?.length == 'number'){
+    clearCart(true, true);
+    return;
+  }
   drawCartItems();
 }
 
