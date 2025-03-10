@@ -190,6 +190,17 @@ function showOrderPreview() {
     return;
   }
 
+  if(cart.shared){
+    const userUid = firebase?.getUserUid();
+    if(userUid && userUid != cart.createdBy){
+      new Notification({
+        message: "Operazione consentita solo al creatore del carrello!",
+        gravity: "error"
+      })
+      return;
+    }
+  }
+
   // check for prefill
   // order name
   const orderName = localStorage.getItem('order-name');
@@ -427,9 +438,10 @@ function drawCartItems() {
     const isOpen = openElemsId?.includes(item.id);
     cartSubtotal += item.totalPrice;
     const isItemStarrred = isStarred(item.id);
+    const canEdit = firebase?.getUserUid() == item.createdBy || firebase?.getUserUid() == cart.createdBy;
 
     const itemElemStr =
-      `<div class="item-container">
+      `<div class="item-container ${canEdit ? '' : 'disabled'}">
           <details data-id="${item.id}" class="details w-100" ${isOpen ? "open" : ""}>
           <summary class="item-title">
             <span class="item-name" title="${item.name}">${item.name}</span>
