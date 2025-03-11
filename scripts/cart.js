@@ -429,14 +429,6 @@ function drawCartItems() {
 
     cartElem.append(convertToHTML(additionalHeaderElemStr));
 
-
-    // invite link generation
-    const inviteLinkElem = 
-    `
-    
-    `;
-
-    cartElem.insertAdjacentHTML('beforeend', inviteLinkElem);
   }
 
   let cartSubtotal = 0;
