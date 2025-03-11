@@ -9,11 +9,7 @@ DA FARE
 -- em => rem
 -- px => rem
 
-- indicazione visiva per l'utente degli elementi che non può rimuovere/modificare dal carrello
-
-- Evitare messaggio di conferma eliminazione se l'utente non può eseguire l'operazione
-
-- Restringere la possibilità di invio dell'ordine solo da parte del creatore del carrello condiviso.
+- ripristinare messaggio notifica aggiunta elemento a carrello da preferiti
 
 - Pagina profilo utente
 -- modifica password da pagina del profilo

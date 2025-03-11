@@ -131,11 +131,11 @@ class Notification {
           break;
 
         case 'error':
-          this.displayTime = 1.2
+          this.displayTime = 1.5
           break;
 
         default:
-          this.displayTime = 1
+          this.displayTime = 1.2
           break;
       }
     } else {

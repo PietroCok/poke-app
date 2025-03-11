@@ -336,14 +336,22 @@ function sendOrder() {
  * 
  * @param {String} id - item id on cart 
  */
-function removeFromCart(id, ask = true) {
+function removeFromCart(id, canEdit = true, ask = true) {
   let cart = getCart();
 
   const toBeRemoved = cart.items[id];
   if(!toBeRemoved) return;
 
+  if(!canEdit){
+    new Notification({
+      message: "Non puoi rimuovere un elemento creato da un altro utente!",
+      gravity: 'error'
+    })
+    return;
+  }
+
   if(ask){
-    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeFromCart(id, false));
+    _confirm(`Confermare l'eliminazione dell'elemento: ${toBeRemoved.name} ?`, () => removeFromCart(id, canEdit, false));
     return;
   }
   
@@ -464,7 +472,7 @@ function drawCartItems() {
                 id="remove-item" 
                 class="button icon icon-only icon-small rapid-action accent-1"
                 title="Rimuovi dal carrello"
-                onclick="removeFromCart('${item.id}')"
+                onclick="removeFromCart('${item.id}', ${canEdit})"
               >
               <i class="fa-solid fa-trash"></i>
               </button>
@@ -510,7 +518,7 @@ function drawCartItems() {
               id="remove-item" 
               class="button icon icon-only icon-small accent-1"
               title="Rimuovi dal carrello"
-              onclick="removeFromCart('${item.id}')"
+              onclick="removeFromCart('${item.id}', ${canEdit})"
             >
             <i class="fa-solid fa-trash"></i>
             </button>
