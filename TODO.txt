@@ -9,8 +9,6 @@ DA FARE
 -- em => rem
 -- px => rem
 
-- ripristinare messaggio notifica aggiunta elemento a carrello da preferiti
-
 - Pagina profilo utente
 -- modifica password da pagina del profilo
 

@@ -256,7 +256,7 @@ async function createSharedCart(fromDialog = false){
 async function addItemToSharedCart(item){
   if(!firebase) return false;
 
-  await firebase.addItemTocart(item, getCart()?.id || null);
+  return await firebase.addItemTocart(item, getCart()?.id || null);
 }
 
 /**

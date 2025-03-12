@@ -134,7 +134,7 @@ async function addToCart(item, allowDuplicate = false) {
     poke.id = getRandomId();
   } else {
     prevItem = cart.items[`${poke.id}`];
-    if (prevItem > 0) {
+    if (prevItem) {
       poke.id = getRandomId();
     }
   }

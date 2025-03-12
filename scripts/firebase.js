@@ -364,9 +364,8 @@ firebase.addItemTocart = async function(item , cartId){
       message: "Errore durante l'aggiunte dell'elemento al carrello condiviso!",
       gravity: 'error'
     })
+    return false;
   });
-
-  console.log(result);
 
   return result;
 }
