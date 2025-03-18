@@ -438,7 +438,7 @@ function drawCartItems() {
     const isOpen = openElemsId?.includes(item.id);
     cartSubtotal += item.totalPrice;
     const isItemStarrred = isStarred(item.id);
-    const canEdit = firebase?.getUserUid() == item.createdBy || firebase?.getUserUid() == cart.createdBy;
+    const canEdit = canEditItem(item);
 
     const itemElemStr =
       `<div class="item-container ${canEdit ? '' : 'disabled'}">
@@ -547,4 +547,32 @@ function drawCartItems() {
 
 function getCartItems(){
   return Object.values(getCart().items || {});
+}
+
+
+function canEditItem(item){
+  if(!firebase){
+    return true;
+  }
+
+  const cart = getCart();
+  if(!cart.shared){
+    return true;
+  }
+
+  if(!item.createdBy){
+    return true;
+  }
+
+  const userUid = firebase.getUserUid();
+  if(!userUid){
+    // user not logged
+    return true;
+  }
+  
+  if(userUid == item.createdBy || userUid == cart.createdBy) {
+    return true;
+  }
+
+  return false;
 }
