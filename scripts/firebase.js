@@ -553,6 +553,18 @@ firebase.getSharedCarts = async function(){
 
     if(cart){
       carts[cart.id] = cart;
+    } else {
+      // try to remove cart id form user carts
+      // no need to wait for the operation to complete
+      update(ref(database, `/users/${this.getUserUid()}/carts`),{
+        [id]: null
+      })
+      .then((snapshot) => {
+        console.log("Removed old cart association!")
+      }).catch((error) => {
+        console.error(error);
+        return null;
+      });
     }
   }
 

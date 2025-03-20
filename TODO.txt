@@ -13,8 +13,6 @@ DA FARE
 -- modifica password da pagina del profilo
 
 DA CORREGGERE
-- gestione cancellazione vecchi carrelli da associazione utenti
--- potrebbe essere gestito dalla funzione che mostra i carrelli condivisi, se non li trova rimuove l'associazione dall'utente
 - non sempre il creatore del carrelo può cancellare tutti gli elementi, compresi quelli creati da altri utenti
 - per alcune operazioni non vengono correttamente lanciate le notifiche
 
