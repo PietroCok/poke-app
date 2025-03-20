@@ -294,7 +294,7 @@ async function editItemInSharedCart(item){
   if(!firebase || !item) return false;
 
   // check if userid is the same as creator of the item
-  if(item.createdBy != firebase.getUserUid()){
+  if(!canEditItem(item)){
     new Notification({
       message: "Non puoi modificare un elemento creato da un altro utente!",
       gravity: 'error'
@@ -438,8 +438,11 @@ async function deleteSharedCart(cartId, ask = true){
  * Scollega carrello condiviso
  */
 function unlinkSharedCart(){
-  firebase.stopObserveCart(getCart()?.id);
-  clearCart(true, true);
+  const cart = getCart();
+  if(cart?.shared){
+    firebase.stopObserveCart(cart.id);
+    clearCart(true, true);
+  }
 }
 
 
