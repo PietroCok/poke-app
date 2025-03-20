@@ -134,7 +134,11 @@ async function addToCart(item, allowDuplicate = false) {
     poke.id = getRandomId();
   } else {
     prevItem = cart.items[`${poke.id}`];
-    if (prevItem) {
+    // if there's already an item in the cart with the same id
+    // checks if current user can edit the elem
+    // else treat as new item
+    if (prevItem && !canEditItem(item)) {
+      prevItem = null;
       poke.id = getRandomId();
     }
   }
