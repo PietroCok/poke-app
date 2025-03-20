@@ -1,7 +1,7 @@
 .dialog[open] {
-  top: 30%;
+  top: 5%;
   left: 50%;
-  transform: translate(-50%, -30%);
+  transform: translate(-50%, -5%);
   border: 1px solid var(--main-color);
   border-radius: .5em;
   z-index: 10;

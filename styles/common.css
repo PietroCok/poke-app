@@ -10,6 +10,17 @@
   }
 }
 
+/* Used for buttons with only text */
+.text-button {
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: large;
+  border-radius: 5px;
+  transition: all 50ms linear;
+  text-decoration: none;
+  color: var(--main-bg);
+}
+
 @media (hover: hover) {
   .button:not(.disabled):hover{
     box-shadow: 0 0 2px 1px var(--main-color);
@@ -19,6 +30,18 @@
 .label{
   font-size: large;
   font-weight: bold;
+}
+
+.weight-normal{
+  font-weight: normal;
+}
+
+.weight-bold{
+  font-weight: bold;
+}
+
+.pointer{
+  cursor: pointer;
 }
 
 .disabled {
@@ -55,6 +78,22 @@
 
 .accent-4-invert{
   background-color: var(--accent-4);
+}
+
+.accent-info{
+  color: var(--accent-info);
+}
+
+.accent-info-invert{
+  background-color: var(--accent-info);
+}
+
+.accent-warn{
+  color: var(--accent-warn);
+}
+
+.accent-warn-invert{
+  background-color: var(--accent-warn);
 }
 
 .accent-main{
@@ -116,6 +155,10 @@
   justify-content: flex-end;
 }
 
+.just-between{
+  justify-content: space-between;
+}
+
 .align-center{
   align-items: center;
 }
@@ -136,23 +179,40 @@
   text-transform: uppercase;
 }
 
+.text-capitalize {
+  text-transform: capitalize;
+}
+
 .text-center {
   text-align: center;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.text-small {
+  font-size: small;
+}
+
+.text-normal {
+  font-size: medium;
 }
 
 .text-large {
   font-size: large;
 }
 
-/* Used for buttons with only text */
-.text-button {
-  padding: 10px 20px;
-  font-weight: bold;
-  font-size: large;
-  border-radius: 5px;
-  transition: all 50ms linear;
-  text-decoration: none;
-  color: var(--main-bg);
+.border-color{
+  border: 1px solid var(--main-color);
+}
+
+.border-r-10{
+  border-radius: 10px;
 }
 
 .padding-0{
@@ -175,6 +235,10 @@
   padding: 0 1em;
 }
 
+.padding-top-0{
+  padding-top: 0;
+}
+
 .margin-0{
   margin: 0;
 }
@@ -195,6 +259,10 @@
   margin: 10px;
 }
 
+.margin-r10{
+  margin-right: 10px;
+}
+
 .margin-b6{
   margin-bottom: 6em;
 }
@@ -211,12 +279,24 @@
   width: 80%;
 }
 
+.w-20 {
+  width: 20%;
+}
+
+.w-fit{
+  width: fit-content;
+}
+
 .gap-1 {
   gap: 1em;
 }
 
 .gap-2 {
   gap: 2em;
+}
+
+.gap-5 {
+  gap: 5px;
 }
 
 .z-1{
@@ -239,6 +319,10 @@
   top: 0;
 }
 
+.top-3 {
+  top: 3em;
+}
+
 .bottom-0{
   bottom: 0;
 }
@@ -247,8 +331,16 @@
   left: 0;
 }
 
+.left-1 {
+  left: 1em;
+}
+
 .right-0 {
   right: 0;
+}
+
+.right-1 {
+  right: 1em;
 }
 
 .h-header{
@@ -273,4 +365,8 @@
 
 .hidden {
   display: none;
+}
+
+.underline{
+  text-decoration: underline;
 }

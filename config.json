@@ -236,5 +236,15 @@
   "titolo": "Nome ristorante",
   "sotto_titolo": "Breve descrizione",
   "sotto_titolo_2": "Info aggiuntive",
-  "numero_telefono": ""
+  "numero_telefono": "",
+  "cart_limit": 50,
+  "firebaseConfig": {
+    "apiKey": "AIzaSyDSzkZ3pf6VNCdatDyggT8Fwk52cLmdgs8",
+    "authDomain": "poke-856b6.firebaseapp.com",
+    "databaseURL": "https://poke-856b6-default-rtdb.europe-west1.firebasedatabase.app",
+    "projectId": "poke-856b6",
+    "storageBucket": "poke-856b6.firebasestorage.app",
+    "messagingSenderId": "523298245560",
+    "appId": "1:523298245560:web:6ac2d4162ebbde92121d4d"
+  }
 }

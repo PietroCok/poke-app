@@ -24,3 +24,22 @@
   color: var(--accent-3);
   background-color: var(--main-bg);
 }
+
+.icon.icon-fake{
+  color: var(--main-bg);
+  background-color: var(--main-bg);
+  cursor: auto;
+  
+  &:hover{
+    box-shadow: none !important;
+  }
+}
+
+.icon.margin-0-10{
+  margin: 0 10px;
+}
+
+.icon.margin-0-0-0-10{
+  margin: 0 0 0 10px;
+}
+

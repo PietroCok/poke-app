@@ -258,10 +258,6 @@ input[type="radio"] {
   color: var(--main-color);
 }
 
-#cart-content{
-  margin-bottom: 6em;
-}
-
 /* Avoid scrollbar on whole dialog if order too large */
 .order-text{
   max-height: 40vh;
@@ -273,3 +269,108 @@ input[type="radio"] {
   border-radius: 5px;
   border: 1px solid var(--main-color);
 }
+
+.input:disabled{
+  border: var(--main-bg);
+  background: var(--main-bg);
+}
+
+/* Show / hide shared carts submenu items */
+#shared-carts-menu:has(input[type="checkbox"]:checked) #add-shared-cart,
+#shared-carts-menu:has(input[type="checkbox"]:checked) #load-shared-cart{
+  display: block;
+}
+
+.input.custom{
+  display: block;
+  opacity: 0;
+}
+
+.checkbox{
+  width: 1.5em;
+  height: 1.5em;
+  border: 1px solid var(--main-color);
+  border-radius: 5px;
+}
+
+#load-now:checked ~ .checkbox{
+  background-color: var(--accent-3);
+}
+
+
+/* Loading screen*/
+#loading-screen{
+  min-width: 100%;
+  min-height: 100vh;
+  border: none;
+  outline: none;
+  opacity: .7;
+}
+
+
+/* Loading spinner */
+.loading-container {
+  --color: var(--accent-3);
+  --radius: 40px;
+  --sub-elem-radius: 10px;
+  --loop-duration: 2s;
+  --delay: calc(var(--loop-duration)*0.07);
+
+  opacity: 1;
+  min-height: 80vh;
+  width: 100%;
+
+  &:has(.loading-spinner) {
+      position: relative;
+  }
+
+  & .loading-spinner,
+  & .loading-spinner div {
+      width: calc(var(--radius)*2);
+      height: calc(var(--radius)*2);
+
+      position: absolute;
+
+      top: calc(50% - var(--radius));
+      left: calc(50% - var(--radius));
+  }
+
+  & .loading-spinner{
+      transform: rotate(45deg);
+      animation-play-state: inherit;
+  }
+
+  & .loading-spinner div{
+      width: calc(var(--sub-elem-radius)*2);
+      height: calc(var(--sub-elem-radius)*2);
+      background-color: var(--color);
+      border-radius: 50%;
+
+      transform-origin: var(--radius) var(--radius);
+      animation: rotate var(--loop-duration) cubic-bezier(0.46, 0.06, 0.22, 0.99) infinite;
+
+      &:nth-child(2){
+          animation-delay: var(--delay);
+      }
+      &:nth-child(3){
+          animation-delay: calc(var(--delay)*2);
+      }
+      &:nth-child(4){
+          animation-delay: calc(var(--delay)*3);
+      }
+      &:nth-child(5){
+          animation-delay: calc(var(--delay)*4);
+      }
+  }
+}
+
+@keyframes rotate {
+  0%{
+      transform: rotate(0deg);
+  }
+  100%{
+      transform: rotate(360deg);
+  }
+}
+
+

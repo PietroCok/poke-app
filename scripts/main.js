@@ -9,6 +9,7 @@ let selected = {
 let fullOrder = '';
 let compactOrder = '';
 
+const pages = Array.from(document.getElementsByTagName('SECTION')).filter(page => typeof page.dataset?.page == 'string');
 
 function fillHtml() {
 
@@ -210,7 +211,7 @@ function editItem(id, from = '') {
   switch (from) {
     case 'cart':
       const cart = getCart();
-      item = cart.find(item => item.id == id);
+      item = cart.items[id];
       if (!item) return;
       // save from where the item is edited
       if (from) item.from = from;
@@ -226,7 +227,7 @@ function editItem(id, from = '') {
         return;
       }
 
-      closeCart();
+      closePage('cart');
       break;
     case 'starred':
       const starred = getStarred();
@@ -246,8 +247,7 @@ function editItem(id, from = '') {
         return;
       }
 
-      closeCart();
-      closeStarred();
+      closePage('starred');
       break;
   }
 
@@ -316,7 +316,7 @@ function askItemName() {
 /**
  * Save item from configurator
  */
-function saveItem() {
+function saveItem(to) {
   // get loaded item in configurator
   const item = structuredClone(selected);
 
@@ -331,9 +331,11 @@ function saveItem() {
     dialog_addItemName.close();
   }
 
+  let destination = to || item.from;
+
   // check where to save item
   // default to cart
-  switch (item.from) {
+  switch (destination) {
     case 'starred':
       updateStarredItem(item);
       break;
@@ -360,14 +362,16 @@ function cloneItem(id, from) {
       item = starred.find(item => item.id == id);
       copy = structuredClone(item);
       copy.id = getRandomId();
+      copy.createdBy = null;
       starItem(copy)
       break;
 
     case 'cart':
       const cart = getCart();
-      item = cart.find(item => item.id == id);
+      item = cart.items[id];
       copy = structuredClone(item);
       copy.id = getRandomId();
+      copy.createdBy = null;
       addToCart(copy, true);
       break;
   }
@@ -528,6 +532,10 @@ function handleMenuClick() {
   if (parentContainer && !parentContainer.open) {
     // close theme menu every time is opened
     loadTheme();
+
+    // close shared carts menu
+    const sharedCartsMenu = document.querySelector('#shared-carts-menu input[type="checkbox"');
+    if(sharedCartsMenu) sharedCartsMenu.checked = false;
   }
 }
 
@@ -563,6 +571,14 @@ function addActions() {
   }
 }
 
+const loadingElement = document.getElementById('loading-screen');
+function showLoadingScreen(){
+  loadingElement.showModal();
+}
+
+function hideLoadingScreen(){
+  loadingElement.close();
+}
 
 async function setUp() {
   await loadConfig();
@@ -576,6 +592,8 @@ async function setUp() {
   recalculateLimits();
 
   loadCart();
+
+  firebase.init(config.firebaseConfig);
 }
 
 setUp();

@@ -11,8 +11,12 @@ async function loadConfig() {
 /**
  * Returns random id string
  */
-function getRandomId() {
-  return Math.random().toString(36).slice(2);
+function getRandomId(minlength = 0) {
+  let id = '';
+  do {
+    id += Math.random().toString(36).slice(2)
+  } while (id.length < minlength)
+  return id;
 }
 
 /**
@@ -35,6 +39,16 @@ function convertToHTML(string) {
 function closeDialog(id) {
   const dialog = document.getElementById(id);
   if (dialog) dialog.close();
+}
+
+/**
+ * Show a dialog element by its id
+ * 
+ * @param {String} id 
+ */
+function showDialog(id) {
+  const dialog = document.getElementById(id);
+  if (dialog) dialog.showModal();
 }
 
 /**
@@ -65,4 +79,41 @@ function toString(item) {
   }
 
   return str;
+}
+
+
+function checkEmailFormat(email){
+  const regex = /.+@.+\..+/;
+  if(!email.match(regex)){
+    return false;
+  }
+  return true;
+}
+
+function checkPasswordFormat(password){
+  if(!password || password.length < 6){
+    return false;
+  }
+  return true;
+}
+
+/**
+ * Close single page
+ * 
+ * @param {String} id 
+ */
+function closePage(id){
+  if(!id) return;
+
+  const page = document.getElementById(id);
+  if(page) page.classList.add('hidden');
+}
+
+/**
+ * Close all pages
+ */
+function closeAllPages(){
+  for(const page of pages){
+    page.classList.add('hidden');
+  }
 }
