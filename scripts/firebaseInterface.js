@@ -514,7 +514,11 @@ async function drawProfilePage(){
   `<div class="flex gap-1 align-center">
     <div for="user-profile-email" class="label margin-10">Email</div>
 
+    <!--
+    email verification status is not needed now
     <input type="text" id="user-profile-email" class="input flex-1 w-20 text-right ${emailVerified ? 'accent-info' : 'accent-warn'}" title="Email ${emailVerified ? 'verficata' : 'non verificata'}" value="${getUserEmail()}" disabled>
+    -->
+    <input type="text" id="user-profile-email" class="input flex-1 w-20 text-right" value="${getUserEmail()}" disabled>
   </div>`;
 
   const verifyEmail = 
@@ -540,7 +544,8 @@ async function drawProfilePage(){
 
   // verifica email
   if(!emailVerified) {
-    profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
+    // removed until really needed
+    // profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
   }
 
   // abilitazione
