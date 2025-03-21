@@ -405,7 +405,7 @@ function drawCartItems() {
   // additional header for remote carts
   if(isUserActive() && cart.shared){
     const additionalHeaderElemStr = 
-    `<h4 class="w-100 sticky top-0 main-bg flex flex-column just-center padding-1 gap-5">
+    `<h4 class="w-100 sticky top-0 main-bg flex flex-column just-center align-center padding-1 gap-5">
       <button
         id="unlink-shared-cart" 
         class="button icon icon-only icon-small rapid-action accent-1 fixed left-1"
@@ -415,7 +415,7 @@ function drawCartItems() {
         <i class="fa-solid fa-link-slash"></i>
       </button>
 
-      <span id="shared-cart-name">${cart.name}</span>
+      <span id="shared-cart-name" class="w-70">${cart.name}</span>
       <div class="underline text-small text-capitalize pointer" onclick="generatedCartLink('${cart.id}', '${cart.name}')">
       Genera link invito
       </div>
