@@ -297,6 +297,49 @@ input[type="radio"] {
   background-color: var(--accent-3);
 }
 
+/* 
+  Toggle button 
+  Input MUST BE before linked labels
+*/
+input:checked ~ .custom-toogle {
+  &::after {
+    transform: translate(calc(var(--width)/2));
+  }
+}
+.custom-toogle {
+  --width: 50px;
+  --height: calc(var(--width)/2);
+  --border-w: 4px;
+
+  position: relative;
+  min-width: var(--width);
+  height: var(--height);
+  border-radius: var(--height);
+  border: var(--border-w) solid var(--main-color);
+
+  &::after {
+    content: '';
+    display: block;
+    width: calc(var(--height) - var(--border-w)*2);
+    height: calc(var(--height) - var(--border-w)*2);
+    background-color: var(--accent-3);
+    border-radius: 50%;
+    transition: transform .2s ease;
+  }
+}
+
+.toggle{
+  transition: opacity 200ms linear;
+}
+
+input:not(:checked) ~ .toggle-left{
+  opacity: 1;
+}
+
+input:checked ~ .toggle-right{
+  opacity: 1;
+}
+
 
 /* Loading screen*/
 #loading-screen{
@@ -306,7 +349,6 @@ input[type="radio"] {
   outline: none;
   opacity: .7;
 }
-
 
 /* Loading spinner */
 .loading-container {

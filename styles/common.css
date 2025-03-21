@@ -116,6 +116,14 @@
   background-color: var(--main-bg);
 }
 
+.transparent-bg{
+  background-color: transparent;
+}
+
+.absolute{
+  position: absolute;
+}
+
 .fixed {
   position: fixed;
 }

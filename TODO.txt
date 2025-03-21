@@ -13,10 +13,10 @@ DA FARE
 -- modifica password da pagina del profilo
 
 DA CORREGGERE
-- non sempre il creatore del carrelo può cancellare tutti gli elementi, compresi quelli creati da altri utenti
-- per alcune operazioni non vengono correttamente lanciate le notifiche
 
 DA VALUTARE
+- rendere opzionale l'aggiunta del metodo di pagamento al nome dell'oggetto ordinato
+
 - ottimizzazione disegno quando la pagina da aggiornare è attualmente aperta (rimozione e duplicazione diventano puntuali sul DOM, invece di ridisegnare tutto)
 
 - rimuovere codice inutilizzato

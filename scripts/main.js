@@ -304,13 +304,19 @@ function askItemName() {
     return;
   }
 
+  const dialog_name = document.getElementById('item-name');
   if (selected.name) {
-    const dialog_name = document.querySelector('#add-item-name input');
     if (dialog_name) dialog_name.value = selected.name;
   }
 
   const dialog_addItemName = document.getElementById('add-item-name');
-  if (dialog_addItemName) dialog_addItemName.showModal();
+  if (dialog_addItemName) {
+    dialog_addItemName.showModal();
+
+    // use last char of elem to try to edit payment method
+    const lastChar = dialog_name?.value?.slice(-1) || '';
+    addPaymentMethodToName({key: lastChar})
+  } 
 }
 
 /**
@@ -321,13 +327,13 @@ function saveItem(to) {
   const item = structuredClone(selected);
 
   const dialog_addItemName = document.getElementById("add-item-name");
-  const dialog_input = document.querySelector('#add-item-name input');
-  if (dialog_input) {
-    let name = dialog_input.value;
+  const itemName = document.getElementById('item-name-final');
+  if (itemName) {
+    let name = itemName.value;
     if (!name) name = 'Senza nome'
     item.name = name;
 
-    dialog_input.value = '';
+    itemName.value = '';
     dialog_addItemName.close();
   }
 
@@ -524,6 +530,86 @@ function updateLimits(group, current, max) {
   } else {
     document.getElementById(group + "-limit-current").classList.remove("over-limit")
   }
+}
+
+const itemNameInput = document.getElementById('item-name');
+const finalItemNameInput = document.getElementById('item-name-final')
+const checkbox = document.getElementById('payment-method');
+const toogleContainer = document.getElementById('payment-toogle-container');
+const PAYMETHODS = {
+  PAYPAL: 'P',
+  CASH: 'C'
+}
+let currentPaymentMethod = null;
+
+function addPaymentMethodToName(event){
+  if(!itemNameInput || !finalItemNameInput) return;
+
+  // No need to show payment method if user not logged
+  if(!firebase || !firebase.getUserUid()){
+    finalItemNameInput.value = itemNameInput.value;
+    toogleContainer.classList.add('hidden');
+    return;
+  } else {
+    toogleContainer.classList.remove('hidden');
+  }
+
+  // payment method not yet registered
+  if(!currentPaymentMethod){
+    changePaymentMethod(event);
+    return;
+  }
+
+  const lastPressedKey = event?.key?.toUpperCase();
+
+  // payment method already inserted by user
+  const regex = /\s*-\s*([Pp]|[Cc])$/;
+  if(itemNameInput.value.match(regex)){
+    // force change on payment method toggle if user inputs correct method in the name
+    if(lastPressedKey && Object.values(PAYMETHODS).includes(lastPressedKey) && lastPressedKey != currentPaymentMethod){
+      if(lastPressedKey == PAYMETHODS.PAYPAL){
+        checkbox.checked = true;
+      } else {
+        checkbox.checked = false;
+      }
+
+      changePaymentMethod(event);
+
+      return;
+    }
+
+    // check if paymenth method is same as toggle
+    if(itemNameInput.value.trim().toUpperCase().endsWith(currentPaymentMethod)){
+      finalItemNameInput.value = itemNameInput.value;
+    } else {
+      // edit main input element with correct payment method
+      if(currentPaymentMethod == PAYMETHODS.PAYPAL){
+        itemNameInput.value = itemNameInput.value.replace(regex, ` - ${PAYMETHODS.PAYPAL}`);
+      } else {
+        itemNameInput.value = itemNameInput.value.replace(regex, ` - ${PAYMETHODS.CASH}`);
+      }
+
+      addPaymentMethodToName(event);
+    }
+
+    return;
+  }
+
+  // add payment method ad the end of the string ( - P | - C)
+  const finalItemName = itemNameInput.value + ` - ${currentPaymentMethod}`;
+  finalItemNameInput.value = finalItemName;
+}
+
+function changePaymentMethod(event){
+  if(!checkbox) return;
+  if(checkbox.checked){
+    // Selected Paypal
+    currentPaymentMethod = PAYMETHODS.PAYPAL;
+  } else {
+    // Selected Cash
+    currentPaymentMethod = PAYMETHODS.CASH;
+  }
+  addPaymentMethodToName(event);
 }
 
 function handleMenuClick() {
