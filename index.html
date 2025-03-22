@@ -237,15 +237,19 @@
       <label class="label" for="item-name">Dai un nome alla tua poke
       </label>
       <div id="item-name-container">
-        <input class="input margin-10" type="text" name="item-name" id="item-name" autocomplete="off" onkeyup="autoSwithPayment()">
+        <input class="input margin-10" type="text" name="item-name" id="item-name" autocomplete="off">
       </div>
 
-      <div id="payment-toogle-container" class="flex align-center just-center padding-10">
-        <input type="checkbox" name="payment-method" id="payment-method" class="custom-toggle-input" onchange="changePaymentMethod()" checked>
-        <label id="cash" for="payment-method" class="pointer flex-1 toggle toggle-left disabled">Contanti</label>
-        <label class="custom-toogle pointer" for="payment-method"></label>
-        <label id="paypal" for="payment-method" class="pointer flex-1 toggle toggle-right disabled">PayPal</label>
-      </div>
+      <details id="payment-method-selection" class="pointer" ontoggle="changePaymentMethod()">
+        <summary>Metodo di pagamento</summary>
+
+        <div id="payment-toogle-container" class="flex align-center just-center padding-10 margin-10">
+          <input type="checkbox" name="payment-method" id="payment-method" class="custom-toggle-input" onchange="changePaymentMethod()" checked>
+          <label id="cash" for="payment-method" class="pointer flex-1 toggle toggle-left disabled">Contanti</label>
+          <label class="custom-toogle pointer" for="payment-method"></label>
+          <label id="paypal" for="payment-method" class="pointer flex-1 toggle toggle-right disabled">PayPal</label>
+        </div>
+      </details>
 
       <footer class="button-wrapper w-100 padding-0">
         <div title="Annulla" class="button icon icon-only accent-1" onclick="closeDialog('add-item-name')">

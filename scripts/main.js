@@ -315,8 +315,10 @@ function askItemName() {
   if (dialog_addItemName) {
     dialog_addItemName.showModal();
 
+    const fullName = selected.name + (selected.paymentMethod ? ` - ${selected.paymentMethod}` : '');
+
     // use last char of elem to try to edit payment method
-    selectPaymentMethod(dialog_name?.value)
+    selectPaymentMethod(fullName)
   } 
 }
 
@@ -330,6 +332,7 @@ function saveItem(to) {
   const dialog_addItemName = document.getElementById("add-item-name");
   const itemName = getChosenItemName();
   item.name = itemName;
+  item.paymentMethod = currentPaymentMethod;
   dialog_addItemName.close();
 
   let destination = to || item.from;
@@ -530,7 +533,6 @@ function updateLimits(group, current, max) {
 }
 
 const itemNameInput = document.getElementById('item-name');
-const checkbox = document.getElementById('payment-method');
 const toogleContainer = document.getElementById('payment-toogle-container');
 const PAYMETHODS = {
   PAYPAL: 'P',
@@ -554,40 +556,44 @@ function getChosenItemName(){
   return name;
 }
 
-function autoSwithPayment(){
-  if(!itemNameInput) return;
-
-  selectPaymentMethod(itemNameInput.value);
-}
-
+const checkbox = document.getElementById('payment-method');
 function selectPaymentMethod(string){
   if(!checkbox || !string) return;
-
+  debugger
   if(!string.match(paymentRegex)){
+    paymentSelection.removeAttribute('open');
     return;
   }
 
   const char = string.slice(-1).toUpperCase();
 
   if(Object.values(PAYMETHODS).includes(char)){
+    paymentSelection.setAttribute('open', 'true');
     if(char == PAYMETHODS.PAYPAL){
       checkbox.checked = true;
     } else {
       checkbox.checked = false;
     }
-
-    changePaymentMethod();
+  } else {
+    paymentSelection.removeAttribute('open');
   }
+  changePaymentMethod();
 }
 
+const paymentSelection = document.getElementById('payment-method-selection');
 function changePaymentMethod(){
-  if(!checkbox) return;
-  if(checkbox.checked){
-    // Selected Paypal
-    currentPaymentMethod = PAYMETHODS.PAYPAL;
+  if(!checkbox || !paymentSelection) return;
+
+  if(paymentSelection.open){
+    if(checkbox.checked){
+      // Selected Paypal
+      currentPaymentMethod = PAYMETHODS.PAYPAL;
+    } else {
+      // Selected Cash
+      currentPaymentMethod = PAYMETHODS.CASH;
+    }
   } else {
-    // Selected Cash
-    currentPaymentMethod = PAYMETHODS.CASH;
+    currentPaymentMethod = null;
   }
 
   selected.paymentMethod = currentPaymentMethod;
