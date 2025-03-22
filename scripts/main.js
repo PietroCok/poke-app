@@ -560,14 +560,15 @@ function addPaymentMethodToName(event){
     return;
   }
 
-  const lastPressedKey = event?.key?.toUpperCase();
+  // cannot use event key as it may not be correct on mobile devices
+  const lastInsertedChar = event.type == "keyup" ? itemNameInput.value.slice(-1).toUpperCase() : null; 
 
   // payment method already inserted by user
   const regex = /\s*-\s*([Pp]|[Cc])$/;
   if(itemNameInput.value.match(regex)){
     // force change on payment method toggle if user inputs correct method in the name
-    if(lastPressedKey && Object.values(PAYMETHODS).includes(lastPressedKey) && lastPressedKey != currentPaymentMethod){
-      if(lastPressedKey == PAYMETHODS.PAYPAL){
+    if(lastInsertedChar && Object.values(PAYMETHODS).includes(lastInsertedChar) && lastInsertedChar != currentPaymentMethod){
+      if(lastInsertedChar == PAYMETHODS.PAYPAL){
         checkbox.checked = true;
       } else {
         checkbox.checked = false;
