@@ -284,6 +284,8 @@ function loadIntoConfigurator(_item = null) {
 
   selected = structuredClone(item);
   localStorage.setItem("item", JSON.stringify(selected));
+
+  recalculateLimits();
 }
 
 /**
@@ -697,8 +699,6 @@ async function setUp() {
   addActions();
 
   loadIntoConfigurator();
-
-  recalculateLimits();
 
   loadCart();
 
