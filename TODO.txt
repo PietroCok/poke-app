@@ -5,12 +5,11 @@ DA FARE
 -- utente non abilitato
 -- utente abilitato
 
-- css: 
--- em => rem
--- px => rem
+- Aggiungi bottone "Ricordami" in fase di login
+-- Se il bottone non è attivo in fase di login viene tentata una logout all'unload della pagina
 
 - Pagina profilo utente
--- modifica password da pagina del profilo
+-- aggiungere modifica password (rimane comunque possibile resettare la password da schermata di login)
 
 DA CORREGGERE
 
