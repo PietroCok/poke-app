@@ -92,6 +92,9 @@ function starItem(item) {
 function updateStarredItem(item) {
   if (!item) return;
 
+  // save correct name
+  getName(item);
+
   const starred = getStarred();
 
   if(isStarred(item.id)){
