@@ -128,6 +128,10 @@ async function addToCart(item, allowDuplicate = false) {
   }
 
   let poke = structuredClone(item);
+
+  // save correct name
+  getName(poke);
+
   let prevItem = null;
   if (!poke.id || allowDuplicate) {
     // insert into cart
@@ -173,8 +177,6 @@ async function addToCart(item, allowDuplicate = false) {
 
   // local update
   cart.items[`${poke.id}`] = poke;
-
-  clearConfigurator();
 
   saveCart(cart);
 }
@@ -443,12 +445,13 @@ function drawCartItems() {
     cartSubtotal += item.totalPrice;
     const isItemStarrred = isStarred(item.id);
     const canEdit = canEditItem(item);
+    const itemName = getName(item);
 
     const itemElemStr =
       `<div class="item-container ${canEdit ? '' : 'disabled'}">
           <details data-id="${item.id}" class="details w-100" ${isOpen ? "open" : ""}>
           <summary class="item-title">
-            <span class="item-name" title="${item.name}">${item.name}</span>
+            <span class="item-name" title="${itemName.fullName}">${itemName.fullName}</span>
 
             <div class="item-short flex align-center just-end min-w-fit">
               <div class='item-price margin-10' title="Prezzo">

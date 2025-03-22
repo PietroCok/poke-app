@@ -343,6 +343,8 @@ function saveItem(to) {
     default:
       addToCart(item);
   }
+
+  clearConfigurator();
 }
 
 /**
@@ -535,18 +537,14 @@ const PAYMETHODS = {
 let currentPaymentMethod = null;
 
 const paymentRegex = /\s*-\s*([Pp]|[Cc])$/;
+const itemNameRegex = /[\S\s]*(?=\s*-\s*([Pp]$|[Cc]$))/;
 function getChosenItemName(){
-  if(!itemNameInput || !checkbox) return;
+  if(!itemNameInput) return;
 
   let name = itemNameInput.value;
 
   if(!name) {
     name = "Senza Nome";
-  }
-
-  // add payment method if not already set
-  if(!itemNameInput.value.match(paymentRegex)){
-    name += ` - ${currentPaymentMethod}`
   }
 
   itemNameInput.value = '';
@@ -589,7 +587,53 @@ function changePaymentMethod(){
     // Selected Cash
     currentPaymentMethod = PAYMETHODS.CASH;
   }
+
+  selected.paymentMethod = currentPaymentMethod;
+  localStorage.setItem("item", JSON.stringify(selected));
 }
+
+function getName(item){
+  if(!item) return {
+    name: "Senza nome",
+    fullName: "Senza nome"
+  };
+
+  let fullName = item.name.trim();
+
+  if(!item.paymentMethod){
+    return {
+      name: fullName,
+      fullName: fullName
+    };
+  }
+
+  if(fullName.match(paymentRegex)){
+    // payment method already included in item name
+    let nameOnly = fullName.match(itemNameRegex);
+    nameOnly = nameOnly[0];
+    if(!nameOnly){
+      nameOnly = "Senza nome";
+    }
+    // fix original name
+    item.name = nameOnly.trim();
+    // add correct payment method
+    fullName = `${item.name} - ${item.paymentMethod}`;
+
+    return {
+      name: item.name,
+      fullName: fullName
+    };
+  } else {
+    const nameOnly = fullName;
+    fullName += ` - ${item.paymentMethod}`;
+
+    return {
+      name: nameOnly,
+      fullName: fullName
+    };
+  }
+}
+
 
 function handleMenuClick() {
   // get details state
