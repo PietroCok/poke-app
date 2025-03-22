@@ -87,20 +87,20 @@ body>header {
   display: flex;
   flex-direction: column;
   text-align: center;
-  margin-top: 1.5em;
+  margin-top: 1.5rem;
 
   >div {
     display: flex;
     justify-content: space-around;
-    margin-top: 2em;
+    margin-top: 2rem;
     flex-direction: column;
     align-items: center;
-    gap: .5em;
+    gap: .5rem;
   }
 
   nav {
-    width: 2em;
-    height: 2em;
+    width: 2rem;
+    height: 2rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -155,7 +155,7 @@ body>header {
           > div{
             display: flex;
             justify-content: flex-end;
-            margin-top: .5em;
+            margin-top: .5rem;
           }
         }
       }
@@ -176,10 +176,10 @@ body>header {
       #theme-menu-container {
         display: flex;
         width: fit-content;
-        gap: .5em;
+        gap: .5rem;
 
         div {
-          width: 2em;
+          width: 2rem;
           cursor: pointer;
           font-size: x-large;
           overflow: hidden;
@@ -208,7 +208,7 @@ body>header {
     align-items: center;
     gap: 20px;
     justify-content: center;
-    margin-bottom: 1em;
+    margin-bottom: 1rem;
 
     &::after,
     &::before {
@@ -227,8 +227,8 @@ body>header {
     z-index: 2;
     flex-direction: column;
     width: 105%;
-    gap: .5em;
-    padding: 1em;
+    gap: .5rem;
+    padding: 1rem;
 
     >span {
       display: flex;
@@ -260,7 +260,7 @@ body>header {
 
   h4 {
     color: var(--accent-1);
-    font-size: 0.8em;
+    font-size: 0.8rem;
     position: sticky;
     top: 68px;
     background: var(--main-bg);
@@ -300,7 +300,7 @@ body>header {
   #dimensione {
     display: flex;
     flex-direction: column;
-    gap: 1em;
+    gap: 1rem;
 
     h3 {
       display: none;
@@ -320,7 +320,7 @@ body>header {
       >* {
         display: flex;
         justify-content: center;
-        padding: .5em;
+        padding: .5rem;
       }
 
       * {
@@ -364,7 +364,7 @@ body>header {
   }
 
   .options {
-    gap: 1em;
+    gap: 1rem;
     justify-content: center;
     margin: 1em 0;
 
@@ -406,13 +406,13 @@ body>header {
       i {
         border: 1px solid transparent;
         border-radius: 50%;
-        padding: 1em;
+        padding: 1rem;
       }
     }
 
     label {
       display: inline-block;
-      padding: 1em;
+      padding: 1rem;
       width: 100%;
       cursor: pointer;
     }
@@ -454,9 +454,9 @@ dialog {
     flex-direction: column;
     align-items: center;
     text-align: center;
-    padding: 2em;
+    padding: 2rem;
     border: 1px solid;
-    border-radius: .5em;
+    border-radius: .5rem;
     z-index: 9;
   }
 
@@ -479,7 +479,7 @@ dialog {
   }
 
   footer {
-    margin-top: 1em;
+    margin-top: 1rem;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -510,15 +510,15 @@ dialog {
 
   header {
     top: 0;
-    padding: .5em;
-    padding-bottom: 1em;
+    padding: .5rem;
+    padding-bottom: 1rem;
 
     button {
       font-size: x-large;
     }
 
     #cart-count{
-      margin-right: 1em;
+      margin-right: 1rem;
     }
 
     #cart-price-container {
@@ -551,10 +551,10 @@ dialog {
     display: flex;
     align-items: center;
     flex-direction: column;
-    gap: 1em;
+    gap: 1rem;
     position: absolute;
-    top: 4.5em;
-    bottom: 5.5em;
+    top: 4.5rem;
+    bottom: 5.5rem;
     overflow-y: auto;
 
     .item-name {
@@ -563,10 +563,10 @@ dialog {
     }
 
     .item-container {
-      padding: .5em;
+      padding: .5rem;
       width: 80%;
       border: 1px solid var(--accent-5);
-      border-radius: .5em;
+      border-radius: .5rem;
 
       summary {
         cursor: pointer;
@@ -583,7 +583,7 @@ dialog {
       }
 
       details>div {
-        margin-bottom: 1em;
+        margin-bottom: 1rem;
         margin-left: 10px;
       }
 
@@ -629,9 +629,9 @@ header > div:has(> i){
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: .5em;
+  border-radius: .5rem;
   aspect-ratio: 1;
-  width: 2em;
+  width: 2rem;
   cursor: pointer;
 
   &:hover {
@@ -646,7 +646,7 @@ input[type="checkbox"] {
 
 
 #preview-order {
-  top: 1em;
+  top: 1rem;
   transform: translate(-50%, 0);
 
   >* {
@@ -657,7 +657,7 @@ input[type="checkbox"] {
     display: flex;
     justify-content: flex-start;
     align-items: center;
-    gap: 1em;
+    gap: 1rem;
     width: 100%;
 
     label,
@@ -666,7 +666,7 @@ input[type="checkbox"] {
       text-align: left;
 
       span {
-        margin-right: .5em;
+        margin-right: .5rem;
       }
     }
   }
@@ -684,7 +684,7 @@ input[type="checkbox"] {
 
   .button-wrapper {
     justify-content: space-between;
-    margin-top: 1em;
+    margin-top: 1rem;
   }
 
   #order-price-container {
@@ -692,8 +692,8 @@ input[type="checkbox"] {
   }
 
   #order-price span {
-    margin-left: 1em;
-    margin-right: .5em;
+    margin-left: 1rem;
+    margin-right: .5rem;
   }
 
   .button-wrapper {
@@ -810,7 +810,7 @@ button {
 
     >span {
       flex: 1;
-      padding: 0 2em;
+      padding: 0 2rem;
       justify-content: flex-start;
 
       &:empty{

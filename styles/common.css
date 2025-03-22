@@ -228,7 +228,7 @@
 }
 
 .padding-1{
-  padding: 1em;
+  padding: 1rem;
 }
 
 .padding-10{
@@ -240,7 +240,7 @@
 }
 
 .padding-0-1{
-  padding: 0 1em;
+  padding: 0 1rem;
 }
 
 .padding-top-0{
@@ -272,7 +272,7 @@
 }
 
 .margin-b6{
-  margin-bottom: 6em;
+  margin-bottom: 6rem;
 }
 
 .h-100{
@@ -300,11 +300,11 @@
 }
 
 .gap-1 {
-  gap: 1em;
+  gap: 1rem;
 }
 
 .gap-2 {
-  gap: 2em;
+  gap: 2rem;
 }
 
 .gap-5 {
@@ -332,7 +332,7 @@
 }
 
 .top-3 {
-  top: 3em;
+  top: 3rem;
 }
 
 .bottom-0{
@@ -344,7 +344,7 @@
 }
 
 .left-1 {
-  left: 1em;
+  left: 1rem;
 }
 
 .right-0 {
@@ -352,7 +352,7 @@
 }
 
 .right-1 {
-  right: 1em;
+  right: 1rem;
 }
 
 .h-header{
