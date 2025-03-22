@@ -299,6 +299,10 @@
   width: fit-content;
 }
 
+.min-w-fit{
+  min-width: fit-content;
+}
+
 .gap-1 {
   gap: 1rem;
 }

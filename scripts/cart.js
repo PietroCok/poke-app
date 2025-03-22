@@ -450,7 +450,7 @@ function drawCartItems() {
           <summary class="item-title">
             <span class="item-name" title="${item.name}">${item.name}</span>
 
-            <div class="item-short flex align-center just-end">
+            <div class="item-short flex align-center just-end min-w-fit">
               <div class='item-price margin-10' title="Prezzo">
                 <span>${item.totalPrice.toFixed(2)} €</span>
               </div>
