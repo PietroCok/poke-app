@@ -297,6 +297,11 @@ input[type="radio"] {
   background-color: var(--accent-3);
 }
 
+#payment-method-selection{
+  border-radius: 1rem;
+  border: 1px solid var(--main-color);
+}
+
 /* 
   Toggle button 
   Input MUST BE before linked labels

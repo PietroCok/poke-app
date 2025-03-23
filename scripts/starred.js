@@ -183,7 +183,7 @@ function drawStarredItems() {
       `<div class="item-container">
           <details data-id="${item.id}" class="details w-100" ${isOpen ? "open" : ""}>
             <summary class="item-title">
-              <span class="item-name" title="${itemName.fullName}">${itemName.fullName}</span>
+              <span class="item-name" title="${itemName.name}">${itemName.fullName}</span>
 
               <div class="item-short flex align-center just-end">
                 <div class='item-price margin-10' title="Prezzo">

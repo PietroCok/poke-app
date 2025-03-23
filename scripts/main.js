@@ -294,13 +294,13 @@ function loadIntoConfigurator(_item = null) {
 function askItemName() {
   const groups = selected.ingredients;
   let totalIngredients = 0;
-  for(const group in groups){
+  for (const group in groups) {
     totalIngredients += groups[group].length;
   }
-  
+
   if (totalIngredients <= 0) {
     new Notification({
-      message: 'Nessun ingrediente selezionato!', 
+      message: 'Nessun ingrediente selezionato!',
       gravity: 'error'
     })
     return;
@@ -314,12 +314,9 @@ function askItemName() {
   const dialog_addItemName = document.getElementById('add-item-name');
   if (dialog_addItemName) {
     dialog_addItemName.showModal();
-
-    const fullName = selected.name + (selected.paymentMethod ? ` - ${selected.paymentMethod}` : '');
-
-    // use last char of elem to try to edit payment method
-    selectPaymentMethod(fullName)
-  } 
+    // auto select chosen payment method
+    changePaymentMethod(selected.paymentMethod || 'none');
+  }
 }
 
 /**
@@ -330,8 +327,7 @@ function saveItem(to) {
   const item = structuredClone(selected);
 
   const dialog_addItemName = document.getElementById("add-item-name");
-  const itemName = getChosenItemName();
-  item.name = itemName;
+  item.name = itemNameInput.value || "Senza nome";
   item.paymentMethod = currentPaymentMethod;
   dialog_addItemName.close();
 
@@ -437,7 +433,7 @@ function recalculateLimits() {
 
   // enable / disable save button
   const add_btn = document.getElementById('add-cart');
-  if(totalSelected == 0){
+  if (totalSelected == 0) {
     add_btn.classList.add('disabled');
   } else {
     add_btn.classList.remove('disabled');
@@ -532,22 +528,12 @@ function updateLimits(group, current, max) {
   }
 }
 
-const itemNameInput = document.getElementById('item-name');
-const toogleContainer = document.getElementById('payment-toogle-container');
-const PAYMETHODS = {
-  PAYPAL: 'P',
-  CASH: 'C'
-}
-let currentPaymentMethod = null;
-
-const paymentRegex = /\s*-\s*([Pp]|[Cc])$/;
-const itemNameRegex = /[\S\s]*(?=\s*-\s*([Pp]$|[Cc]$))/;
-function getChosenItemName(){
-  if(!itemNameInput) return;
+function getChosenItemName() {
+  if (!itemNameInput) return;
 
   let name = itemNameInput.value;
 
-  if(!name) {
+  if (!name) {
     name = "Senza Nome";
   }
 
@@ -556,36 +542,42 @@ function getChosenItemName(){
   return name;
 }
 
+const itemNameInput = document.getElementById('item-name');
+const toogleContainer = document.getElementById('payment-toogle-container');
+let currentPaymentMethod = null;
+const PAYMETHODS = {
+  PAYPAL: 'P',
+  CASH: 'C'
+}
 const checkbox = document.getElementById('payment-method');
-function selectPaymentMethod(string){
-  if(!checkbox || !string) return;
-  debugger
-  if(!string.match(paymentRegex)){
+const paymentSelection = document.getElementById('payment-method-selection');
+
+function changePaymentMethod(forceSelection) {
+  console.log(forceSelection);
+  
+  if (!checkbox || !paymentSelection) return;
+
+  // force details to close if paymentMethod on item is not present
+  if(forceSelection && forceSelection == 'none'){
     paymentSelection.removeAttribute('open');
     return;
   }
 
-  const char = string.slice(-1).toUpperCase();
-
-  if(Object.values(PAYMETHODS).includes(char)){
-    paymentSelection.setAttribute('open', 'true');
-    if(char == PAYMETHODS.PAYPAL){
+  // force selected paymentMethod on item
+  if (forceSelection && Object.values(PAYMETHODS).includes(forceSelection)) {
+    currentPaymentMethod = forceSelection;
+    paymentSelection.setAttribute('open', true);
+    if(forceSelection == PAYMETHODS.PAYPAL){
       checkbox.checked = true;
     } else {
       checkbox.checked = false;
     }
-  } else {
-    paymentSelection.removeAttribute('open');
+    return;
   }
-  changePaymentMethod();
-}
 
-const paymentSelection = document.getElementById('payment-method-selection');
-function changePaymentMethod(){
-  if(!checkbox || !paymentSelection) return;
-
-  if(paymentSelection.open){
-    if(checkbox.checked){
+  // select payment method base on element state
+  if (paymentSelection.open) {
+    if (checkbox.checked) {
       // Selected Paypal
       currentPaymentMethod = PAYMETHODS.PAYPAL;
     } else {
@@ -600,45 +592,33 @@ function changePaymentMethod(){
   localStorage.setItem("item", JSON.stringify(selected));
 }
 
-function getName(item){
-  if(!item) return {
+function getName(item) {
+  if (!item) return {
     name: "Senza nome",
     fullName: "Senza nome"
   };
 
   let fullName = item.name.trim();
 
-  if(!item.paymentMethod){
+  if (!item.paymentMethod) {
     return {
       name: fullName,
       fullName: fullName
     };
   }
 
-  if(fullName.match(paymentRegex)){
-    // payment method already included in item name
-    let nameOnly = fullName.match(itemNameRegex);
-    nameOnly = nameOnly[0];
-    if(!nameOnly){
-      nameOnly = "Senza nome";
+  fullName = `${getIcon(item.paymentMethod)} ${fullName}`;
+  return {
+    name: item.name,
+    fullName: fullName
+  };
+
+  function getIcon(paymentMethod) {
+    if (paymentMethod == PAYMETHODS.PAYPAL) {
+      return '<i class="fa-brands fa-paypal margin-r10"></i>';
+    } else {
+      return '<i class="fa-solid fa-coins margin-r10"></i>';
     }
-    // fix original name
-    item.name = nameOnly.trim();
-    // add correct payment method
-    fullName = `${item.name} - ${item.paymentMethod}`;
-
-    return {
-      name: item.name,
-      fullName: fullName
-    };
-  } else {
-    const nameOnly = fullName;
-    fullName += ` - ${item.paymentMethod}`;
-
-    return {
-      name: nameOnly,
-      fullName: fullName
-    };
   }
 }
 
@@ -652,7 +632,7 @@ function handleMenuClick() {
 
     // close shared carts menu
     const sharedCartsMenu = document.querySelector('#shared-carts-menu input[type="checkbox"');
-    if(sharedCartsMenu) sharedCartsMenu.checked = false;
+    if (sharedCartsMenu) sharedCartsMenu.checked = false;
   }
 }
 
@@ -689,11 +669,11 @@ function addActions() {
 }
 
 const loadingElement = document.getElementById('loading-screen');
-function showLoadingScreen(){
+function showLoadingScreen() {
   loadingElement.showModal();
 }
 
-function hideLoadingScreen(){
+function hideLoadingScreen() {
   loadingElement.close();
 }
 

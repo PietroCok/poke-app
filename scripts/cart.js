@@ -451,7 +451,7 @@ function drawCartItems() {
       `<div class="item-container ${canEdit ? '' : 'disabled'}">
           <details data-id="${item.id}" class="details w-100" ${isOpen ? "open" : ""}>
           <summary class="item-title">
-            <span class="item-name" title="${itemName.fullName}">${itemName.fullName}</span>
+            <span class="item-name" title="${itemName.name}">${itemName.fullName}</span>
 
             <div class="item-short flex align-center just-end min-w-fit">
               <div class='item-price margin-10' title="Prezzo">
