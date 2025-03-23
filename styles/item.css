@@ -37,6 +37,7 @@
 
 .item-actions{
   justify-content: space-between;
+  margin-bottom: 8px;
 }
 
 .item-description{
