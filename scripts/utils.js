@@ -116,4 +116,10 @@ function closeAllPages(){
   for(const page of pages){
     page.classList.add('hidden');
   }
+
+  // close subtotals
+  const subtotals = document.getElementById('subtotals-container');
+  if(subtotals?.open){
+    subtotals.removeAttribute('open');
+  }
 }

@@ -267,6 +267,10 @@
   margin: 10px;
 }
 
+.margin-5{
+  margin: 5px;
+}
+
 .margin-r10{
   margin-right: 10px;
 }
@@ -385,4 +389,9 @@
 
 .underline{
   text-decoration: underline;
+}
+
+
+.hide-empty:has(span:empty) {
+  display: none;
 }

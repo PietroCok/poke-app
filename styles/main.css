@@ -258,6 +258,11 @@ input[type="radio"] {
   color: var(--main-color);
 }
 
+#cart-subtotals-by-type{
+  height: 2rem;
+  opacity: .7;
+}
+
 /* Avoid scrollbar on whole dialog if order too large */
 .order-text{
   max-height: 40vh;

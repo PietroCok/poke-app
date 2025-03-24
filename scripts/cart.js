@@ -187,8 +187,9 @@ async function addToCart(item, allowDuplicate = false) {
 function showOrderPreview() {
   // check if at least one item in cart
   const cart = getCart();
+  const cartItems = getCartItems();
 
-  if (getCartItems().length == 0) {
+  if (cartItems.length == 0) {
     new Notification({
       message: "Il carrello è vuoto",
       gravity: 'error'
@@ -224,7 +225,7 @@ function showOrderPreview() {
 
   // total price
   let cartSubtotal = 0;
-  for (const item of getCartItems()) {
+  for (const item of cartItems) {
     cartSubtotal += item.totalPrice;
   }
   const cartSubtotalElem = document.getElementById('order-price');
@@ -244,12 +245,14 @@ function showOrderPreview() {
 function generateOrderMessage() {
 
   const cart = getCart();
+  const cartItems = getCartItems();
+
   const orderTime = document.getElementById('order-time');
   const orderName = document.getElementById('order-name');
 
   let simple_order_string = '';
 
-  for (const [index, item] of Object.entries(getCartItems())) {
+  for (const [index, item] of Object.entries(cartItems)) {
     let single_order = ''
     single_order += `${Number(index) + 1}) ${item.dimension.toUpperCase()}: `;
 
@@ -268,7 +271,7 @@ function generateOrderMessage() {
 
   const complete_order_string =
     `Buongiorno,
-vorrei ordinare ${getCartItems().length > 1 ? getCartItems().length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ? " a nome: " + orderName.value : ""}.
+vorrei ordinare ${cartItems.length > 1 ? cartItems.length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ? " a nome: " + orderName.value : ""}.
 
 ${simple_order_string}`;
 
@@ -438,14 +441,21 @@ function drawCartItems() {
   }
 
   let cartSubtotal = 0;
+  const subtotals = Object.values(PAYMETHODS).reduce((obj, key) => ({...obj, [key]:0}), {'none': 0});
 
-  for (const item of getCartItems()) {
+  const cartItems = getCartItems(true)
+
+  for (const item of cartItems) {
     const description = toString(item);
     const isOpen = openElemsId?.includes(item.id);
-    cartSubtotal += item.totalPrice;
     const isItemStarrred = isStarred(item.id);
     const canEdit = canEditItem(item);
     const itemName = getName(item);
+    
+    const paymentMethod = item.paymentMethod;
+    subtotals[paymentMethod || 'none'] += item.totalPrice;
+    cartSubtotal += item.totalPrice;
+
 
     const itemElemStr =
       `<div class="item-container ${canEdit ? '' : 'disabled'}">
@@ -530,17 +540,30 @@ function drawCartItems() {
     cartElem.append(itemElem);
   }
 
-  const cartItems = getCartItems().length
+  for(const st in subtotals){
+    const stElem = document.getElementById(`subtotal-type-${st}`);
+    if(stElem){
+      const _value = subtotals[st].toFixed(2);
+      if(_value > 0) {
+        stElem.textContent = _value;
+      } else {
+        stElem.textContent = '';
+      }
+    }
+  }
+
+
+  const itemsNumber = cartItems.length;
   // update cart count
   const menuElem = document.getElementById('cart-menu');
-  if (menuElem) menuElem.dataset.cartcount = cartItems > 0 ?  cartItems : '';
+  if (menuElem) menuElem.dataset.cartcount = itemsNumber > 0 ?  itemsNumber : '';
 
   const headerElem = document.getElementById('cart-count');
-  if (headerElem) headerElem.textContent =  cartItems;
+  if (headerElem) headerElem.textContent =  itemsNumber;
 
   // enable / disable preview button
   const preview_btn = document.getElementById('btn-preview-order');
-  if ( cartItems == 0) {
+  if ( itemsNumber == 0) {
     preview_btn.classList.add('disabled');
   } else {
     preview_btn.classList.remove('disabled');
@@ -552,8 +575,17 @@ function drawCartItems() {
 }
 
 
-function getCartItems(){
-  return Object.values(getCart().items || {});
+function getCartItems(ordered = false){
+  const items = Object.values(getCart().items || {});
+  
+  // ordinamento alfanumerico
+  if(ordered){
+    items.sort((A, B) => {
+      return A.name > B.name ? 1 : -1;
+    });
+  }
+
+  return items;
 }
 
 

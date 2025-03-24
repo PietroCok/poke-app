@@ -648,9 +648,10 @@ function addActions() {
 
   // close menu if click outside of it
   const main_menu_container = document.getElementById('main-menu-container');
-  document.addEventListener('touchstart', (evt) => handleCloseMenu(evt));
-  document.addEventListener('mousedown', (evt) => handleCloseMenu(evt));
-  function handleCloseMenu(evt) {
+  document.addEventListener('touchstart', (evt) => handleGenericClick(evt));
+  document.addEventListener('mousedown', (evt) => handleGenericClick(evt));
+  function handleGenericClick(evt) {
+    // close main menu
     if (!main_menu_container.contains(evt.target)) {
       closeMenu();
     }
