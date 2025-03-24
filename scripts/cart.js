@@ -240,6 +240,11 @@ function generateOrderMessage() {
   const cart = getCart();
   const orderTime = document.getElementById('order-time');
   const orderName = document.getElementById('order-name');
+  let greetings = 'Buongiorno';
+
+  if ((new Date()).getHours() > 14) {
+    greetings = 'Buonasera';
+  }
 
   let simple_order_string = '';
 
@@ -261,7 +266,7 @@ function generateOrderMessage() {
   }
 
   const complete_order_string =
-    `Buongiorno,
+    `${greetings},
 vorrei ordinare ${getCartItems().length > 1 ? getCartItems().length : "una"} poke da asporto per le ${orderTime.value}${orderName.value ? " a nome: " + orderName.value : ""}.
 
 ${simple_order_string}`;
