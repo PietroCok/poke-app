@@ -615,9 +615,9 @@ function getName(item) {
 
   function getIcon(paymentMethod) {
     if (paymentMethod == PAYMETHODS.PAYPAL) {
-      return '<i class="fa-brands fa-paypal margin-r10"></i>';
+      return '<i class="fa-brands fa-paypal margin-r10 w-1"></i>';
     } else {
-      return '<i class="fa-solid fa-coins margin-r10"></i>';
+      return '<i class="fa-solid fa-coins margin-r10 w-1"></i>';
     }
   }
 }
