@@ -376,6 +376,8 @@ firebase.addItemTocart = async function(item , cartId){
 firebase.updateItemInCart = async function(item, cartId){
   if(!cartId || !item) return false;
 
+  item.createdBy = firebase.getUserUid();
+
   const path = getItemsPath(cartId);
   const result = await update(ref(database, path), {
     [item.id] : item
