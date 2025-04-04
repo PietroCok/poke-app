@@ -154,7 +154,7 @@ async function addUserToCart(cartId, cartName, ask = true){
   if(!cartId) return false;
 
   if(ask){
-    const messagePart1 = `Sei stato invitato/a ` + cartName ? `al carrello condiviso: ${cartName}` : `ad un carrello condiviso`;
+    const messagePart1 = `Sei stato invitato/a ` + (cartName ? `al carrello condiviso: ${cartName}` : `ad un carrello condiviso`);
     _confirm(`${messagePart1}.<div class="margin-10">Confermi la partecipazione?</div>`, () => addUserToCart(cartId, cartName, false));
     return false;
   }
