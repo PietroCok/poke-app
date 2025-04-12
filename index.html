@@ -124,22 +124,33 @@
       onclick="closePage('cart')">
       <i class="fa-solid fa-x"></i>
     </button>
-    <header class="h-header flex flex-center w-100 margin-10">
-      <div class="flex gap-2">
-        <div class="flex gap-1" title="Elementi nel carrello">
-          <div>
-            <i class="fa-solid fa-bowl-food"></i>
+    <header class="flex flex-center just-center w-100 pointer">
+      <details id="subtotals-container" class="w-80">
+        <summary class="h-header flex flex-center margin-10">
+          <div class="flex gap-2">
+            <div class="flex gap-1" title="Elementi nel carrello">
+              <div>
+                <i class="fa-solid fa-bowl-food"></i>
+              </div>
+              <div id="cart-count"></div>
+            </div>
+    
+            <div class="flex gap-1" title="Totale carrello">
+              <div class="accent-2">
+                <i class="fa-solid fa-coins"></i>
+              </div>
+              <div id="cart-price"><span class="margin-r10"></span>€</div>
+            </div>
           </div>
-          <div id="cart-count"></div>
+        </summary>
+
+        <div id="cart-subtotals-by-type" class="flex gap-1 just-center">
+          <div class="hide-empty" title="Non definito"><span id="subtotal-type-none" class="margin-5">15.00</span>€</div>
+          <div class="hide-empty" title="Contanti"><i class="fa-solid fa-coins"></i><span id="subtotal-type-C" class="margin-5">120.00</span>€</div>
+          <div class="hide-empty" title="Paypal"><i class="fa-brands fa-paypal"></i><span id="subtotal-type-P" class="margin-5">50.00</span>€</div>
         </div>
 
-        <div class="flex gap-1" title="Totale carrello">
-          <div class="accent-2">
-            <i class="fa-solid fa-coins"></i>
-          </div>
-          <div id="cart-price"><span class="margin-r10"></span>€</div>
-        </div>
-      </div>
+      </details>
     </header>
 
     <section id="cart-content" class="w-100 h-100 flex flex-column align-center gap-1 scroll margin-b6">
@@ -226,7 +237,7 @@
       <h3>Utenti</h3>
     </header>
 
-    <div id="users-status-container" class="flex flex-column gap-2 padding-1 w-100">
+    <div id="users-status-container" class="flex flex-column gap-2 padding-1 w-100 scroll">
       
     </div>
 
@@ -236,7 +247,20 @@
     <div class="flex flex-column gap-1 padding-1">
       <label class="label" for="item-name">Dai un nome alla tua poke
       </label>
-      <input class="input margin-10" type="text" name="item-name" id="item-name">
+      <div id="item-name-container">
+        <input class="input margin-10" type="text" name="item-name" id="item-name" autocomplete="off">
+      </div>
+
+      <details id="payment-method-selection" class="pointer margin-10" ontoggle="changePaymentMethod()">
+        <summary class="padding-1">Metodo di pagamento</summary>
+
+        <div id="payment-toogle-container" class="flex align-center just-center padding-10 margin-10">
+          <input type="checkbox" name="payment-method" id="payment-method" class="custom-toggle-input" onchange="changePaymentMethod()" checked>
+          <label id="cash" for="payment-method" class="pointer flex-1 toggle toggle-left disabled">Contanti</label>
+          <label class="custom-toogle pointer" for="payment-method"></label>
+          <label id="paypal" for="payment-method" class="pointer flex-1 toggle toggle-right disabled">PayPal</label>
+        </div>
+      </details>
 
       <footer class="button-wrapper w-100 padding-0">
         <div title="Annulla" class="button icon icon-only accent-1" onclick="closeDialog('add-item-name')">

@@ -284,6 +284,8 @@ function loadIntoConfigurator(_item = null) {
 
   selected = structuredClone(item);
   localStorage.setItem("item", JSON.stringify(selected));
+
+  recalculateLimits();
 }
 
 /**
@@ -292,25 +294,29 @@ function loadIntoConfigurator(_item = null) {
 function askItemName() {
   const groups = selected.ingredients;
   let totalIngredients = 0;
-  for(const group in groups){
+  for (const group in groups) {
     totalIngredients += groups[group].length;
   }
-  
+
   if (totalIngredients <= 0) {
     new Notification({
-      message: 'Nessun ingrediente selezionato!', 
+      message: 'Nessun ingrediente selezionato!',
       gravity: 'error'
     })
     return;
   }
 
+  const dialog_name = document.getElementById('item-name');
   if (selected.name) {
-    const dialog_name = document.querySelector('#add-item-name input');
     if (dialog_name) dialog_name.value = selected.name;
   }
 
   const dialog_addItemName = document.getElementById('add-item-name');
-  if (dialog_addItemName) dialog_addItemName.showModal();
+  if (dialog_addItemName) {
+    dialog_addItemName.showModal();
+    // auto select chosen payment method
+    changePaymentMethod(selected.paymentMethod || 'none');
+  }
 }
 
 /**
@@ -321,15 +327,9 @@ function saveItem(to) {
   const item = structuredClone(selected);
 
   const dialog_addItemName = document.getElementById("add-item-name");
-  const dialog_input = document.querySelector('#add-item-name input');
-  if (dialog_input) {
-    let name = dialog_input.value;
-    if (!name) name = 'Senza nome'
-    item.name = name;
-
-    dialog_input.value = '';
-    dialog_addItemName.close();
-  }
+  item.name = itemNameInput.value || "Senza nome";
+  item.paymentMethod = currentPaymentMethod;
+  dialog_addItemName.close();
 
   let destination = to || item.from;
 
@@ -344,6 +344,8 @@ function saveItem(to) {
     default:
       addToCart(item);
   }
+
+  clearConfigurator();
 }
 
 /**
@@ -431,7 +433,7 @@ function recalculateLimits() {
 
   // enable / disable save button
   const add_btn = document.getElementById('add-cart');
-  if(totalSelected == 0){
+  if (totalSelected == 0) {
     add_btn.classList.add('disabled');
   } else {
     add_btn.classList.remove('disabled');
@@ -526,6 +528,101 @@ function updateLimits(group, current, max) {
   }
 }
 
+function getChosenItemName() {
+  if (!itemNameInput) return;
+
+  let name = itemNameInput.value;
+
+  if (!name) {
+    name = "Senza Nome";
+  }
+
+  itemNameInput.value = '';
+
+  return name;
+}
+
+const itemNameInput = document.getElementById('item-name');
+const toogleContainer = document.getElementById('payment-toogle-container');
+let currentPaymentMethod = null;
+const PAYMETHODS = {
+  PAYPAL: 'P',
+  CASH: 'C'
+}
+const checkbox = document.getElementById('payment-method');
+const paymentSelection = document.getElementById('payment-method-selection');
+
+function changePaymentMethod(forceSelection) {
+  console.log(forceSelection);
+  
+  if (!checkbox || !paymentSelection) return;
+
+  // force details to close if paymentMethod on item is not present
+  if(forceSelection && forceSelection == 'none'){
+    paymentSelection.removeAttribute('open');
+    return;
+  }
+
+  // force selected paymentMethod on item
+  if (forceSelection && Object.values(PAYMETHODS).includes(forceSelection)) {
+    currentPaymentMethod = forceSelection;
+    paymentSelection.setAttribute('open', true);
+    if(forceSelection == PAYMETHODS.PAYPAL){
+      checkbox.checked = true;
+    } else {
+      checkbox.checked = false;
+    }
+    return;
+  }
+
+  // select payment method base on element state
+  if (paymentSelection.open) {
+    if (checkbox.checked) {
+      // Selected Paypal
+      currentPaymentMethod = PAYMETHODS.PAYPAL;
+    } else {
+      // Selected Cash
+      currentPaymentMethod = PAYMETHODS.CASH;
+    }
+  } else {
+    currentPaymentMethod = null;
+  }
+
+  selected.paymentMethod = currentPaymentMethod;
+  localStorage.setItem("item", JSON.stringify(selected));
+}
+
+function getName(item) {
+  if (!item) return {
+    name: "Senza nome",
+    fullName: "Senza nome"
+  };
+
+  let fullName = item.name.trim();
+
+  if (!item.paymentMethod) {
+    return {
+      name: fullName,
+      fullName: fullName
+    };
+  }
+
+  fullName = `${getIcon(item.paymentMethod)} ${fullName}`;
+  return {
+    name: item.name,
+    fullName: fullName
+  };
+
+  function getIcon(paymentMethod) {
+    if (paymentMethod == PAYMETHODS.PAYPAL) {
+      return '<i class="fa-brands fa-paypal margin-r10 w-1"></i>';
+    } else {
+      return '<i class="fa-solid fa-coins margin-r10 w-1"></i>';
+    }
+  }
+}
+
+
 function handleMenuClick() {
   // get details state
   const parentContainer = document.querySelector('#main-menu-container details');
@@ -535,7 +632,7 @@ function handleMenuClick() {
 
     // close shared carts menu
     const sharedCartsMenu = document.querySelector('#shared-carts-menu input[type="checkbox"');
-    if(sharedCartsMenu) sharedCartsMenu.checked = false;
+    if (sharedCartsMenu) sharedCartsMenu.checked = false;
   }
 }
 
@@ -551,9 +648,10 @@ function addActions() {
 
   // close menu if click outside of it
   const main_menu_container = document.getElementById('main-menu-container');
-  document.addEventListener('touchstart', (evt) => handleCloseMenu(evt));
-  document.addEventListener('mousedown', (evt) => handleCloseMenu(evt));
-  function handleCloseMenu(evt) {
+  document.addEventListener('touchstart', (evt) => handleGenericClick(evt));
+  document.addEventListener('mousedown', (evt) => handleGenericClick(evt));
+  function handleGenericClick(evt) {
+    // close main menu
     if (!main_menu_container.contains(evt.target)) {
       closeMenu();
     }
@@ -572,11 +670,11 @@ function addActions() {
 }
 
 const loadingElement = document.getElementById('loading-screen');
-function showLoadingScreen(){
+function showLoadingScreen() {
   loadingElement.showModal();
 }
 
-function hideLoadingScreen(){
+function hideLoadingScreen() {
   loadingElement.close();
 }
 
@@ -588,8 +686,6 @@ async function setUp() {
   addActions();
 
   loadIntoConfigurator();
-
-  recalculateLimits();
 
   loadCart();
 

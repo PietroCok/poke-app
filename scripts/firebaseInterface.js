@@ -84,8 +84,9 @@ async function handleLogin(success = false, active = false, notification = true)
       })
     } else {
       new Notification({
-        message: 'Utente NON abilitato. Contattare un amministratore!',
-        gravity: 'warn'
+        message: 'Utente NON abilitato.<br>Contattare un amministratore per accedere alle funzionalità di convisione',
+        gravity: 'warn',
+        displayTime: 5
       })
     }
 
@@ -122,7 +123,8 @@ async function generatedCartLink(cartId, name){
     await navigator.clipboard.writeText(inviteLink);
 
     new Notification({
-      message: "Link di invito copiato negli appunti!"
+      message: "Link di invito copiato negli appunti!",
+      displayTime: 2
     })
   } else {
     // clipboard not supported
@@ -131,6 +133,10 @@ async function generatedCartLink(cartId, name){
 }
 
 async function handleCartInvite(id, name){
+  if(!isUserActive()){
+    console.log(`Utente non attivo, salto la gestione dell'inivito fino a quando non viene abilitato`);
+    return;
+  }
   console.log('invited to shared cart: ', id, name);
   const alreadyAdded = await firebase.isCartAccessible(id);
   if(alreadyAdded){
@@ -148,13 +154,16 @@ async function addUserToCart(cartId, cartName, ask = true){
   if(!cartId) return false;
 
   if(ask){
-    _confirm(`Sei stato invitato al carrello condiviso: ${cartName}.<div class="margin-10">Confermi la partecipazione?</div>`, () => addUserToCart(cartId, cartName, false));
+    const messagePart1 = `Sei stato invitato/a ` + cartName ? `al carrello condiviso: ${cartName}` : `ad un carrello condiviso`;
+    _confirm(`${messagePart1}.<div class="margin-10">Confermi la partecipazione?</div>`, () => addUserToCart(cartId, cartName, false));
     return false;
   }
 
   const result = firebase.addCartToUser(`cart-${cartId}`);
   if(result){
+    // check if user is active
     clearUrl();
+
     new Notification({
       message: `Carrello condiviso ${cartName} ora disponibile!`
     })
@@ -294,7 +303,7 @@ async function editItemInSharedCart(item){
   if(!firebase || !item) return false;
 
   // check if userid is the same as creator of the item
-  if(item.createdBy != firebase.getUserUid()){
+  if(!canEditItem(item)){
     new Notification({
       message: "Non puoi modificare un elemento creato da un altro utente!",
       gravity: 'error'
@@ -438,8 +447,11 @@ async function deleteSharedCart(cartId, ask = true){
  * Scollega carrello condiviso
  */
 function unlinkSharedCart(){
-  firebase.stopObserveCart(getCart()?.id);
-  clearCart(true, true);
+  const cart = getCart();
+  if(cart?.shared){
+    firebase.stopObserveCart(cart.id);
+    clearCart(true, true);
+  }
 }
 
 
@@ -511,7 +523,11 @@ async function drawProfilePage(){
   `<div class="flex gap-1 align-center">
     <div for="user-profile-email" class="label margin-10">Email</div>
 
+    <!--
+    email verification status is not needed now
     <input type="text" id="user-profile-email" class="input flex-1 w-20 text-right ${emailVerified ? 'accent-info' : 'accent-warn'}" title="Email ${emailVerified ? 'verficata' : 'non verificata'}" value="${getUserEmail()}" disabled>
+    -->
+    <input type="text" id="user-profile-email" class="input flex-1 w-20 text-right" value="${getUserEmail()}" disabled>
   </div>`;
 
   const verifyEmail = 
@@ -537,7 +553,8 @@ async function drawProfilePage(){
 
   // verifica email
   if(!emailVerified) {
-    profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
+    // removed until really needed
+    // profileContainer.insertAdjacentHTML('beforeend', verifyEmail)
   }
 
   // abilitazione

@@ -376,6 +376,8 @@ firebase.addItemTocart = async function(item , cartId){
 firebase.updateItemInCart = async function(item, cartId){
   if(!cartId || !item) return false;
 
+  item.createdBy = firebase.getUserUid();
+
   const path = getItemsPath(cartId);
   const result = await update(ref(database, path), {
     [item.id] : item
@@ -553,6 +555,18 @@ firebase.getSharedCarts = async function(){
 
     if(cart){
       carts[cart.id] = cart;
+    } else {
+      // try to remove cart id form user carts
+      // no need to wait for the operation to complete
+      update(ref(database, `/users/${this.getUserUid()}/carts`),{
+        [id]: null
+      })
+      .then((snapshot) => {
+        console.log("Removed old cart association!")
+      }).catch((error) => {
+        console.error(error);
+        return null;
+      });
     }
   }
 

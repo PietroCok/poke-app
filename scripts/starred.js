@@ -46,6 +46,10 @@ function starItemFromCart(id) {
   const item = cart.items[id];
   // remove creator
   delete item.createdBy;
+
+  // save correct name
+  getName(item);
+
   starredItems.push(item);
 
   setStarred(starredItems);
@@ -67,6 +71,9 @@ function starItem(item) {
   const starredItems = getStarred();
   if (isStarred(item.id)) return;
 
+  // save correct name
+  getName(item);
+
   starredItems.push(item);
   
   setStarred(starredItems);
@@ -84,6 +91,9 @@ function starItem(item) {
  */
 function updateStarredItem(item) {
   if (!item) return;
+
+  // save correct name
+  getName(item);
 
   const starred = getStarred();
 
@@ -166,13 +176,14 @@ function drawStarredItems() {
     const isOpen = openElemsId?.includes(item.id);
     const isItemCarted = isCarted(item.id);
     const description = toString(item);
+    const itemName = getName(item);
 
     // TODO HTML costruction
     const itemElemStr =
       `<div class="item-container">
           <details data-id="${item.id}" class="details w-100" ${isOpen ? "open" : ""}>
             <summary class="item-title">
-              <span class="item-name" title="${item.name}">${item.name}</span>
+              <span class="item-name" title="${itemName.name}">${itemName.fullName}</span>
 
               <div class="item-short flex align-center just-end">
                 <div class='item-price margin-10' title="Prezzo">

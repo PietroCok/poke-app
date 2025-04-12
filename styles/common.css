@@ -116,6 +116,14 @@
   background-color: var(--main-bg);
 }
 
+.transparent-bg{
+  background-color: transparent;
+}
+
+.absolute{
+  position: absolute;
+}
+
 .fixed {
   position: fixed;
 }
@@ -220,7 +228,7 @@
 }
 
 .padding-1{
-  padding: 1em;
+  padding: 1rem;
 }
 
 .padding-10{
@@ -232,7 +240,7 @@
 }
 
 .padding-0-1{
-  padding: 0 1em;
+  padding: 0 1rem;
 }
 
 .padding-top-0{
@@ -259,16 +267,24 @@
   margin: 10px;
 }
 
+.margin-5{
+  margin: 5px;
+}
+
 .margin-r10{
   margin-right: 10px;
 }
 
 .margin-b6{
-  margin-bottom: 6em;
+  margin-bottom: 6rem;
 }
 
 .h-100{
   height: 100%;
+}
+
+.w-1{
+  width: 1rem;
 }
 
 .w-100 {
@@ -279,6 +295,10 @@
   width: 80%;
 }
 
+.w-70 {
+  width: 70%;
+}
+
 .w-20 {
   width: 20%;
 }
@@ -287,12 +307,16 @@
   width: fit-content;
 }
 
+.min-w-fit{
+  min-width: fit-content;
+}
+
 .gap-1 {
-  gap: 1em;
+  gap: 1rem;
 }
 
 .gap-2 {
-  gap: 2em;
+  gap: 2rem;
 }
 
 .gap-5 {
@@ -320,7 +344,7 @@
 }
 
 .top-3 {
-  top: 3em;
+  top: 3rem;
 }
 
 .bottom-0{
@@ -332,7 +356,7 @@
 }
 
 .left-1 {
-  left: 1em;
+  left: 1rem;
 }
 
 .right-0 {
@@ -340,7 +364,7 @@
 }
 
 .right-1 {
-  right: 1em;
+  right: 1rem;
 }
 
 .h-header{
@@ -369,4 +393,9 @@
 
 .underline{
   text-decoration: underline;
+}
+
+
+.hide-empty:has(span:empty) {
+  display: none;
 }

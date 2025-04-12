@@ -128,13 +128,21 @@ async function addToCart(item, allowDuplicate = false) {
   }
 
   let poke = structuredClone(item);
+
+  // save correct name
+  getName(poke);
+
   let prevItem = null;
   if (!poke.id || allowDuplicate) {
     // insert into cart
     poke.id = getRandomId();
   } else {
     prevItem = cart.items[`${poke.id}`];
-    if (prevItem) {
+    // if there's already an item in the cart with the same id
+    // checks if current user can edit the elem
+    // else treat as new item
+    if (prevItem && !canEditItem(item)) {
+      prevItem = null;
       poke.id = getRandomId();
     }
   }
@@ -170,8 +178,6 @@ async function addToCart(item, allowDuplicate = false) {
   // local update
   cart.items[`${poke.id}`] = poke;
 
-  clearConfigurator();
-
   saveCart(cart);
 }
 
@@ -181,8 +187,9 @@ async function addToCart(item, allowDuplicate = false) {
 function showOrderPreview() {
   // check if at least one item in cart
   const cart = getCart();
+  const cartItems = getCartItems();
 
-  if (getCartItems().length == 0) {
+  if (cartItems.length == 0) {
     new Notification({
       message: "Il carrello è vuoto",
       gravity: 'error'
@@ -218,7 +225,7 @@ function showOrderPreview() {
 
   // total price
   let cartSubtotal = 0;
-  for (const item of getCartItems()) {
+  for (const item of cartItems) {
     cartSubtotal += item.totalPrice;
   }
   const cartSubtotalElem = document.getElementById('order-price');
@@ -238,6 +245,8 @@ function showOrderPreview() {
 function generateOrderMessage() {
 
   const cart = getCart();
+  const cartItems = getCartItems();
+
   const orderTime = document.getElementById('order-time');
   const orderName = document.getElementById('order-name');
   let greetings = 'Buongiorno';
@@ -248,7 +257,7 @@ function generateOrderMessage() {
 
   let simple_order_string = '';
 
-  for (const [index, item] of Object.entries(getCartItems())) {
+  for (const [index, item] of Object.entries(cartItems)) {
     let single_order = ''
     single_order += `${Number(index) + 1}) ${item.dimension.toUpperCase()}: `;
 
@@ -406,7 +415,7 @@ function drawCartItems() {
   // additional header for remote carts
   if(isUserActive() && cart.shared){
     const additionalHeaderElemStr = 
-    `<h4 class="w-100 sticky top-0 main-bg flex flex-column just-center padding-1 gap-5">
+    `<h4 class="w-100 sticky top-0 main-bg flex flex-column just-center align-center padding-1 gap-5">
       <button
         id="unlink-shared-cart" 
         class="button icon icon-only icon-small rapid-action accent-1 fixed left-1"
@@ -416,7 +425,7 @@ function drawCartItems() {
         <i class="fa-solid fa-link-slash"></i>
       </button>
 
-      <span id="shared-cart-name">${cart.name}</span>
+      <span id="shared-cart-name" class="w-70">${cart.name}</span>
       <div class="underline text-small text-capitalize pointer" onclick="generatedCartLink('${cart.id}', '${cart.name}')">
       Genera link invito
       </div>
@@ -437,21 +446,29 @@ function drawCartItems() {
   }
 
   let cartSubtotal = 0;
+  const subtotals = Object.values(PAYMETHODS).reduce((obj, key) => ({...obj, [key]:0}), {'none': 0});
 
-  for (const item of getCartItems()) {
+  const cartItems = getCartItems(true)
+
+  for (const item of cartItems) {
     const description = toString(item);
     const isOpen = openElemsId?.includes(item.id);
-    cartSubtotal += item.totalPrice;
     const isItemStarrred = isStarred(item.id);
-    const canEdit = firebase?.getUserUid() == item.createdBy || firebase?.getUserUid() == cart.createdBy;
+    const canEdit = canEditItem(item);
+    const itemName = getName(item);
+    
+    const paymentMethod = item.paymentMethod;
+    subtotals[paymentMethod || 'none'] += item.totalPrice;
+    cartSubtotal += item.totalPrice;
+
 
     const itemElemStr =
       `<div class="item-container ${canEdit ? '' : 'disabled'}">
           <details data-id="${item.id}" class="details w-100" ${isOpen ? "open" : ""}>
           <summary class="item-title">
-            <span class="item-name" title="${item.name}">${item.name}</span>
+            <span class="item-name" title="${itemName.name}">${itemName.fullName}</span>
 
-            <div class="item-short flex align-center just-end">
+            <div class="item-short flex align-center just-end min-w-fit">
               <div class='item-price margin-10' title="Prezzo">
                 <span>${item.totalPrice.toFixed(2)} €</span>
               </div>
@@ -528,17 +545,30 @@ function drawCartItems() {
     cartElem.append(itemElem);
   }
 
-  const cartItems = getCartItems().length
+  for(const st in subtotals){
+    const stElem = document.getElementById(`subtotal-type-${st}`);
+    if(stElem){
+      const _value = subtotals[st].toFixed(2);
+      if(_value > 0) {
+        stElem.textContent = _value;
+      } else {
+        stElem.textContent = '';
+      }
+    }
+  }
+
+
+  const itemsNumber = cartItems.length;
   // update cart count
   const menuElem = document.getElementById('cart-menu');
-  if (menuElem) menuElem.dataset.cartcount = cartItems > 0 ?  cartItems : '';
+  if (menuElem) menuElem.dataset.cartcount = itemsNumber > 0 ?  itemsNumber : '';
 
   const headerElem = document.getElementById('cart-count');
-  if (headerElem) headerElem.textContent =  cartItems;
+  if (headerElem) headerElem.textContent =  itemsNumber;
 
   // enable / disable preview button
   const preview_btn = document.getElementById('btn-preview-order');
-  if ( cartItems == 0) {
+  if ( itemsNumber == 0) {
     preview_btn.classList.add('disabled');
   } else {
     preview_btn.classList.remove('disabled');
@@ -550,6 +580,43 @@ function drawCartItems() {
 }
 
 
-function getCartItems(){
-  return Object.values(getCart().items || {});
+function getCartItems(ordered = false){
+  const items = Object.values(getCart().items || {});
+  
+  // ordinamento alfanumerico
+  if(ordered){
+    items.sort((A, B) => {
+      return A.name > B.name ? 1 : -1;
+    });
+  }
+
+  return items;
+}
+
+
+function canEditItem(item){
+  if(!firebase){
+    return true;
+  }
+
+  const cart = getCart();
+  if(!cart.shared){
+    return true;
+  }
+
+  if(!item.createdBy){
+    return true;
+  }
+
+  const userUid = firebase.getUserUid();
+  if(!userUid){
+    // user not logged
+    return true;
+  }
+  
+  if(userUid == item.createdBy || userUid == cart.createdBy) {
+    return true;
+  }
+
+  return false;
 }
