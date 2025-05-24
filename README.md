@@ -79,8 +79,15 @@ Da sezione dedicata nel menu principale è possibile scegliere la preferenza sul
 ### Persistenza
 ---
 
-Essendo una pagina web STATICA non è prevista una vera  e propria persistenza ma la maggior parte delle operazioni è comunque salvata tra una sessione e le successive tramite l'utilizzo del localStorage ( che però si svuota nel momento in cui l'utente svuota la cache del browser).
+Di base la persistenza delle informazioni inserite è gestita tramite l'utilizzo del localStorage.
 
 In particolare viene salvata l'ultima poke caricata nel configuratore (ad ogni modifica), il carrello, i preferiti, il nome con il quale effetturare l'ordinazione, l'orario scelto per l'ultima ordinazione e la preferenza sul tema.
 
+Nelle ultime versioni dell'applicazione è stato aggiunta una persistenza anche cross-device tramite l'intergrazione con Google Firebase, in particolare sfruttando i moduli Authentication e Realtime Database.
+Per il momento è stata aggiunta questo tipo di persistenza per il solo carrello, in quanto, oltre alla possibilità di ritrovare i proprio carrelli a prescindere dal device tramite il quale si accede al sito, ha permesso di inserire una funzionalità di condivisione dei carrelli tramite un apposito link di invito.
+
+Questo con l'obiettivo principale di semplificare le operazioni di coordinazione durante l'ordinazione comune di un gruppo di conoscienti.
+
+
+Per questioni di sicurezza e miglior controllo di eventuali costi di gestione, al momento, l'utilizzo delle funzionalità di condivisione e salvataggio delle informazioni tramite Google Firebase è disabiliato fino ad abilitazione da parte di un utente amministratore.
 
